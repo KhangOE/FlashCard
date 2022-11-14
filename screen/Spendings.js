@@ -12,7 +12,7 @@ export const Test = ({navigation})=>{
         const unsubscribe = navigation.addListener('focus', () => {
             getspending().then(data =>{
                 setdata(data)
-            //    console.log(data)
+                console.log(data)
             }).then(()=>{
             })
           //  console.log('Hello World!')
