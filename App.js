@@ -1,23 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View,Image } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { addspending, deleteSpending, getspending } from './api/firebaseApi';
 import { autoSignIn } from './api/firebaseApi';
 import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import {auth} from "./firebase"
+import { auth } from "./firebase"
 import { async } from '@firebase/util';
 import { Test } from './screen/Spendings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Add } from './screen/addSpending';
-import { Detail } from './screen/spendingDetail';
+import { Detail } from './screen/collectionDetail';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Targets } from './screen/targets';
 import { AddSpending } from './screen/addSpending';
 import { Todos } from './screen/todos';
 import { Statistic } from './screen/statistic';
+import { MainScreen } from './screen/main';
 
+import { CardScreen } from './screen/cardScreen';
+import { AddCard } from './screen/addCard';
 const HomeStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
 
@@ -26,17 +29,22 @@ function HomeStackScreen() {
     <HomeStack.Navigator>
       <HomeStack.Screen
         name="Spending"
-        component={Test}
+        component={MainScreen}
         options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
         name="SpendingDetail"
-        component={Detail}
+        component={CardScreen}
         options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
         name="addSpending"
         component={Add}
+        options={{ tabBarLabel: 'Home!' }}
+      />
+      <HomeStack.Screen
+        name="addCard"
+        component={AddCard}
         options={{ tabBarLabel: 'Home!' }}
       />
     </HomeStack.Navigator>
@@ -50,67 +58,75 @@ const Tab = createBottomTabNavigator();
 
 
 export default function App() {
-  const [data,setData] = useState([])
+  const [data, setData] = useState([])
 
   const [uid, setUid] = useState(null);
 
   useEffect(() => {
-    signInAnonymously(auth).then(()=>{
+    signInAnonymously(auth).then(() => {
       auth.onAuthStateChanged((user) => {
         if (user) {
           const { uid } = user;
           setUid(uid);
         } else {
-         signInAnonymously();
+          signInAnonymously();
         }
       });
     }).then(
-      ()=>{
-       // addspending({money:123123,note:'1243'})
-      // deleteSpending("5Vw24snnMZuHVz6UCIcI")
+      () => {
+        // addspending({money:123123,note:'1243'})
+        // deleteSpending("5Vw24snnMZuHVz6UCIcI")
       }
     )
-     
+
   }, []);
 
-  
+  useEffect(() => {
+    console.log(uid)
+  }, [])
+
+
 
   return (
-    uid ? 
-    <NavigationContainer screenOptions={{
-      headerShown: false
-    }}>
-      <Tab.Navigator screenOptions={{
-       headerShown: false,
-       tabBarShowLabel:false
-  }}>
-        <Tab.Screen options={ {tabBarIcon: ({ focused,color, size },) => (
-        <Icon name="money-bill" size={30} color={ focused ? "#900" : 'gray'} />),
-       
-      } } name="Home" component={HomeStackScreen} />
+    uid ?
+      <NavigationContainer screenOptions={{
+        headerShown: false
+      }}>
+        <Tab.Navigator screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false
+        }}>
+          <Tab.Screen options={{
+            tabBarIcon: ({ focused, color, size },) => (
+              <Icon name="money-bill" size={30} color={focused ? "#900" : 'gray'} />),
 
-      <Tab.Screen options={ {tabBarIcon: ({ focused,color, size },) => (
-        <Icon name="piggy-bank" size={30} color={ focused ? "#900" : 'gray'} />),
-       
-      } } name="H" component={Targets} />
- <Tab.Screen options={ {tabBarIcon: ({ focused,color, size },) => (
-        <Icon name="chart-bar" size={30} color={ focused ? "#900" : 'gray'} />),
-       
-      } } name="Statistic" component={Statistic} />
+          }} name="Home" component={HomeStackScreen} />
 
-<Tab.Screen options={ {tabBarIcon: ({ focused,color, size },) => (
-        <Icon name="th-list" size={30} color={ focused ? "#900" : 'gray'} />),
-       
-      } } name="Todos" component={Todos} />
+          <Tab.Screen options={{
+            tabBarIcon: ({ focused, color, size },) => (
+              <Icon name="piggy-bank" size={30} color={focused ? "#900" : 'gray'} />),
 
-      </Tab.Navigator>
-    </NavigationContainer>  : <View><Text>123</Text></View>
-  /*
-    <View style={styles.container}>
-      {uid ? <Text><Test></Test></Text> : <Text>123</Text> }
-    </View>*/
-    
-  
+          }} name="H" component={Targets} />
+          <Tab.Screen options={{
+            tabBarIcon: ({ focused, color, size },) => (
+              <Icon name="chart-bar" size={30} color={focused ? "#900" : 'gray'} />),
+
+          }} name="Statistic" component={Statistic} />
+
+          <Tab.Screen options={{
+            tabBarIcon: ({ focused, color, size },) => (
+              <Icon name="th-list" size={30} color={focused ? "#900" : 'gray'} />),
+
+          }} name="Todos" component={Todos} />
+
+        </Tab.Navigator>
+      </NavigationContainer> : <View><Text>123</Text></View>
+    /*
+      <View style={styles.container}>
+        {uid ? <Text><Test></Test></Text> : <Text>123</Text> }
+      </View>*/
+
+
   );
 }
 

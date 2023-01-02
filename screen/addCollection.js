@@ -10,7 +10,7 @@ export const Add = () => {
     const [note, setNote] = useState('')
 
     const handle = () => {
-        addCollection({ name: name, note: note })
+        addCollection({ money: name, note: note })
         setNote('')
         setName('')
         console.log(note, name)
@@ -19,26 +19,24 @@ export const Add = () => {
 
         <View>
             {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <Text>
+            <name>
                 Ten
-            </Text>
+            </name>
             <TextInput
                 style={{ height: 40 }}
                 placeholder="Type here to add money!"
-                onChangeText={newname => setName(newname)}
+                onChangename={newname => setName(newname)}
                 defaultValue={name}
 
             />
-            <Text>
+            <name>
                 ghi chu
-            </Text>
+            </name>
             <TextInput
                 style={{ height: 40 }}
                 placeholder="Type here to note!"
                 onChangeText={newText => setNote(newText)}
                 defaultValue={note}
-
-
             />
             <Button title='add transaction' onPress={handle}>
 
