@@ -27,6 +27,12 @@ export const ModalPractice = (props) => {
                                     <Text>ôn tậpds cơ bản</Text>
                                 </View>
                             </TouchableOpacity>
+                            
+                            <TouchableOpacity onPress={() => navigation.navigate('MatchCards')}>
+                                <View style={{ padding: 8 }}>
+                                    <Text>Nối từ</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
 
 

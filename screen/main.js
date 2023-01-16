@@ -59,7 +59,7 @@ function MainScreen({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.base}>
-            <ModalPractice visible={modalVisible} setVisible={setModalVisible}></ModalPractice>
+            <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}></ModalPractice>
             <ScrollView style={styles.topicList}>
 
                 {data.map((item, idx) => {
