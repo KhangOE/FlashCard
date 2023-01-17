@@ -17,11 +17,15 @@ import {
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
 
-const data = [
+const _data = [
     { word: "green", meaning: "mau xanh la" },
     { word: "red", meaning: "mau do" },
     { word: "yellow", meaning: "mau vang" },
     { word: "blue", meaning: "mau xanh lam" },
+    { word: "orange", meaning: "mau cam" },
+    { word: "purple", meaning: "mau tim" },
+    { word: "black", meaning: "mau den" },
+    { word: "white", meaning: "mau trang" },
 ];
 
 function Card(props) {
@@ -42,14 +46,10 @@ function Card(props) {
     );
 }
 
-export default function MatchCards({ navigation, route }) {
-    const [words, setWords] = useState([]);
-    const [meanings, setMeanings] = useState([]);
-
-    const [firstWord, setFirstWord] = useState("");
-    const [secondWord, setSecondWord] = useState("");
-
-    const [errorNo, setErrorNo] = useState(0);
+export default function MultipleChoices({ navigation, route }) {
+    const [data, setData] = useState(_data.slice(0));
+    const [question, setQuestion] = useState({});
+    const [userChoice, setUserChoice] = useState('');
     const [complete, setComplete] = useState(false);
 
     function shuffle(array) {
@@ -67,42 +67,30 @@ export default function MatchCards({ navigation, route }) {
         return array;
     }
 
-    function splitData(data) {
-        var _words = shuffle(data.map((obj) => obj.word));
-        var _meanings = shuffle(data.map((obj) => obj.meaning));
-
-        setWords(_words);
-        setMeanings(_meanings);
-    }
-
-    function matchWord(first, second) {
-        if (data.find((obj) => obj.word === first).meaning === second) {
-            return true;
-        }
-        return false;
+    function get4Answers(obj) {
+        var remaining = shuffle(_data?.filter(item => item !== obj))
+        return shuffle([obj.meaning, remaining[0].meaning, remaining[1].meaning, remaining[2].meaning])
     }
 
     useEffect(() => {
-        splitData(data);
-    }, []);
-
-    useEffect(() => {
-        if (firstWord != "" && secondWord != "") {
-            if (matchWord(firstWord, secondWord)) {
-                if (words.length === 1 && meanings.length === 1) {
+        if (userChoice != '') {
+            if (userChoice === question.realAnswer) {
+                data.shift();
+                setData(data)
+                if (data.length != 0) {
+                    setQuestion({ quest: data[0].word, realAnswer: data[0].meaning, answers: get4Answers(data[0]) })
+                    setUserChoice('')
+                } else {
                     setComplete(true)
                 }
-
-                setWords(words.filter((item) => item != firstWord));
-                setMeanings(meanings.filter((item) => item !== secondWord));
-
-                setFirstWord("");
-                setSecondWord("");
-            } else {
-                setErrorNo((prev) => prev + 1);
             }
         }
-    }, [firstWord, secondWord]);
+    }, [userChoice]);
+
+    useEffect(() => {
+        setData(shuffle(data))
+        setQuestion({ quest: data[0].word, realAnswer: data[0].meaning, answers: get4Answers(data[0]) })
+    }, []);
 
     return (
         <View style={styles.base}>
@@ -117,30 +105,13 @@ export default function MatchCards({ navigation, route }) {
             <View style={styles.cardList}>
                 {complete ? <PracticeComplete></PracticeComplete> : <ScrollView
                     contentContainerStyle={{
-                        flexDirection: "row",
                         justifyContent: "space-between",
                     }}
                     style={styles.cardSecondBlock}
                 >
-                    <View style={{ flexDirection: "column" }}>
-                        {words?.map((item, index) => (
-                            <Card
-                                title={item}
-                                key={index}
-                                onPress={() => setFirstWord(item)}
-                                isChoosing={firstWord === item}
-                            />
-                        ))}
-                    </View>
-                    <View style={{ flexDirection: "column" }}>
-                        {meanings?.map((item, index) => (
-                            <Card
-                                title={item}
-                                key={index}
-                                onPress={() => setSecondWord(item)}
-                                isChoosing={secondWord === item}
-                            />
-                        ))}
+                    <View>
+                        <Card title={question.quest} />
+                        {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} />)}
                     </View>
                 </ScrollView>}
             </View>
