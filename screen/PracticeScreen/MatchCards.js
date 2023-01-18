@@ -18,6 +18,28 @@ const data = [
     { word: "red", meaning: "mau do" },
     { word: "yellow", meaning: "mau vang" },
     { word: "blue", meaning: "mau xanh lam" },
+    { word: "one", meaning: "1" },
+    { word: "two", meaning: "2" },
+    { word: "three", meaning: "3" },
+    { word: "four", meaning: "4" },
+    { word: "five", meaning: "5" },
+    { word: "six", meaning: "6" },
+    { word: "seven", meaning: "7" },
+    { word: "eight", meaning: "8" },
+    { word: "nine", meaning: "9" },
+    { word: "ten", meaning: "10" },
+    { word: "eleven", meaning: "11" },
+    { word: "twelve", meaning: "12" },
+    { word: "thirteen", meaning: "13" },
+    { word: "forteen", meaning: "14" },
+    { word: "fifteen", meaning: "15" },
+    { word: "sixteen", meaning: "16" },
+    { word: "seventeen", meaning: "17" },
+    { word: "eighteen", meaning: "18" },
+    { word: "nineteen", meaning: "19" },
+    { word: "twenty", meaning: "20" },
+    { word: "twenty-one", meaning: "21" },
+    { word: "twenty-two", meaning: "22" },
 ];
 
 function Card(props) {
@@ -110,35 +132,30 @@ export default function MatchCards({ navigation, route }) {
                 </View>
             </View>
 
-            <View style={styles.cardList}>
-                {complete ? <PracticeComplete></PracticeComplete> : <ScrollView
-                    contentContainerStyle={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
-                    style={styles.cardSecondBlock}
-                >
-                    <View style={{ flexDirection: "column" }}>
-                        {words?.map((item, index) => (
-                            <Card
-                                title={item}
-                                key={index}
-                                onPress={() => setFirstWord(item)}
-                                isChoosing={firstWord === item}
-                            />
-                        ))}
-                    </View>
-                    <View style={{ flexDirection: "column" }}>
-                        {meanings?.map((item, index) => (
-                            <Card
-                                title={item}
-                                key={index}
-                                onPress={() => setSecondWord(item)}
-                                isChoosing={secondWord === item}
-                            />
-                        ))}
-                    </View>
-                </ScrollView>}
+            <View style={styles.cardSection}>
+                {complete ? <PracticeComplete></PracticeComplete> :
+                    (<View style={styles.cardsContainer}>
+                        <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }}>
+                            {words?.map((item, index) => (
+                                <Card
+                                    title={item}
+                                    key={index}
+                                    onPress={() => setFirstWord(item)}
+                                    isChoosing={firstWord === item}
+                                />
+                            ))}
+                        </ScrollView>
+                        <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }}>
+                            {meanings?.map((item, index) => (
+                                <Card
+                                    title={item}
+                                    key={index}
+                                    onPress={() => setSecondWord(item)}
+                                    isChoosing={secondWord === item}
+                                />
+                            ))}
+                        </ScrollView>
+                    </View>)}
             </View>
         </View>
     );
@@ -147,7 +164,6 @@ export default function MatchCards({ navigation, route }) {
 const styles = StyleSheet.create({
     base: {
         flex: 1,
-        marginTop: 28,
     },
     sub_block: {
         width: "92%",
@@ -160,77 +176,27 @@ const styles = StyleSheet.create({
         backgroundColor: "#6A197D",
         alignItems: "center",
     },
-    cardList: {
+    cardSection: {
         backgroundColor: "#DFDFDE",
     },
-    cardFirstBlock: {
+    cardsContainer: {
+        // flexGrow: 1,
+        height: "50%",
+        marginBottom: 100,
+        backgroundColor: "#DFDFDE",
         flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-    },
-    cardTotal: {
-        backgroundColor: "#6A197D",
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-        color: "white",
-        //fontWeight: 400,
-        fontSize: 16,
-    },
-    cardSecondBlock: {
-        backgroundColor: "#DFDFDE",
-        minHeight: 350,
-        paddingHorizontal: 14,
+        justifyContent: "space-between",
     },
     card: {
         backgroundColor: "white",
-        width: 140,
-        maxWidth: 140,
-        paddingVertical: 5,
-        paddingHorizontal: 12,
+        width: "90%",
+        height: 50,
         marginBottom: 5,
+        alignItems: "center",
+        justifyContent: "center"
     },
     cardTitle: {
         //fontWeight: 700,
         fontSize: 16,
-    },
-    cardMeaning: {
-        marginVertical: 5,
-    },
-    cardFooter: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    cardOpion: {
-        marginTop: 3,
-    },
-    cardThirdBlock: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingTop: 5,
-        paddingBottom: 8,
-        // position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: "#DFDFDE",
-        borderTopWidth: 1,
-        borderTopColor: "white",
-    },
-    footerButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#6A197D",
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20,
-    },
-    footerText: {
-        marginLeft: 12,
-        color: "white",
-        //fontWeight: 500
     },
 });

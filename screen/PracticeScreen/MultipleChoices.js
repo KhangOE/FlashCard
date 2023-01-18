@@ -34,13 +34,23 @@ function Card(props) {
             style={[
                 styles.card,
                 props.isChoosing
-                    ? { backgroundColor: "red" }
+                    ? (props.isAnswer ? { backgroundColor: "green" } : { backgroundColor: "red" })
                     : { backgroundColor: "white" },
             ]}
             onPress={props.onPress}
         >
             <View>
-                <Text style={styles.cardTitle}>{props.title}</Text>
+                <Text style={[styles.cardTitle, props.style]}>{props.title}</Text>
+            </View>
+        </TouchableHighlight>
+    );
+}
+
+function Question(props) {
+    return (
+        <TouchableHighlight style={[styles.cartQuestion]}>
+            <View>
+                <Text style={[styles.cardTitle, props.style]}>{props.title}</Text>
             </View>
         </TouchableHighlight>
     );
@@ -51,6 +61,7 @@ export default function MultipleChoices({ navigation, route }) {
     const [question, setQuestion] = useState({});
     const [userChoice, setUserChoice] = useState('');
     const [complete, setComplete] = useState(false);
+    const [isAnswer, setIsAnswer] = useState(false);
 
     function shuffle(array) {
         let currentIndex = array.length,
@@ -75,9 +86,11 @@ export default function MultipleChoices({ navigation, route }) {
     useEffect(() => {
         if (userChoice != '') {
             if (userChoice === question.realAnswer) {
+                setIsAnswer(true);
                 data.shift();
-                setData(data)
+                setTimeout(() => { setData(data) }, 5000)
                 if (data.length != 0) {
+                    setIsAnswer(false);
                     setQuestion({ quest: data[0].word, realAnswer: data[0].meaning, answers: get4Answers(data[0]) })
                     setUserChoice('')
                 } else {
@@ -102,18 +115,12 @@ export default function MultipleChoices({ navigation, route }) {
                 </View>
             </View>
 
-            <View style={styles.cardList}>
-                {complete ? <PracticeComplete></PracticeComplete> : <ScrollView
-                    contentContainerStyle={{
-                        justifyContent: "space-between",
-                    }}
-                    style={styles.cardSecondBlock}
-                >
-                    <View>
-                        <Card title={question.quest} />
-                        {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} />)}
-                    </View>
-                </ScrollView>}
+            <View style={styles.cardSection}>
+                {complete ? <PracticeComplete></PracticeComplete> :
+                    (<View style={styles.cardsContainer}>
+                        <Question title={question.quest} />
+                        {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} isAnswer={isAnswer} />)}
+                    </View>)}
             </View>
         </View>
     );
@@ -122,7 +129,6 @@ export default function MultipleChoices({ navigation, route }) {
 const styles = StyleSheet.create({
     base: {
         flex: 1,
-        marginTop: 28,
     },
     sub_block: {
         width: "92%",
@@ -135,77 +141,30 @@ const styles = StyleSheet.create({
         backgroundColor: "#6A197D",
         alignItems: "center",
     },
-    cardList: {
+    cardSection: {
         backgroundColor: "#DFDFDE",
     },
-    cardFirstBlock: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-    },
-    cardTotal: {
-        backgroundColor: "#6A197D",
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-        color: "white",
-        //fontWeight: 400,
-        fontSize: 16,
-    },
-    cardSecondBlock: {
+    cardsContainer: {
+        // flexGrow: 1,
+        minHeight: "100%",
         backgroundColor: "#DFDFDE",
-        minHeight: 350,
-        paddingHorizontal: 14,
     },
     card: {
-        backgroundColor: "white",
-        width: 140,
-        maxWidth: 140,
-        paddingVertical: 5,
-        paddingHorizontal: 12,
+        justifyContent: "center",
+        alignItems: "center",
         marginBottom: 5,
+        minHeight: 50,
+        backgroundColor: "white"
+    },
+    cartQuestion: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 5,
+        minHeight: 200,
+        backgroundColor: "white"
     },
     cardTitle: {
         //fontWeight: 700,
         fontSize: 16,
-    },
-    cardMeaning: {
-        marginVertical: 5,
-    },
-    cardFooter: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    cardOpion: {
-        marginTop: 3,
-    },
-    cardThirdBlock: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingTop: 5,
-        paddingBottom: 8,
-        // position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: "#DFDFDE",
-        borderTopWidth: 1,
-        borderTopColor: "white",
-    },
-    footerButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#6A197D",
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20,
-    },
-    footerText: {
-        marginLeft: 12,
-        color: "white",
-        //fontWeight: 500
     },
 });
