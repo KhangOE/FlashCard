@@ -9,11 +9,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import {
-    FontAwesome,
     AntDesign,
-    Entypo,
-    Feather,
-    SimpleLineIcons,
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
 
