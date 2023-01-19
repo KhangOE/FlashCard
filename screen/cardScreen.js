@@ -91,7 +91,7 @@ function CardScreen({ navigation, route }) {
             </View>
 
             <View style={styles.cardList}>
-                <ModalPractice visible={modalVisible} setVisible={setModalVisible}
+                <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
                     tobasic={() => { navigation.navigate('basicreview', cid) }}></ModalPractice>
                 <View style={styles.cardFirstBlock}>
                     <Text style={styles.cardTotal}> Tất cả : 2 </Text>

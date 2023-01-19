@@ -65,8 +65,7 @@ function MainScreen({ navigation }) {
 
     return (
         <View style={styles.base}>
-            <ModalPractice visible={modalVisible} setVisible={setModalVisible}
-                tochoice={() => { navigation.navigate('') }}></ModalPractice>
+            <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}></ModalPractice>
             <ScrollView style={styles.topicList}>
 
                 {data.map((item, idx) => {

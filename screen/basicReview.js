@@ -4,12 +4,14 @@ import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/
 import axios from 'axios';
 import { checkDoc } from '../api/firebaseApi';
 import { Audio } from 'expo-av';
+
+
 function BasicReviewScreen({ navigation, route }) {
     const [card, setCard] = useState([])
     const [sound, setSound] = useState();
     useEffect(() => {
-        console.log(route.params)
-        checkDoc({ cid: route.params }).then(data => {
+        console.log(route?.params)
+        checkDoc({ cid: route.params || 1 }).then(data => {
             setCard(data)
             console.log(data)
             //  console.log(data)
@@ -40,11 +42,11 @@ function BasicReviewScreen({ navigation, route }) {
     }, [sound]);
     return (
         <View style={styles.base}>
-            {card.map(item => {
+            {card?.map(item => {
                 return <>
                     <View>
                         <Text>
-                            {item.vi}
+                            {item?.vi}
                         </Text>
                     </View>
                 </>

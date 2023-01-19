@@ -4,7 +4,7 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } fro
 
 
 export const ModalPractice = (props) => {
-    //  const { navigation } = props;
+    const { navigation } = props;
     //const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.centeredView}>
@@ -19,12 +19,23 @@ export const ModalPractice = (props) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Hello World!</Text>
-
+                        <Text style={styles.modalText}>{props.topicId}</Text>
                         <View>
-                            <TouchableOpacity onPress={props.tobasic}>
+                            <TouchableOpacity onPress={() => navigation.navigate('basicReview')}>
                                 <View style={{ padding: 8 }}>
                                     <Text>ôn tậpds cơ bản</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => navigation.navigate('MatchCards')}>
+                                <View style={{ padding: 8 }}>
+                                    <Text>Nối từ</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices')}>
+                                <View style={{ padding: 8 }}>
+                                    <Text>Multiple Answers</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
