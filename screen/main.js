@@ -28,7 +28,11 @@ function TopicTag(props) {
                                 <Text style={styles.topicFirstText}> Thêm thẻ </Text>
                             </View>
                         </TouchableHighlight>
-                        <TouchableHighlight style={styles.topicPractise} onPress={() => { props.setvisible(state => !state) }}>
+                        <TouchableHighlight style={styles.topicPractise} onPress={() => {
+                            props.setvisible(state => !state)
+                            props.setopic
+
+                        }}>
                             <Text style={styles.topicSecondText}> Thực hành </Text>
                         </TouchableHighlight>
                     </View>
@@ -42,6 +46,9 @@ function TopicTag(props) {
 
 function MainScreen({ navigation }) {
     const [data, setdata] = useState([])
+    const [topic, setTopic] = useState()
+
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             getCollection().then(data => {
@@ -53,24 +60,24 @@ function MainScreen({ navigation }) {
         });
         return unsubscribe;
     }, [navigation]);
-    useEffect(() => {
-        console.log(data)
-    }, [])
+
     const [modalVisible, setModalVisible] = useState(false);
+
     return (
         <View style={styles.base}>
-            <ModalPractice visible={modalVisible} setVisible={setModalVisible}></ModalPractice>
+            <ModalPractice visible={modalVisible} setVisible={setModalVisible}
+                tochoice={() => { navigation.navigate('') }}></ModalPractice>
             <ScrollView style={styles.topicList}>
 
                 {data.map((item, idx) => {
                     return (
-                        <TopicTag key={idx} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate({ name: 'SpendingDetail', params: { id: 1, money: 1, note: 1 } })}
+                        <TopicTag key={idx} settopic={() => { settopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('SpendingDetail', item)}
                             pressAdd={() => { navigation.navigate('addCard', item) }} />
                     )
                 })}
             </ScrollView>
 
-            <PlusBtn press={() => { navigation.navigate({ name: 'addSpending' }) }} />
+            <PlusBtn press={() => { navigation.navigate({ name: 'basicreview' }) }} />
         </View>
     );
 }

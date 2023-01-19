@@ -21,6 +21,8 @@ import { MainScreen } from './screen/main';
 
 import { CardScreen } from './screen/cardScreen';
 import { AddCard } from './screen/addCard';
+import { BasicReviewScreen } from './screen/basicReview';
+
 const HomeStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
 
@@ -45,6 +47,11 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="addCard"
         component={AddCard}
+        options={{ tabBarLabel: 'Home!' }}
+      />
+      <HomeStack.Screen
+        name="basicreview"
+        component={BasicReviewScreen}
         options={{ tabBarLabel: 'Home!' }}
       />
     </HomeStack.Navigator>

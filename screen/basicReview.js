@@ -1,41 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
+import axios from 'axios';
+import { checkDoc } from '../api/firebaseApi';
+import { Audio } from 'expo-av';
+function BasicReviewScreen({ navigation, route }) {
+    const [card, setCard] = useState([])
+    const [sound, setSound] = useState();
+    useEffect(() => {
+        console.log(route.params)
+        checkDoc({ cid: route.params }).then(data => {
+            setCard(data)
+            console.log(data)
+            //  console.log(data)
+        }).then(() => {
+        })
+    }, [])
 
-function BasicReviewScreen() {
+    async function playSound() {
+        const { sound } = await Audio.Sound.createAsync(
+            { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/white-us.mp3` },
+            { shouldPlay: true }
+        );
+        setSound(sound);
+
+        console.log('Playing Sound');
+        await sound.playAsync();
+    }
+    useEffect(() => {
+        playSound()
+    }, [])
+    React.useEffect(() => {
+        return sound
+            ? () => {
+                console.log('Unloading Sound');
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound]);
     return (
         <View style={styles.base}>
-            <View style={styles.navbar}>
-                <View style={styles.sub_block}>
-                    <View style={styles.heading}>
-                        <TouchableHighlight>
-                            <AntDesign name="arrowleft" size={24} color="white" />
-                        </TouchableHighlight>
-                        <Text style={styles.topicTitle}> Color </Text>
+            {card.map(item => {
+                return <>
+                    <View>
+                        <Text>
+                            {item.vi}
+                        </Text>
                     </View>
-                    <TouchableHighlight>
-                        <FontAwesome name="search" size={20} color="white" />
-                    </TouchableHighlight>
-                </View>
-            </View>
-
-            <TouchableHighlight style={styles.cardBlock}>
-                <View style={styles.card}>
-                    <View style={styles.cardWrapper}>
-                        <Text style={styles.vocabulary}> green </Text>
-                        <View style={styles.sound}>
-                            <AntDesign name="sound" size={24} color="black" />
-                        </View>
-                    </View>
-                </View>
-            </TouchableHighlight>
-
-            <View style={styles.footerCard}>
-                <View style={styles.footerCardBlock}>
-                    <Feather name="arrow-left-circle" size={40} color="#6A197D" />
-                    <Feather name="arrow-right-circle" size={40} color="#6A197D" />
-                </View>
-            </View>
+                </>
+            })}
         </View>
     );
 }
@@ -43,14 +56,16 @@ function BasicReviewScreen() {
 const styles = StyleSheet.create({
     base: {
         flex: 1,
-        marginTop: 28
+        marginTop: 28,
+        marginBottom: 30
     },
     sub_block: {
         width: '92%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '10vh',
+        height: 20
+        //  height: '10vh',
     },
     navbar: {
         backgroundColor: '#6A197D',
@@ -64,7 +79,7 @@ const styles = StyleSheet.create({
     topicTitle: {
         color: 'white',
         fontSize: 18,
-        fontWeight: 700
+        //fontWeight: 700
     },
     cardBlock: {
         backgroundColor: '#DFDFDE',
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
     },
     vocabulary: {
         fontSize: 30,
-        fontWeight: 700
+        //fontWeight: 700
     },
     sound: {
         borderWidth: 1,
@@ -95,7 +110,8 @@ const styles = StyleSheet.create({
         padding: 10
     },
     footerCard: {
-        height: '10vh',
+        // height: '10vh',
+        height: 20,
         paddingHorizontal: 40,
         paddingVertical: 5,
         marginBottom: '3%'

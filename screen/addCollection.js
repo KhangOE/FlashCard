@@ -19,12 +19,12 @@ export const Add = () => {
 
         <View>
             {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <name>
+            <Text>
                 Ten
-            </name>
+            </Text>
             <TextInput
                 style={{ height: 40 }}
-                placeholder="Type here to add money!"
+                placeholder=""
                 onChangename={newname => setName(newname)}
                 defaultValue={name}
 
@@ -34,7 +34,7 @@ export const Add = () => {
             </name>
             <TextInput
                 style={{ height: 40 }}
-                placeholder="Type here to note!"
+                placeholder=""
                 onChangeText={newText => setNote(newText)}
                 defaultValue={note}
             />

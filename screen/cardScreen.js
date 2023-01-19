@@ -2,16 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
+import { getCardByCid } from '../api/firebaseApi';
+import { checkDoc } from '../api/firebaseApi';
+import { Audio } from 'expo-av';
+import { Buffer } from "buffer";
+import SoundPlayer from 'react-native-sound-player'
+import { ModalPractice } from '../components/modalPractice';
+
 
 function Card(props) {
+
     return (
         <TouchableHighlight style={styles.card}>
             <View>
                 <View>
-                    <Text style={styles.cardTitle}>green</Text>
+                    <Text style={styles.cardTitle}>{props.en}</Text>
                 </View>
                 <View style={styles.cardMeaning}>
-                    <Text>màu xanh</Text>
+                    <Text>{props.vi}</Text>
                 </View>
                 <View style={styles.cardFooter}>
                     <AntDesign name="sound" size={18} color="black" />
@@ -25,42 +33,83 @@ function Card(props) {
 }
 
 function CardScreen({ navigation, route }) {
-    const [cName, setCName] = useState()
+
+    const [card, setCard] = useState()
+    const [cid, setCid] = useState()
+    // const [sound, setSound] = useState();
+
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+    // async function playSound() {
+    //     const { sound } = await Audio.Sound.createAsync(
+    //         { uri: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3' },
+    //         { shouldPlay: true }
+    //     );
+    //     setSound(sound);
+
+    //     console.log('Playing Sound');
+    //     await sound.playAsync();
+    // }
+
+
+
+    // useEffect(() => {
+    //     playSound()
+    // }, [])
+    // React.useEffect(() => {
+    //     return sound
+    //         ? () => {
+    //             console.log('Unloading Sound');
+    //             sound.unloadAsync();
+    //         }
+    //         : undefined;
+    // }, [sound]);
+
     useEffect(() => {
-        setCName(route.params.name)
-    }, [])
+        const unsubscribe = navigation.addListener('focus', () => {
+            console.log(route.params.id)
+            setCid(route.params.id)
+            checkDoc({ cid: route.params.id }).then(data => {
+                setCard(data)
+                console.log(data)
+                //  console.log(data)
+            }).then(() => {
+            })
+            //  console.log('Hello World!')
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+
+
     return (
         <View style={styles.base}>
             <View style={styles.navbar}>
-                <View style={styles.sub_block}>
-                    <TouchableHighlight>
-                        <AntDesign name="arrowleft" size={24} color="white" />
-                    </TouchableHighlight>
-                    <TouchableHighlight>
-                        <FontAwesome name="search" size={20} color="white" />
-                    </TouchableHighlight>
-                </View>
+                {/* <Button title="Play Sound" onPress={playSound} /> */}
+
             </View>
 
             <View style={styles.cardList}>
+                <ModalPractice visible={modalVisible} setVisible={setModalVisible}
+                    tobasic={() => { navigation.navigate('basicreview', cid) }}></ModalPractice>
                 <View style={styles.cardFirstBlock}>
                     <Text style={styles.cardTotal}> Tất cả : 2 </Text>
                 </View>
                 <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} style={styles.cardSecondBlock}>
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
+                    {card?.map((item) => {
+                        return (
+                            <View key={item.id}>
+                                <Card vi={item.vi} en={item.en}></Card>
+                            </View>
+
+                        )
+                    })}
                 </ScrollView>
             </View>
 
             <View style={styles.cardThirdBlock}>
-                <TouchableHighlight>
+                <TouchableHighlight onPress={() => { setModalVisible(state => !state) }}>
                     <View style={styles.footerButton}>
                         <SimpleLineIcons name="graduation" size={24} color="white" />
                         <Text style={styles.footerText}>Thực hành</Text>
@@ -146,7 +195,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 5,
         paddingBottom: 8,
-        // position: 'fixed',
+        position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,

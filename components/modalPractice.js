@@ -4,7 +4,7 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } fro
 
 
 export const ModalPractice = (props) => {
-    const { navigation } = props;
+    //  const { navigation } = props;
     //const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.centeredView}>
@@ -22,7 +22,7 @@ export const ModalPractice = (props) => {
                         <Text style={styles.modalText}>Hello World!</Text>
 
                         <View>
-                            <TouchableOpacity onPress={props.press}>
+                            <TouchableOpacity onPress={props.tobasic}>
                                 <View style={{ padding: 8 }}>
                                     <Text>ôn tậpds cơ bản</Text>
                                 </View>

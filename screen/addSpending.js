@@ -24,7 +24,7 @@ export const Add = () => {
             </Text>
             <TextInput
                 style={{ height: 40 }}
-                placeholder="Type here to add money!"
+                placeholder=""
                 onChangeText={newname => setName(newname)}
                 defaultValue={name}
 
@@ -34,7 +34,7 @@ export const Add = () => {
             </Text>
             <TextInput
                 style={{ height: 40 }}
-                placeholder="Type here to note!"
+                placeholder=""
                 onChangeText={newText => setNote(newText)}
                 defaultValue={note}
 
