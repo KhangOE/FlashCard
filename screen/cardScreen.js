@@ -127,95 +127,95 @@ function CardScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    base: {
-        flex: 1,
-        marginTop: 28
-    },
-    sub_block: {
-        width: '92%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: 50,
-    },
-    navbar: {
-        backgroundColor: '#6A197D',
-        alignItems: 'center'
-    },
-    cardList: {
-        backgroundColor: '#DFDFDE'
-    },
-    cardFirstBlock: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingVertical: 10
-    },
-    cardTotal: {
-        backgroundColor: '#6A197D',
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-        color: 'white',
-        //fontWeight: 400,
-        fontSize: 16
-    },
-    cardSecondBlock: {
-        backgroundColor: '#DFDFDE',
-        maxHeight: 350,
-        minHeight: 350,
-        paddingHorizontal: 14
-    },
-    card: {
-        backgroundColor: 'white',
-        width: 140,
-        maxWidth: 140,
-        paddingVertical: 5,
-        paddingHorizontal: 12,
-        marginBottom: 5
-    },
-    cardTitle: {
-        //fontWeight: 700,
-        fontSize: 16
-    },
-    cardMeaning: {
-        marginVertical: 5
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    cardOpion: {
-        marginTop: 3
-    },
-    cardThirdBlock: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        paddingTop: 5,
-        paddingBottom: 8,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: '#DFDFDE',
-        borderTopWidth: 1,
-        borderTopColor: 'white'
-    },
-    footerButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#6A197D',
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20
-    },
-    footerText: {
-        marginLeft: 12,
-        color: 'white',
-        //fontWeight: 500
-    }
+  base: {
+    flex: 1,
+    marginTop: 28
+  },
+  sub_block: {
+    width: '92%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 50,
+  },
+  navbar: {
+    backgroundColor: '#6A197D',
+    alignItems: 'center'
+  },
+  cardList: {
+    backgroundColor: '#DFDFDE'
+  },
+  cardFirstBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10
+  },
+  cardTotal: {
+    backgroundColor: '#6A197D',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    color: '#fff',
+    fontWeight: '400',
+    fontSize: 16
+  },
+  cardSecondBlock: {
+    backgroundColor: '#DFDFDE',
+    // maxHeight: 350,
+    // minHeight: 350,
+    paddingHorizontal: 14
+  },
+  card: {
+    backgroundColor: '#fff',
+    width: '45%',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    marginBottom: 5
+  },
+  cardTitle: {
+    fontWeight: '700',
+    fontSize: 16
+  },
+  cardMeaning: {
+    marginVertical: 5
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  cardOpion: {
+    marginTop: 3
+  },
+  cardThirdBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingTop: 5,
+    paddingBottom: 8,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    // left: 0,
+    // right: 0,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#fff'
+  },
+  footerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#6A197D',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 20
+  },
+  footerText: {
+    marginLeft: 12,
+    color: '#fff',
+    fontWeight: '500'
+  }
 });
 export { CardScreen };
 
