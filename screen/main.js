@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         marginTop: 25
     },
     topicTitle: {
-        //fontWeight: 630,
+        fontWeight: '600',
         fontSize: 23
     },
     topicAddButton: {
@@ -145,12 +145,12 @@ const styles = StyleSheet.create({
     },
     topicFirstText: {
         color: 'white',
-        //fontWeight: 600,
+        fontWeight: '600',
         marginLeft: 3
     },
     topicSecondText: {
         color: 'blue',
-        //fontWeight: 600
+        fontWeight: '600'
     }
 });
 export { MainScreen };
