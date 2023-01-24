@@ -160,74 +160,100 @@ function BasicReviewScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    base: {
-        flex: 1,
-        marginTop: 28,
-        marginBottom: 30
-    },
-    sub_block: {
-        width: '92%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: 20
-        //  height: '10vh',
-    },
-    navbar: {
-        backgroundColor: '#6A197D',
-        alignItems: 'center'
-    },
-    heading: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 30
-    },
-    topicTitle: {
-        color: 'white',
-        fontSize: 18,
-        //fontWeight: 700
-    },
-    cardBlock: {
-        backgroundColor: '#DFDFDE',
-        flex: 1,
-        backfaceVisibility: 'visible'
-    },
-    card: {
-        backgroundColor: 'white',
-        width: '80%',
-        height: '80%',
-        marginHorizontal: 'auto',
-        marginTop: 25,
-        paddingVertical: 20,
-        paddingHorizontal: 10
-    },
-    cardWrapper: {
-        alignItems: 'center',
-        gap: 20
-    },
-    vocabulary: {
-        fontSize: 30,
-        //fontWeight: 700
-    },
-    sound: {
-        borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 50,
-        padding: 10
-    },
-    footerCard: {
-        // height: '10vh',
-        height: 20,
-        paddingHorizontal: 40,
-        paddingVertical: 5,
-        marginBottom: '3%'
-    },
-    footerCardBlock: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flex: 1
-    }
+  base: {
+    flex: 1,
+    marginTop: 24
+  },
+  sub_block: {
+    width: '92%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: tenvhHeight
+  },
+  navbar: {
+    backgroundColor: '#6A197D',
+    alignItems: 'center'
+  },
+  heading: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  topicTitle: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: '700',
+    marginLeft: 15
+  },
+  mainSection: {
+    backgroundColor: '#DFDFDE',
+    overflow: 'hidden',
+    paddingLeft: 20,
+    paddingRight: 10
+  },
+  card: {
+    width: cardWidth,
+    height: '80%',
+    marginTop: 25,
+    marginRight: 10,
+    marginLeft: 10
+  },
+  cardWrapper: {
+    width: '100%',
+    height: '100%'
+  },
+  cardFront: {
+    alignItems: 'center',
+    backfaceVisibility: 'hidden',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    backgroundColor: 'white'
+  },
+  vocabulary: {
+    fontSize: 30,
+    fontWeight: '700',
+    marginTop: '30%',
+    marginBottom: '20%'
+  },
+  sound: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 50,
+    padding: 10
+  },
+  cardBack: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backfaceVisibility: 'hidden',
+    backgroundColor: 'white'
+  },
+  cardBackText: {
+    fontSize: 25,
+    fontWeight: '500',
+    bottom: '10%'
+  },
+  footerCard: {
+    height: tenvhHeight,
+    paddingHorizontal: 40,
+    paddingVertical: 5,
+    marginBottom: '3%'
+  },
+  footerCardBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1
+  },
+  cardPosition: {
+    fontSize: 18,
+    fontWeight: '400'
+  }
 });
 
 export { BasicReviewScreen };
