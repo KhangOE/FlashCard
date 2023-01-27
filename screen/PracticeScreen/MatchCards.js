@@ -12,34 +12,25 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
+import { useIsFocused } from '@react-navigation/native';
+
 
 const data = [
-    { word: "green", meaning: "mau xanh la" },
-    { word: "red", meaning: "mau do" },
-    { word: "yellow", meaning: "mau vang" },
-    { word: "blue", meaning: "mau xanh lam" },
-    { word: "one", meaning: "1" },
-    { word: "two", meaning: "2" },
-    { word: "three", meaning: "3" },
-    { word: "four", meaning: "4" },
-    { word: "five", meaning: "5" },
-    { word: "six", meaning: "6" },
-    { word: "seven", meaning: "7" },
-    { word: "eight", meaning: "8" },
-    { word: "nine", meaning: "9" },
-    { word: "ten", meaning: "10" },
-    { word: "eleven", meaning: "11" },
-    { word: "twelve", meaning: "12" },
-    { word: "thirteen", meaning: "13" },
-    { word: "forteen", meaning: "14" },
-    { word: "fifteen", meaning: "15" },
-    { word: "sixteen", meaning: "16" },
-    { word: "seventeen", meaning: "17" },
-    { word: "eighteen", meaning: "18" },
-    { word: "nineteen", meaning: "19" },
-    { word: "twenty", meaning: "20" },
-    { word: "twenty-one", meaning: "21" },
-    { word: "twenty-two", meaning: "22" },
+    { word: "one", meaning: "1", favorited: false },
+    { word: "two", meaning: "2", favorited: false },
+    { word: "three", meaning: "3", favorited: false },
+    { word: "four", meaning: "4", favorited: false },
+    { word: "five", meaning: "5", favorited: false },
+    // { word: "six", meaning: "6", favorited: false },
+    // { word: "seven", meaning: "7", favorited: false },
+    // { word: "eight", meaning: "8", favorited: false },
+    // { word: "nine", meaning: "9", favorited: false },
+    // { word: "ten", meaning: "10", favorited: false },
+    // { word: "eleven", meaning: "11", favorited: false },
+    // { word: "twelve", meaning: "12", favorited: false },
+    // { word: "thirteen", meaning: "13", favorited: false },
+    // { word: "fourteen", meaning: "14", favorited: false },
+    // { word: "fifteen", meaning: "15", favorited: false },
 ];
 
 function Card(props) {
@@ -67,8 +58,9 @@ export default function MatchCards({ navigation, route }) {
     const [firstWord, setFirstWord] = useState("");
     const [secondWord, setSecondWord] = useState("");
 
-    const [errorNo, setErrorNo] = useState(0);
     const [complete, setComplete] = useState(false);
+    const [wrongList, setWrongList] = useState([]);
+    const [correctList, setCorrectList] = useState([])
 
     function shuffle(array) {
         let currentIndex = array.length,
@@ -85,7 +77,9 @@ export default function MatchCards({ navigation, route }) {
         return array;
     }
 
-    function splitData(data) {
+    function initialFetch(data) {
+        setCorrectList(data.slice(0))
+
         var _words = shuffle(data.map((obj) => obj.word));
         var _meanings = shuffle(data.map((obj) => obj.meaning));
 
@@ -100,9 +94,22 @@ export default function MatchCards({ navigation, route }) {
         return false;
     }
 
+    const sleep = ms =>
+        new Promise(resolve => setTimeout(resolve, ms));
+
+    function findWord(word) {
+        return data.find(x => x.word === word);
+    }
+
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-        splitData(data);
-    }, []);
+        if (isFocused) {
+            setComplete(false)
+            setWrongList([])
+            initialFetch(data)
+        }
+    }, [isFocused]);
 
     useEffect(() => {
         if (firstWord != "" && secondWord != "") {
@@ -117,10 +124,24 @@ export default function MatchCards({ navigation, route }) {
                 setFirstWord("");
                 setSecondWord("");
             } else {
-                setErrorNo((prev) => prev + 1);
+                var newObj = findWord(firstWord)
+                if (!wrongList.includes(newObj)) {
+                    setWrongList(prev => [...prev, newObj])
+                    setCorrectList(prev => prev.filter(x => x !== newObj))
+                }
+                sleep(200).then(() => {
+                    setFirstWord('')
+                    setSecondWord('')
+                })
             }
         }
     }, [firstWord, secondWord]);
+
+    useEffect(() => {
+        if (complete) {
+            navigation.navigate('PracticeComplete', { wrongList: wrongList, correctList: correctList })
+        }
+    }, [complete]);
 
     return (
         <View style={styles.base}>
@@ -132,32 +153,29 @@ export default function MatchCards({ navigation, route }) {
                 </View>
             </View>
 
-            <View style={styles.cardSection}>
-                {complete ? <PracticeComplete></PracticeComplete> :
-                    (<View style={styles.cardsContainer}>
-                        <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }}>
-                            {words?.map((item, index) => (
-                                <Card
-                                    title={item}
-                                    key={index}
-                                    onPress={() => setFirstWord(item)}
-                                    isChoosing={firstWord === item}
-                                />
-                            ))}
-                        </ScrollView>
-                        <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }}>
-                            {meanings?.map((item, index) => (
-                                <Card
-                                    title={item}
-                                    key={index}
-                                    onPress={() => setSecondWord(item)}
-                                    isChoosing={secondWord === item}
-                                />
-                            ))}
-                        </ScrollView>
-                    </View>)}
+            <View style={styles.cardsContainer}>
+                <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }} style={{ width: "50%", marginRight: 3, marginLeft: 6 }} showsHorizontalScrollIndicator={false}>
+                    {words?.map((item, index) => (
+                        <Card
+                            title={item}
+                            key={index}
+                            onPress={() => setFirstWord(item)}
+                            isChoosing={firstWord === item}
+                        />
+                    ))}
+                </ScrollView>
+                <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }} style={{ width: "50%", marginRight: 6, marginLeft: 3 }} showsHorizontalScrollIndicator={false}>
+                    {meanings?.map((item, index) => (
+                        <Card
+                            title={item}
+                            key={index}
+                            onPress={() => setSecondWord(item)}
+                            isChoosing={secondWord === item}
+                        />
+                    ))}
+                </ScrollView>
             </View>
-        </View>
+        </View >
     );
 }
 
@@ -176,24 +194,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#6A197D",
         alignItems: "center",
     },
-    cardSection: {
-        backgroundColor: "#DFDFDE",
-    },
     cardsContainer: {
-        // flexGrow: 1,
-        height: "50%",
-        marginBottom: 100,
+        flex: 1,
         backgroundColor: "#DFDFDE",
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
     },
     card: {
         backgroundColor: "white",
-        width: "90%",
+        width: "100%",
         height: 50,
-        marginBottom: 5,
+        margin: 3,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        borderRadius: 5
     },
     cardTitle: {
         //fontWeight: 700,
