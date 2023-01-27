@@ -18,7 +18,7 @@ import { AddSpending } from './screen/addSpending';
 import { Todos } from './screen/todos';
 import { Statistic } from './screen/statistic';
 import { MainScreen } from './screen/main';
-import { MatchCards, MultipleChoices } from "./screen/PracticeScreen"
+import { MatchCards, MultipleChoices, PracticeComplete } from "./screen/PracticeScreen"
 
 import { CardScreen } from './screen/cardScreen';
 import { AddCard } from './screen/addCard';
@@ -59,6 +59,11 @@ function HomeStackScreen() {
         name="MultipleChoices"
         component={MultipleChoices}
         options={{ tabBarLabel: 'Home!' }}
+      />
+      <HomeStack.Screen
+        name="PracticeComplete"
+        component={PracticeComplete}
+        options={{ tabBarStyle: { display: 'none' } }}
       />
       <HomeStack.Screen
         name="basicReview"

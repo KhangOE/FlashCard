@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -16,16 +16,18 @@ import {
     SimpleLineIcons,
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
+import { useIsFocused } from '@react-navigation/native';
+
 
 const _data = [
-    { word: "green", meaning: "mau xanh la" },
-    { word: "red", meaning: "mau do" },
-    { word: "yellow", meaning: "mau vang" },
-    { word: "blue", meaning: "mau xanh lam" },
-    { word: "orange", meaning: "mau cam" },
-    { word: "purple", meaning: "mau tim" },
-    { word: "black", meaning: "mau den" },
-    { word: "white", meaning: "mau trang" },
+    { word: "green", meaning: "mau xanh la", favorited: false },
+    { word: "red", meaning: "mau do", favorited: true },
+    { word: "yellow", meaning: "mau vang", favorited: false },
+    { word: "blue", meaning: "mau xanh lam", favorited: true },
+    { word: "orange", meaning: "mau cam", favorited: false },
+    { word: "purple", meaning: "mau tim", favorited: true },
+    { word: "black", meaning: "mau den", favorited: false },
+    { word: "white", meaning: "mau trang", favorited: true },
 ];
 
 function Card(props) {
@@ -34,7 +36,7 @@ function Card(props) {
             style={[
                 styles.card,
                 props.isChoosing
-                    ? (props.isAnswer ? { backgroundColor: "green" } : { backgroundColor: "red" })
+                    ? (props.correct ? { backgroundColor: "green" } : { backgroundColor: "red" })
                     : { backgroundColor: "white" },
             ]}
             onPress={props.onPress}
@@ -57,11 +59,32 @@ function Question(props) {
 }
 
 export default function MultipleChoices({ navigation, route }) {
-    const [data, setData] = useState(_data.slice(0));
+    const [data, setData] = useState([]);
     const [question, setQuestion] = useState({});
     const [userChoice, setUserChoice] = useState('');
     const [complete, setComplete] = useState(false);
-    const [isAnswer, setIsAnswer] = useState(false);
+    const [correct, setCorrect] = useState(false);
+    const [wrongList, setWrongList] = useState([]);
+    const [correctList, setCorrectList] = useState([]);
+
+    async function initialFetch() {
+        setData(shuffle(_data.slice(0)))
+        setCorrectList(_data.slice(0))
+    }
+
+    const firstUpdate = useRef(true);
+
+    useLayoutEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
+        if (data.length != 0) {
+            setQuestion({ data: data[0], answers: get4Answers(data[0]) })
+        } else {
+            setComplete(true)
+        }
+    }, [data])
 
     function shuffle(array) {
         let currentIndex = array.length,
@@ -83,27 +106,54 @@ export default function MultipleChoices({ navigation, route }) {
         return shuffle([obj.meaning, remaining[0].meaning, remaining[1].meaning, remaining[2].meaning])
     }
 
+    const sleep = ms =>
+        new Promise(resolve => setTimeout(resolve, ms));
+
     useEffect(() => {
         if (userChoice != '') {
-            if (userChoice === question.realAnswer) {
-                setIsAnswer(true);
-                data.shift();
-                setTimeout(() => { setData(data) }, 5000)
-                if (data.length != 0) {
-                    setIsAnswer(false);
-                    setQuestion({ quest: data[0].word, realAnswer: data[0].meaning, answers: get4Answers(data[0]) })
-                    setUserChoice('')
-                } else {
-                    setComplete(true)
+            if (userChoice === question.data.meaning) {
+                setCorrect(true);
+            } else {
+                if (!wrongList.includes(question.data)) {
+                    setWrongList(prev => [...prev, question.data])
+                    setCorrectList(prev => prev.filter(x => x !== question.data))
                 }
             }
+
         }
     }, [userChoice]);
 
     useEffect(() => {
-        setData(shuffle(data))
-        setQuestion({ quest: data[0].word, realAnswer: data[0].meaning, answers: get4Answers(data[0]) })
-    }, []);
+        if (correct) {
+            sleep(500).then(() => {
+                setData(data.slice(1))
+                setCorrect(false)
+                setUserChoice('')
+            })
+        }
+    }, [correct])
+
+    useEffect(() => {
+        if (complete) {
+            console.log("this run")
+            navigation.navigate('PracticeComplete', { wrongList: wrongList, correctList: correctList })
+        }
+    }, [complete]);
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            setComplete(false)
+            setWrongList([])
+            initialFetch()
+        }
+    }, [isFocused]);
+
+    // useEffect(() => {
+    //     setData(shuffle(data))
+    //     setQuestion({ data: data[0], answers: get4Answers(data[0]) })
+    // }, []);
 
     return (
         <View style={styles.base}>
@@ -115,12 +165,9 @@ export default function MultipleChoices({ navigation, route }) {
                 </View>
             </View>
 
-            <View style={styles.cardSection}>
-                {complete ? <PracticeComplete></PracticeComplete> :
-                    (<View style={styles.cardsContainer}>
-                        <Question title={question.quest} />
-                        {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} isAnswer={isAnswer} />)}
-                    </View>)}
+            <View style={styles.cardsContainer}>
+                <Question title={question.data?.word} />
+                {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} correct={correct} />)}
             </View>
         </View>
     );
@@ -141,27 +188,28 @@ const styles = StyleSheet.create({
         backgroundColor: "#6A197D",
         alignItems: "center",
     },
-    cardSection: {
-        backgroundColor: "#DFDFDE",
-    },
     cardsContainer: {
-        // flexGrow: 1,
-        minHeight: "100%",
+        flex: 1,
         backgroundColor: "#DFDFDE",
     },
     card: {
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 5,
+        marginHorizontal: 6,
+        marginVertical: 3,
         minHeight: 50,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        borderRadius: 5
     },
     cartQuestion: {
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 5,
+        marginHorizontal: 6,
+        marginVertical: 3,
+        marginTop: 10,
         minHeight: 200,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        borderRadius: 5
     },
     cardTitle: {
         //fontWeight: 700,
