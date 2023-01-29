@@ -12,118 +12,118 @@ import { ModalPractice } from '../components/modalPractice';
 
 function Card(props) {
 
-    return (
-        <TouchableHighlight style={styles.card}>
-            <View>
-                <View>
-                    <Text style={styles.cardTitle}>{props.en}</Text>
-                </View>
-                <View style={styles.cardMeaning}>
-                    <Text>{props.vi}</Text>
-                </View>
-                <View style={styles.cardFooter}>
-                    <AntDesign name="sound" size={18} color="black" />
-                    <TouchableHighlight style={styles.cardOpion}>
-                        <Entypo name="dots-three-vertical" size={13} color="black" />
-                    </TouchableHighlight>
-                </View>
-            </View>
-        </TouchableHighlight>
-    );
+  return (
+    <TouchableHighlight style={styles.card}>
+      <View>
+        <View>
+          <Text style={styles.cardTitle}>{props.en}</Text>
+        </View>
+        <View style={styles.cardMeaning}>
+          <Text>{props.vi}</Text>
+        </View>
+        <View style={styles.cardFooter}>
+          <AntDesign name="sound" size={18} color="black" />
+          <TouchableHighlight style={styles.cardOpion}>
+            <Entypo name="dots-three-vertical" size={13} color="black" />
+          </TouchableHighlight>
+        </View>
+      </View>
+    </TouchableHighlight>
+  );
 }
 
 function CardScreen({ navigation, route }) {
 
-    const [card, setCard] = useState()
-    const [cid, setCid] = useState()
-    // const [sound, setSound] = useState();
+  const [card, setCard] = useState()
+  const [cid, setCid] = useState()
+  // const [sound, setSound] = useState();
 
 
-    const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-    // async function playSound() {
-    //     const { sound } = await Audio.Sound.createAsync(
-    //         { uri: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3' },
-    //         { shouldPlay: true }
-    //     );
-    //     setSound(sound);
+  // async function playSound() {
+  //     const { sound } = await Audio.Sound.createAsync(
+  //         { uri: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3' },
+  //         { shouldPlay: true }
+  //     );
+  //     setSound(sound);
 
-    //     console.log('Playing Sound');
-    //     await sound.playAsync();
-    // }
-
-
-
-    // useEffect(() => {
-    //     playSound()
-    // }, [])
-    // React.useEffect(() => {
-    //     return sound
-    //         ? () => {
-    //             console.log('Unloading Sound');
-    //             sound.unloadAsync();
-    //         }
-    //         : undefined;
-    // }, [sound]);
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            console.log(route.params.id)
-            setCid(route.params.id)
-            checkDoc({ cid: route.params.id }).then(data => {
-                setCard(data)
-                console.log(data)
-                //  console.log(data)
-            }).then(() => {
-            })
-            //  console.log('Hello World!')
-        });
-        return unsubscribe;
-    }, [navigation]);
+  //     console.log('Playing Sound');
+  //     await sound.playAsync();
+  // }
 
 
 
-    return (
-        <View style={styles.base}>
-            <View style={styles.navbar}>
-                {/* <Button title="Play Sound" onPress={playSound} /> */}
+  // useEffect(() => {
+  //     playSound()
+  // }, [])
+  // React.useEffect(() => {
+  //     return sound
+  //         ? () => {
+  //             console.log('Unloading Sound');
+  //             sound.unloadAsync();
+  //         }
+  //         : undefined;
+  // }, [sound]);
 
-            </View>
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log(route.params.id)
+      setCid(route.params.id)
+      checkDoc({ cid: route.params.id }).then(data => {
+        setCard(data)
+        console.log(data)
+        //  console.log(data)
+      }).then(() => {
+      })
+      //  console.log('Hello World!')
+    });
+    return unsubscribe;
+  }, [navigation]);
 
-            <View style={styles.cardList}>
-                <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
-                    tobasic={() => { navigation.navigate('basicreview', cid) }}></ModalPractice>
-                <View style={styles.cardFirstBlock}>
-                    <Text style={styles.cardTotal}> Tất cả : 2 </Text>
-                </View>
-                <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} style={styles.cardSecondBlock}>
-                    {card?.map((item) => {
-                        return (
-                            <View key={item.id}>
-                                <Card vi={item.vi} en={item.en}></Card>
-                            </View>
 
-                        )
-                    })}
-                </ScrollView>
-            </View>
 
-            <View style={styles.cardThirdBlock}>
-                <TouchableHighlight onPress={() => { setModalVisible(state => !state) }}>
-                    <View style={styles.footerButton}>
-                        <SimpleLineIcons name="graduation" size={24} color="white" />
-                        <Text style={styles.footerText}>Thực hành</Text>
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight>
-                    <View style={styles.footerButton}>
-                        <Feather name="plus" size={24} color="white" />
-                        <Text style={styles.footerText}>Thêm thẻ</Text>
-                    </View>
-                </TouchableHighlight>
-            </View>
+  return (
+    <View style={styles.base}>
+      <View style={styles.navbar}>
+        {/* <Button title="Play Sound" onPress={playSound} /> */}
+
+      </View>
+
+      <View style={styles.cardList}>
+        <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
+          tobasic={() => { navigation.navigate('basicreview', cid) }} id={cid}></ModalPractice>
+        <View style={styles.cardFirstBlock}>
+          <Text style={styles.cardTotal}> Tất cả : 2 </Text>
         </View>
-    );
+        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} style={styles.cardSecondBlock}>
+          {card?.map((item) => {
+            return (
+              <View key={item.id}>
+                <Card vi={item.vi} en={item.en}></Card>
+              </View>
+
+            )
+          })}
+        </ScrollView>
+      </View>
+
+      <View style={styles.cardThirdBlock}>
+        <TouchableHighlight onPress={() => { setModalVisible(state => !state) }}>
+          <View style={styles.footerButton}>
+            <SimpleLineIcons name="graduation" size={24} color="white" />
+            <Text style={styles.footerText}>Thực hành</Text>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <View style={styles.footerButton}>
+            <Feather name="plus" size={24} color="white" />
+            <Text style={styles.footerText}>Thêm thẻ</Text>
+          </View>
+        </TouchableHighlight>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

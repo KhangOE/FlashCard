@@ -8,39 +8,40 @@ import { Audio } from 'expo-av';
 const tenvhHeight = Dimensions.get('screen').height * 0.1;
 const cardWidth = Dimensions.get('window').width * 0.8;
 
-function CardReview() {
+function CardReview(props) {
   const rotate = useRef(new Animated.Value(0)).current;
   const [isFlipped, setIsFlipped] = useState(false);
   const rotateFront = rotate.interpolate({
-    inputRange: [0,1],
-    outputRange: ['0deg','180deg']
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg']
   });
   const rotateBack = rotate.interpolate({
-    inputRange: [0,1],
-    outputRange: ['180deg','360deg']
+    inputRange: [0, 1],
+    outputRange: ['180deg', '360deg']
   });
-  
+
   function flipCard() {
-      Animated.timing(rotate, {
-        toValue: isFlipped ? 0 : 1,
-        duration: 400,
-        easing: Easing.linear,
-        useNativeDriver: true
-      }).start(() => setIsFlipped(!isFlipped));
+    Animated.timing(rotate, {
+      toValue: isFlipped ? 0 : 1,
+      duration: 400,
+      easing: Easing.linear,
+      useNativeDriver: true
+    }).start(() => setIsFlipped(!isFlipped));
+    props.sound()
 
   }
   return (
     <Pressable style={styles.card} onPress={flipCard} android_disableSound={true}>
       <View style={styles.cardWrapper}>
-          <Animated.View style={[styles.cardFront, {transform: [{rotateY: rotateFront}]} ]}>
-              <Text style={styles.vocabulary}> green </Text>
-              <View style={styles.sound}>
-                <AntDesign name="sound" size={24} color="black" /> 
-              </View>  
-          </Animated.View>
-          <Animated.View style={[styles.cardBack, {transform: [{rotateY: rotateBack}]} ]}>
-              <Text style={styles.cardBackText}>màu xanh </Text> 
-          </Animated.View>
+        <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
+          <Text style={styles.vocabulary}>{props.en}</Text>
+          <View style={styles.sound}>
+            <AntDesign name="sound" size={24} color="black" />
+          </View>
+        </Animated.View>
+        <Animated.View style={[styles.cardBack, { transform: [{ rotateY: rotateBack }] }]}>
+          <Text style={styles.cardBackText}>{props.vi} </Text>
+        </Animated.View>
       </View>
     </Pressable>
   );
@@ -48,75 +49,92 @@ function CardReview() {
 
 
 function BasicReviewScreen({ navigation, route }) {
-    // Xu ly am thanh
-    const [card, setCard] = useState([])
-    const [sound, setSound] = useState();
-    useEffect(() => {
-        console.log(route?.params)
-        checkDoc({ cid: route.params || 1 }).then(data => {
-            setCard(data)
-            console.log(data)
-            //  console.log(data)
-        }).then(() => {
-        })
-    }, [])
+  // Xu ly am thanh
+  const [card, setCard] = useState([])
+  const [sound, setSound] = useState();
+  const [cardNumber, setCardNumber] = useState(1);
+  useEffect(() => {
+    // console.log(route?.params)
+    const callApi = async () => {
+      await checkDoc({ cid: route.params || 1 }).then(data => {
+        // console.log('data', data)
+        setCard(data)
+        // console.log(data)
+        //  console.log(data)
+      }).then(() => {
+      })
 
-    async function playSound() {
-        const { sound } = await Audio.Sound.createAsync(
-            { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/white-us.mp3` },
-            { shouldPlay: true }
-        );
-        setSound(sound);
-
-        console.log('Playing Sound');
-        await sound.playAsync();
     }
-    useEffect(() => {
-        playSound()
-    }, [])
-    React.useEffect(() => {
-        return sound
-            ? () => {
-                console.log('Unloading Sound');
-                sound.unloadAsync();
-            }
-            : undefined;
-    }, [sound]);
-    
-    // Xử lý animation flip va scroll
+    callApi()
+
+    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
+  }, [])
+
+
+  async function playSound() {
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3` },
+      { shouldPlay: true }
+    );
+    setSound(sound);
+
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+  useEffect(() => {
+    // console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
+  }, [])
+  useEffect(() => {
+
+    //playSound()
+    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1]?.en}-uk.mp3`)
+  }, [cardNumber])
+
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+        console.log('Unloading Sound');
+        sound.unloadAsync();
+      }
+      : undefined;
+  }, [sound]);
+
+  // Xử lý animation flip va scroll
   const cardTotal = 12;     // Tong so luong card
   const scrollPoint = useRef(0);
   let distance = cardWidth + 20;
-  const [cardNumber, setCardNumber] = useState(1);
+
   function moveLeftRight(index) {
     if (index == 1) {
-      scrollPoint.current.scrollTo({x: distance * cardNumber, animated: true});
+      scrollPoint.current.scrollTo({ x: distance * cardNumber, animated: true });
       setCardNumber(cardNumber == cardTotal ? cardTotal : cardNumber + 1);
     }
     else {
-      scrollPoint.current.scrollTo({x: distance * (cardNumber - 2), animated: true});
+      scrollPoint.current.scrollTo({ x: distance * (cardNumber - 2), animated: true });
       setCardNumber(cardNumber == 1 ? 1 : cardNumber - 1);
     }
-    
+
   }
   // Trang chia thành 3 thành phần chính : navbar, scrollview , footer
-    return (
-       <SafeAreaView style={styles.base}>
-        <View style={styles.navbar}>
-          <View style={styles.sub_block}>
-            <View style={styles.heading}>
-              <TouchableHighlight>
-                <AntDesign name="arrowleft" size={24} color="white" />
-              </TouchableHighlight>
-              <Text style={styles.topicTitle}> Color </Text>
-            </View>
-            <TouchableHighlight style={{opacity: 0}}>
-              <FontAwesome name="search" size={20} color="white" />
+  return (
+    <SafeAreaView style={styles.base}>
+      <View style={styles.navbar}>
+        <View style={styles.sub_block}>
+          <View style={styles.heading}>
+            <TouchableHighlight>
+              <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableHighlight>
+            <Text style={styles.topicTitle}> Color </Text>
           </View>
+          <TouchableHighlight style={{ opacity: 0 }}>
+            <FontAwesome name="search" size={20} color="white" />
+          </TouchableHighlight>
         </View>
+      </View>
 
-        <ScrollView style={styles.mainSection} horizontal={true} showsHorizontalScrollIndicator={false}
+      <ScrollView style={styles.mainSection} horizontal={true} showsHorizontalScrollIndicator={false}
         scrollEnabled={false}
         decelerationRate="fast"
         snapToInterval={cardWidth + 22}
@@ -128,35 +146,29 @@ function BasicReviewScreen({ navigation, route }) {
           right: 10,
         }}
         ref={scrollPoint}
-        >
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-          <CardReview />
-        </ScrollView>
-        
+      >
+        {card.map((item, index) => {
+          return (<>
+            <CardReview en={item.en} vi={item.vi} key={index} sound={playSound} />
+          </>)
+        })}
 
-        <View style={styles.footerCard}>
-          <View style={styles.footerCardBlock}>
-            <TouchableOpacity onPress={() => moveLeftRight(-1)}>
-              <Feather name="arrow-left-circle" size={40} color="#6A197D" />
-            </TouchableOpacity>
-            <Text style={styles.cardPosition}> {cardNumber} / {cardTotal} </Text>
-            <TouchableOpacity onPress={() => moveLeftRight(1)}>
-              <Feather name="arrow-right-circle" size={40} color="#6A197D" />
-            </TouchableOpacity>
-          </View>
+      </ScrollView>
+
+
+      <View style={styles.footerCard}>
+        <View style={styles.footerCardBlock}>
+          <TouchableOpacity onPress={() => moveLeftRight(-1)}>
+            <Feather name="arrow-left-circle" size={40} color="#6A197D" />
+          </TouchableOpacity>
+          <Text style={styles.cardPosition}> {cardNumber} / {cardTotal} </Text>
+          <TouchableOpacity onPress={() => moveLeftRight(1)}>
+            <Feather name="arrow-right-circle" size={40} color="#6A197D" />
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    );
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -76,7 +76,7 @@ function MainScreen({ navigation }) {
                 })}
             </ScrollView>
 
-            <PlusBtn press={() => { navigation.navigate({ name: 'basicreview' }) }} />
+            <PlusBtn press={() => { navigation.navigate({ name: 'addSpending' }) }} />
         </View>
     );
 }

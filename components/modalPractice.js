@@ -19,21 +19,21 @@ export const ModalPractice = (props) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>{props.topicId}</Text>
+                        <Text style={styles.modalText}>{props.id}</Text>
                         <View>
-                            <TouchableOpacity onPress={() => navigation.navigate('basicReview')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('basicReview', props.id)}>
                                 <View style={{ padding: 8 }}>
                                     <Text>ôn tậpds cơ bản</Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => navigation.navigate('MatchCards')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('MatchCards', props.id)}>
                                 <View style={{ padding: 8 }}>
                                     <Text>Nối từ</Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices', props.id)}>
                                 <View style={{ padding: 8 }}>
                                     <Text>Multiple Answers</Text>
                                 </View>
