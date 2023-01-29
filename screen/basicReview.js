@@ -57,7 +57,7 @@ function BasicReviewScreen({ navigation, route }) {
     // console.log(route?.params)
     const callApi = async () => {
       await checkDoc({ cid: route.params || 1 }).then(data => {
-        // console.log('data', data)
+        console.log('data', data)
         setCard(data)
         // console.log(data)
         //  console.log(data)
@@ -73,7 +73,7 @@ function BasicReviewScreen({ navigation, route }) {
 
   async function playSound() {
     const { sound } = await Audio.Sound.createAsync(
-      { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3` },
+      { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].word.toLowerCase()}-uk.mp3` },
       { shouldPlay: true }
     );
     setSound(sound);
@@ -149,7 +149,7 @@ function BasicReviewScreen({ navigation, route }) {
       >
         {card.map((item, index) => {
           return (<>
-            <CardReview en={item.en} vi={item.vi} key={index} sound={playSound} />
+            <CardReview en={item.word} vi={item.meaning} key={index} sound={playSound} />
           </>)
         })}
 

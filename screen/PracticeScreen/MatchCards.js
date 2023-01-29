@@ -13,25 +13,25 @@ import {
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
 import { useIsFocused } from '@react-navigation/native';
+import { checkDoc } from "../../api/firebaseApi";
 
-
-const data = [
-    { word: "one", meaning: "1", favorited: false },
-    { word: "two", meaning: "2", favorited: false },
-    { word: "three", meaning: "3", favorited: false },
-    { word: "four", meaning: "4", favorited: false },
-    { word: "five", meaning: "5", favorited: false },
-    // { word: "six", meaning: "6", favorited: false },
-    // { word: "seven", meaning: "7", favorited: false },
-    // { word: "eight", meaning: "8", favorited: false },
-    // { word: "nine", meaning: "9", favorited: false },
-    // { word: "ten", meaning: "10", favorited: false },
-    // { word: "eleven", meaning: "11", favorited: false },
-    // { word: "twelve", meaning: "12", favorited: false },
-    // { word: "thirteen", meaning: "13", favorited: false },
-    // { word: "fourteen", meaning: "14", favorited: false },
-    // { word: "fifteen", meaning: "15", favorited: false },
-];
+// const data = [
+//     { word: "one", meaning: "1", favorited: false },
+//     { word: "two", meaning: "2", favorited: false },
+//     { word: "three", meaning: "3", favorited: false },
+//     { word: "four", meaning: "4", favorited: false },
+//     { word: "five", meaning: "5", favorited: false },
+//     // { word: "six", meaning: "6", favorited: false },
+//     // { word: "seven", meaning: "7", favorited: false },
+//     // { word: "eight", meaning: "8", favorited: false },
+//     // { word: "nine", meaning: "9", favorited: false },
+//     // { word: "ten", meaning: "10", favorited: false },
+//     // { word: "eleven", meaning: "11", favorited: false },
+//     // { word: "twelve", meaning: "12", favorited: false },
+//     // { word: "thirteen", meaning: "13", favorited: false },
+//     // { word: "fourteen", meaning: "14", favorited: false },
+//     // { word: "fifteen", meaning: "15", favorited: false },
+// ];
 
 function Card(props) {
     return (
@@ -61,6 +61,23 @@ export default function MatchCards({ navigation, route }) {
     const [complete, setComplete] = useState(false);
     const [wrongList, setWrongList] = useState([]);
     const [correctList, setCorrectList] = useState([])
+    const [data, setCard] = useState([])
+
+    useEffect(() => {
+        // console.log(route?.params)
+        const callApi = async () => {
+            await checkDoc({ cid: route.params || 1 }).then(d => {
+                // console.log('data', data)
+                setCard(d)
+                //console.log(data)
+                //  console.log(data)
+            }).then(() => {
+            })
+
+        }
+        callApi()
+
+    }, [])
 
     function shuffle(array) {
         let currentIndex = array.length,
@@ -109,7 +126,7 @@ export default function MatchCards({ navigation, route }) {
             setWrongList([])
             initialFetch(data)
         }
-    }, [isFocused]);
+    }, [data]);
 
     useEffect(() => {
         if (firstWord != "" && secondWord != "") {

@@ -17,7 +17,7 @@ import {
 } from "@expo/vector-icons";
 import PracticeComplete from "./PracticeComplete";
 import { useIsFocused } from '@react-navigation/native';
-
+import { checkDoc } from "../../api/firebaseApi";
 
 const _data = [
     { word: "green", meaning: "mau xanh la", favorited: false },
@@ -66,6 +66,24 @@ export default function MultipleChoices({ navigation, route }) {
     const [correct, setCorrect] = useState(false);
     const [wrongList, setWrongList] = useState([]);
     const [correctList, setCorrectList] = useState([]);
+    const [card, setCard] = useState([])
+
+    useEffect(() => {
+        console.log(route?.params)
+        const callApi = async () => {
+            await checkDoc({ cid: route.params || 1 }).then(d => {
+                console.log('data', card)
+                setCard(d)
+                //console.log(data)
+                //  console.log(data)
+            }).then(() => {
+            })
+
+        }
+        callApi()
+
+        //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
+    }, [])
 
     async function initialFetch() {
         setData(shuffle(_data.slice(0)))

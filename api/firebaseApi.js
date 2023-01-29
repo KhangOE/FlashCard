@@ -52,8 +52,8 @@ export const addCard = async (props) => {
     const docRef = await addDoc(collection(db, "Card"), {
       userID: auth.currentUser.uid,
       cid: props.cid,
-      en: props.en,
-      vi: props.vi,
+      word: props.en,
+      meaning: props.vi,
       ex: props.ex || null
 
     });
