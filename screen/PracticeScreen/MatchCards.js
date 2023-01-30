@@ -11,27 +11,9 @@ import {
 import {
     AntDesign,
 } from "@expo/vector-icons";
-import PracticeComplete from "./PracticeComplete";
 import { useIsFocused } from '@react-navigation/native';
 import { checkDoc } from "../../api/firebaseApi";
 
-// const data = [
-//     { word: "one", meaning: "1", favorited: false },
-//     { word: "two", meaning: "2", favorited: false },
-//     { word: "three", meaning: "3", favorited: false },
-//     { word: "four", meaning: "4", favorited: false },
-//     { word: "five", meaning: "5", favorited: false },
-//     // { word: "six", meaning: "6", favorited: false },
-//     // { word: "seven", meaning: "7", favorited: false },
-//     // { word: "eight", meaning: "8", favorited: false },
-//     // { word: "nine", meaning: "9", favorited: false },
-//     // { word: "ten", meaning: "10", favorited: false },
-//     // { word: "eleven", meaning: "11", favorited: false },
-//     // { word: "twelve", meaning: "12", favorited: false },
-//     // { word: "thirteen", meaning: "13", favorited: false },
-//     // { word: "fourteen", meaning: "14", favorited: false },
-//     // { word: "fifteen", meaning: "15", favorited: false },
-// ];
 
 function Card(props) {
     return (
@@ -55,29 +37,33 @@ export default function MatchCards({ navigation, route }) {
     const [words, setWords] = useState([]);
     const [meanings, setMeanings] = useState([]);
 
-    const [firstWord, setFirstWord] = useState("");
-    const [secondWord, setSecondWord] = useState("");
+    const [firstWord, setFirstWord] = useState(null);
+    const [secondWord, setSecondWord] = useState(null);
 
     const [complete, setComplete] = useState(false);
     const [wrongList, setWrongList] = useState([]);
     const [correctList, setCorrectList] = useState([])
-    const [data, setCard] = useState([])
+    const [card, setCard] = useState([])
+
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-        // console.log(route?.params)
-        const callApi = async () => {
-            await checkDoc({ cid: route.params || 1 }).then(d => {
-                // console.log('data', data)
-                setCard(d)
-                //console.log(data)
-                //  console.log(data)
-            }).then(() => {
-            })
+        if (isFocused) {
+            setComplete(false)
+            setWrongList([])
+            const callApi = async () => {
+                await checkDoc({ cid: route.params || 1 }).then(d => {
+                    setCard(d)
+                    setCorrectList(d)
+                    setWords(d)
+                    setMeanings(shuffle(d.slice(0)))
+                }).then(() => {
+                })
 
+            }
+            callApi()
         }
-        callApi()
-
-    }, [])
+    }, [isFocused]);
 
     function shuffle(array) {
         let currentIndex = array.length,
@@ -94,43 +80,13 @@ export default function MatchCards({ navigation, route }) {
         return array;
     }
 
-    function initialFetch(data) {
-        setCorrectList(data.slice(0))
-
-        var _words = shuffle(data.map((obj) => obj.word));
-        var _meanings = shuffle(data.map((obj) => obj.meaning));
-
-        setWords(_words);
-        setMeanings(_meanings);
-    }
-
-    function matchWord(first, second) {
-        if (data.find((obj) => obj.word === first).meaning === second) {
-            return true;
-        }
-        return false;
-    }
-
     const sleep = ms =>
         new Promise(resolve => setTimeout(resolve, ms));
 
-    function findWord(word) {
-        return data.find(x => x.word === word);
-    }
-
-    const isFocused = useIsFocused();
 
     useEffect(() => {
-        if (isFocused) {
-            setComplete(false)
-            setWrongList([])
-            initialFetch(data)
-        }
-    }, [data]);
-
-    useEffect(() => {
-        if (firstWord != "" && secondWord != "") {
-            if (matchWord(firstWord, secondWord)) {
+        if (firstWord != null && secondWord != null) {
+            if (firstWord.id === secondWord.id) {
                 if (words.length === 1 && meanings.length === 1) {
                     setComplete(true)
                 }
@@ -138,17 +94,16 @@ export default function MatchCards({ navigation, route }) {
                 setWords(words.filter((item) => item != firstWord));
                 setMeanings(meanings.filter((item) => item !== secondWord));
 
-                setFirstWord("");
-                setSecondWord("");
+                setFirstWord(null);
+                setSecondWord(null);
             } else {
-                var newObj = findWord(firstWord)
-                if (!wrongList.includes(newObj)) {
-                    setWrongList(prev => [...prev, newObj])
-                    setCorrectList(prev => prev.filter(x => x !== newObj))
+                if (!wrongList.includes(firstWord)) {
+                    setWrongList(prev => [...prev, firstWord])
+                    setCorrectList(prev => prev.filter(x => x !== firstWord))
                 }
                 sleep(200).then(() => {
-                    setFirstWord('')
-                    setSecondWord('')
+                    setFirstWord(null)
+                    setSecondWord(null)
                 })
             }
         }
@@ -174,7 +129,7 @@ export default function MatchCards({ navigation, route }) {
                 <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }} style={{ width: "50%", marginRight: 3, marginLeft: 6 }} showsHorizontalScrollIndicator={false}>
                     {words?.map((item, index) => (
                         <Card
-                            title={item}
+                            title={item.word}
                             key={index}
                             onPress={() => setFirstWord(item)}
                             isChoosing={firstWord === item}
@@ -184,7 +139,7 @@ export default function MatchCards({ navigation, route }) {
                 <ScrollView contentContainerStyle={{ flexDirection: "column", alignItems: "center" }} style={{ width: "50%", marginRight: 6, marginLeft: 3 }} showsHorizontalScrollIndicator={false}>
                     {meanings?.map((item, index) => (
                         <Card
-                            title={item}
+                            title={item.meaning}
                             key={index}
                             onPress={() => setSecondWord(item)}
                             isChoosing={secondWord === item}

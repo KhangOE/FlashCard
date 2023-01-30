@@ -3,32 +3,14 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
-    Button,
     TouchableHighlight,
-    TouchableOpacity,
 } from "react-native";
 import {
-    FontAwesome,
     AntDesign,
-    Entypo,
-    Feather,
-    SimpleLineIcons,
 } from "@expo/vector-icons";
-import PracticeComplete from "./PracticeComplete";
 import { useIsFocused } from '@react-navigation/native';
 import { checkDoc } from "../../api/firebaseApi";
 
-const _data = [
-    { word: "green", meaning: "mau xanh la", favorited: false },
-    { word: "red", meaning: "mau do", favorited: true },
-    { word: "yellow", meaning: "mau vang", favorited: false },
-    { word: "blue", meaning: "mau xanh lam", favorited: true },
-    { word: "orange", meaning: "mau cam", favorited: false },
-    { word: "purple", meaning: "mau tim", favorited: true },
-    { word: "black", meaning: "mau den", favorited: false },
-    { word: "white", meaning: "mau trang", favorited: true },
-];
 
 function Card(props) {
     return (
@@ -61,37 +43,38 @@ function Question(props) {
 export default function MultipleChoices({ navigation, route }) {
     const [data, setData] = useState([]);
     const [question, setQuestion] = useState({});
-    const [userChoice, setUserChoice] = useState('');
+    const [userChoice, setUserChoice] = useState(null);
     const [complete, setComplete] = useState(false);
     const [correct, setCorrect] = useState(false);
     const [wrongList, setWrongList] = useState([]);
     const [correctList, setCorrectList] = useState([]);
     const [card, setCard] = useState([])
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-        console.log(route?.params)
-        const callApi = async () => {
-            await checkDoc({ cid: route.params || 1 }).then(d => {
-                console.log('data', card)
-                setCard(d)
-                //console.log(data)
-                //  console.log(data)
-            }).then(() => {
-            })
+        if (isFocused) {
+            setComplete(false)
+            setWrongList([])
+            const callApi = async () => {
+                await checkDoc({ cid: route.params || 1 }).then(d => {
+                    setCard(d)
+                    setData(shuffle(d))
+                    setCorrectList(d)
+                }).then(() => {
+                })
 
+            }
+            callApi()
+
+            //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
         }
-        callApi()
-
-        //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
-    }, [])
-
-    async function initialFetch() {
-        setData(shuffle(_data.slice(0)))
-        setCorrectList(_data.slice(0))
-    }
+    }, [isFocused]);
 
     const firstUpdate = useRef(true);
 
+
+    // if data change (because of shift) update question 
     useLayoutEffect(() => {
         if (firstUpdate.current) {
             firstUpdate.current = false;
@@ -119,17 +102,21 @@ export default function MultipleChoices({ navigation, route }) {
         return array;
     }
 
+    // make 4 answers for a question
     function get4Answers(obj) {
-        var remaining = shuffle(_data?.filter(item => item !== obj))
-        return shuffle([obj.meaning, remaining[0].meaning, remaining[1].meaning, remaining[2].meaning])
+        var remaining = shuffle(card?.filter(item => item !== obj))
+        return shuffle([obj, remaining[0], remaining[1], remaining[2]])
     }
 
     const sleep = ms =>
         new Promise(resolve => setTimeout(resolve, ms));
 
+    // if user choice an answer, check if its true, if its false, check if the question
+    // already in the wrong list or not and if its not, add to wrong list and remove 
+    // from correct list
     useEffect(() => {
-        if (userChoice != '') {
-            if (userChoice === question.data.meaning) {
+        if (userChoice != null) {
+            if (userChoice.id === question.data.id) {
                 setCorrect(true);
             } else {
                 if (!wrongList.includes(question.data)) {
@@ -141,37 +128,24 @@ export default function MultipleChoices({ navigation, route }) {
         }
     }, [userChoice]);
 
+    // if correct flag was raised, pause the app for 0,5s then shift data by 1
     useEffect(() => {
         if (correct) {
             sleep(500).then(() => {
                 setData(data.slice(1))
                 setCorrect(false)
-                setUserChoice('')
+                setUserChoice(null)
             })
         }
     }, [correct])
 
     useEffect(() => {
         if (complete) {
-            console.log("this run")
             navigation.navigate('PracticeComplete', { wrongList: wrongList, correctList: correctList })
         }
     }, [complete]);
 
-    const isFocused = useIsFocused();
 
-    useEffect(() => {
-        if (isFocused) {
-            setComplete(false)
-            setWrongList([])
-            initialFetch()
-        }
-    }, [isFocused]);
-
-    // useEffect(() => {
-    //     setData(shuffle(data))
-    //     setQuestion({ data: data[0], answers: get4Answers(data[0]) })
-    // }, []);
 
     return (
         <View style={styles.base}>
@@ -185,7 +159,7 @@ export default function MultipleChoices({ navigation, route }) {
 
             <View style={styles.cardsContainer}>
                 <Question title={question.data?.word} />
-                {question?.answers?.map((i, idx) => <Card title={i} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} correct={correct} />)}
+                {question?.answers?.map((i, idx) => <Card title={i.meaning} key={idx} onPress={() => setUserChoice(i)} isChoosing={userChoice === i} correct={correct} />)}
             </View>
         </View>
     );

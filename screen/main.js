@@ -30,7 +30,7 @@ function TopicTag(props) {
                         </TouchableHighlight>
                         <TouchableHighlight style={styles.topicPractise} onPress={() => {
                             props.setvisible(state => !state)
-                            props.setopic
+                            props.settopic()
 
                         }}>
                             <Text style={styles.topicSecondText}> Thực hành </Text>
@@ -65,12 +65,12 @@ function MainScreen({ navigation }) {
 
     return (
         <View style={styles.base}>
-            <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}></ModalPractice>
+            <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
             <ScrollView style={styles.topicList}>
 
                 {data.map((item, idx) => {
                     return (
-                        <TopicTag key={idx} settopic={() => { settopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('SpendingDetail', item)}
+                        <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('SpendingDetail', item)}
                             pressAdd={() => { navigation.navigate('addCard', item) }} />
                     )
                 })}
