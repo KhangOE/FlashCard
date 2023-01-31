@@ -35,9 +35,9 @@ function CardReview(props) {
       <View style={styles.cardWrapper}>
         <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
           <Text style={styles.vocabulary}>{props.en}</Text>
-          <View style={styles.sound}>
+          <Pressable style={styles.sound} onPress={playSound}>  // Đặt hàm playSound ở đây
             <AntDesign name="sound" size={24} color="black" />
-          </View>
+          </Pressable>
         </Animated.View>
         <Animated.View style={[styles.cardBack, { transform: [{ rotateY: rotateBack }] }]}>
           <Text style={styles.cardBackText}>{props.vi} </Text>
@@ -222,10 +222,11 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingVertical: 20,
     paddingHorizontal: 10,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    zIndex: 1
   },
   vocabulary: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: '700',
     marginTop: '30%',
     marginBottom: '20%'
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 50,
-    padding: 10
+    padding: 15
   },
   cardBack: {
     width: '100%',
