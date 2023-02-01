@@ -7,51 +7,55 @@ export const ModalPractice = (props) => {
     const { navigation } = props;
     //const [modalVisible, setModalVisible] = useState(false);
     return (
-        <View style={styles.centeredView}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={props.visible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    // props.setVisible(state => !state);
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>{props.id}</Text>
-                        <View>
-                            <TouchableOpacity onPress={() => navigation.navigate('basicReview', props.id)}>
-                                <View style={{ padding: 8 }}>
-                                    <Text>ôn tậpds cơ bản</Text>
-                                </View>
-                            </TouchableOpacity>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={props.visible}
+            onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                // props.setVisible(state => !state);
+            }}
+        >
+            <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>{props.id}</Text>
+                    <View>
+                        <TouchableOpacity onPress={() => navigation.navigate('basicReview', props.id)}>
+                            <View style={{ padding: 8 }}>
+                                <Text>ôn tậpds cơ bản</Text>
+                            </View>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => navigation.navigate('MatchCards', props.id)}>
-                                <View style={{ padding: 8 }}>
-                                    <Text>Nối từ</Text>
-                                </View>
-                            </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('MatchCards', props.id)}>
+                            <View style={{ padding: 8 }}>
+                                <Text>Nối từ</Text>
+                            </View>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices', props.id)}>
-                                <View style={{ padding: 8 }}>
-                                    <Text>Multiple Answers</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices', props.id)}>
+                            <View style={{ padding: 8 }}>
+                                <Text>Multiple Answers</Text>
+                            </View>
+                        </TouchableOpacity>
 
-
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => props.setVisible(state => !state)}
-                        >
-                            <Text style={styles.textStyle}>Hide Modal</Text>
-                        </Pressable>
+                        <TouchableOpacity onPress={() => navigation.navigate('MemoryGame', props.id)}>
+                            <View style={{ padding: 8 }}>
+                                <Text>Memory Game</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                </View>
-            </Modal >
 
-        </View >
+
+                    <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => props.setVisible(state => !state)}
+                    >
+                        <Text style={styles.textStyle}>Hide Modal</Text>
+                    </Pressable>
+                </View>
+            </View>
+        </Modal >
+
     );
 };
 

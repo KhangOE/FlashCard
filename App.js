@@ -18,7 +18,7 @@ import { AddSpending } from './screen/addSpending';
 import { Todos } from './screen/todos';
 import { Statistic } from './screen/statistic';
 import { MainScreen } from './screen/main';
-import { MatchCards, MultipleChoices, PracticeComplete } from "./screen/PracticeScreen"
+import { MatchCards, MemoryGame, MultipleChoices, PracticeComplete } from "./screen/PracticeScreen"
 
 import { CardScreen } from './screen/cardScreen';
 import { AddCard } from './screen/addCard';
@@ -58,6 +58,11 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="MultipleChoices"
         component={MultipleChoices}
+        options={{ tabBarLabel: 'Home!' }}
+      />
+      <HomeStack.Screen
+        name="MemoryGame"
+        component={MemoryGame}
         options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen

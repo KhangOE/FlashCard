@@ -66,8 +66,6 @@ export default function MultipleChoices({ navigation, route }) {
 
             }
             callApi()
-
-            //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
         }
     }, [isFocused]);
 

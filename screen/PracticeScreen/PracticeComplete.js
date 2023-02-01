@@ -31,7 +31,7 @@ function ReviewPage(props) {
 const Tab = createMaterialTopTabNavigator();
 
 export default function PracticeComplete({ route, navigation }) {
-    const { correctList, wrongList } = route.params;
+    const { correctList, wrongList, moves } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
@@ -52,8 +52,8 @@ export default function PracticeComplete({ route, navigation }) {
                             </TouchableOpacity>
                         </View>
                         <Tab.Navigator>
-                            <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Wrong: ' + wrongList.length }} />
-                            <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Correct: ' + correctList.length }} />
+                            <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Wrong: ' + wrongList?.length }} />
+                            <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Correct: ' + correctList?.length }} />
                         </Tab.Navigator>
                     </View>
                 </View>
@@ -66,9 +66,12 @@ export default function PracticeComplete({ route, navigation }) {
                 <Text>Review complete!</Text>
                 <View style={styles.sub_container}>
                     <Text>Summary</Text>
-                    <Text style={{ color: "green" }}>Correct answers: {correctList.length}</Text>
-                    <Text style={{ color: "red" }}>Incorrect answers: {wrongList.length}</Text>
-                    <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.viewResultButton}><Text style={{ color: "blue" }}>view results</Text></TouchableOpacity>
+                    <Text style={{ color: "green" }}>Correct answers: {correctList?.length}</Text>
+                    <Text style={{ color: "red" }}>Incorrect answers: {wrongList?.length}</Text>
+                    {moves !== undefined ? <Text style={{ color: "yellow" }}>Number of moves: {moves}</Text> :
+                        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.viewResultButton}>
+                            <Text style={{ color: "blue" }}>view results</Text>
+                        </TouchableOpacity>}
                 </View>
             </View>
             <View style={{ width: '100%' }}>
