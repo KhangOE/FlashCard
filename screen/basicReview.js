@@ -35,7 +35,7 @@ function CardReview(props) {
       <View style={styles.cardWrapper}>
         <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
           <Text style={styles.vocabulary}>{props.en}</Text>
-          <Pressable style={styles.sound} onPress={playSound}>  // Đặt hàm playSound ở đây
+          <Pressable style={styles.sound} onPress={() => playSound({props.en})} >  //   Hàm playSound được gọi ở đây
             <AntDesign name="sound" size={24} color="black" />
           </Pressable>
         </Animated.View>
