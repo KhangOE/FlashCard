@@ -35,7 +35,8 @@ function CardReview(props) {
       <View style={styles.cardWrapper}>
         <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
           <Text style={styles.vocabulary}>{props.en}</Text>
-          <Pressable style={styles.sound} onPress={playSound}>  // Đặt hàm playSound ở đây
+          <Pressable style={styles.sound}>
+            {/* // Đặt hàm playSound ở đây */}
             <AntDesign name="sound" size={24} color="black" />
           </Pressable>
         </Animated.View>
@@ -72,16 +73,57 @@ function BasicReviewScreen({ navigation, route }) {
 
 
   async function playSound() {
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: `https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].word.toLowerCase()}-uk.mp3` },
-      { shouldPlay: true }
-    );
-    setSound(sound);
+
+    const a = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
+      if (data.data[0].phonetics[0].audio) {
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: data.data[0].phonetics[0].audio },
+          { shouldPlay: true }
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
+      }
+      else if (data.data[0].phonetics[1].audio) {
+        const b = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: data.data[0].phonetics[1].audio },
+            { shouldPlay: true }
+          );
+          setSound(sound);
+          console.log('Playing Sound');
+          await sound.playAsync();
+        })
+
+      }
+      else {
+        const c = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: data.data[0].phonetics[2].audio },
+            { shouldPlay: true }
+          );
+          setSound(sound);
+          console.log('Playing Sound');
+          await sound.playAsync();
+        })
+      }
+
+    })
 
 
-    console.log('Playing Sound');
-    await sound.playAsync();
+
+
+
+
   }
+  useEffect(() => {
+    axios.get('https://api.dictionaryapi.dev/api/v2/entries/en/green').then((data) => {
+      console.log(data.data[0].phonetics[0].audio)
+    })
+    //playSound()
+    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1]?.en}-uk.mp3`)
+  }, [])
+
   useEffect(() => {
     // console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
   }, [])
