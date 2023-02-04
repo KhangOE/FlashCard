@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TouchableHighlight, TouchableOpacity, Animated, Easing, Dimensions, SafeAreaView } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { checkDoc } from '../api/firebaseApi';
+import { checkDoc, getTopicById } from '../api/firebaseApi';
 import { Audio } from 'expo-av';
-
+import { auth } from '../firebase';
+//import { getTopicById } from '../api/firebaseApi';
 const tenvhHeight = Dimensions.get('screen').height * 0.1;
 const cardWidth = Dimensions.get('window').width * 0.8;
 
@@ -35,7 +36,7 @@ function CardReview(props) {
       <View style={styles.cardWrapper}>
         <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
           <Text style={styles.vocabulary}>{props.en}</Text>
-          <Pressable style={styles.sound}>
+          <Pressable style={styles.sound} onPress={() => { console.log('sound here') }}>
             {/* // Đặt hàm playSound ở đây */}
             <AntDesign name="sound" size={24} color="black" />
           </Pressable>
@@ -94,7 +95,6 @@ function BasicReviewScreen({ navigation, route }) {
           console.log('Playing Sound');
           await sound.playAsync();
         })
-
       }
       else {
         const c = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
@@ -125,6 +125,10 @@ function BasicReviewScreen({ navigation, route }) {
   }, [])
 
   useEffect(() => {
+    getTopicById().then(data => {
+      console.log('data ne ', data)
+    })
+    // console.log('id user', auth.currentUser.uid)
     // console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
   }, [])
   useEffect(() => {

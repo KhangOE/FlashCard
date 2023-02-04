@@ -83,21 +83,24 @@ export async function checkDoc(props) {
   }
 }
 
-export const getCardByCid = async (props) => {
-  console.log("iddd", props.cid)
-  const querySnapshot = await getDocs(collection(db, "Card"), where("cid", "==", props.cid));
-  const docs = []
 
-  querySnapshot.forEach((doc) => {
+export async function getTopicById(props) {
+  try {
+    const urlsRef = collection(db, "Collection");
+    const q = query(urlsRef, where("userID", "==", auth.currentUser.uid));
 
-    docs.push({ ...doc.data(), id: doc.id });
+    const querySnapshot = await getDocs(q);
+    const l = []
+    querySnapshot.forEach(docSnap => {
+      l.push({ ...docSnap.data(), id: docSnap.id });
+    })
 
-    // doc.data() is never undefined for query doc snapshots
+    return l   // Generate the returned object in the forEach loop, see link below
 
-    // console.log(doc.data())
-  });
-  //   console.log(docs)
-  return docs
+  } catch (e) {
+    console.error("Error querying document: ", e);
+    return e.response
+  }
 }
 
 

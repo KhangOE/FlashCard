@@ -6,7 +6,7 @@ import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
 import { getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
-
+import { getTopicById } from '../api/firebaseApi';
 function TopicTag(props) {
 
     const handle = () => {
@@ -51,7 +51,7 @@ function MainScreen({ navigation }) {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            getCollection().then(data => {
+            getTopicById().then(data => {
                 setdata(data)
                 console.log(data)
             }).then(() => {
