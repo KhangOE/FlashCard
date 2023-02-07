@@ -3,7 +3,7 @@ import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 
-import { addCard, addCollection, addspending, getspending } from '../api/firebaseApi';
+import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
 
 export const AddCard = ({ navigation, route }) => {
     const [cname, setCname] = useState('')
@@ -28,26 +28,47 @@ export const AddCard = ({ navigation, route }) => {
 
         <View>
             {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <Text>
-                enlish card cua {cname}
-            </Text>
+            <View>
+                
+                <Text style={{ height : 20, margin : 8}}>
+                    Thuật ngữ 
+                </Text>
+
+            </View>
+
             <TextInput
-                style={{ height: 40 }}
-                placeholder="Type here to add money!"
+                style={{height: 40 , 
+                    backgroundColor: '#fff' , 
+                    margin : 8, 
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    //paddingVertical: 15,
+                    paddingHorizontal: 10,
+                    marginTop: 4}}
+                placeholder=""
                 onChangeText={newname => setEn(newname)}
                 defaultValue={en}
 
             />
-            <Text>
-                vi
+            <Text style={{ height : 20 , margin : 8}}>
+                Định nghĩa
             </Text>
+
             <TextInput
-                style={{ height: 40 }}
-                placeholder="Type here to note!"
+                style={{ height: 40 , 
+                    backgroundColor: '#fff' , 
+                    margin : 8, 
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    //paddingVertical: 15,
+                    paddingHorizontal: 10,
+                    marginTop: 4,
+                }}
+                placeholder=""
                 onChangeText={newText => setVi(newText)}
                 defaultValue={vi}
             />
-            <Text>
+            {/* <Text>
                 ex
             </Text>
             <TextInput
@@ -55,15 +76,19 @@ export const AddCard = ({ navigation, route }) => {
                 placeholder="Type here to note!"
                 onChangeText={newText => setEx(newText)}
                 defaultValue={ex}
-            />
-            <Button title='add transaction' onPress={handle}>
+            /> */}
+            <Button title='Thêm thẻ' onPress={handle}>
 
             </Button>
-            <Button title={cname || 'we'} onPress={handle}>
+            {/* <Button title={cname || 'we'} onPress={handle}>
 
-            </Button>
+            </Button> */}
 
         </View>
 
     </>)
 }
+
+const styles = StyleSheet.create({
+    
+  });
