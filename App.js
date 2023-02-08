@@ -29,7 +29,11 @@ const SettingsStack = createNativeStackNavigator();
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator
+    // screenOptions={{
+    //   headerShown: false
+    // }}
+    >
       <HomeStack.Screen
         name="Spending"
         component={MainScreen}
@@ -53,22 +57,18 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="MatchCards"
         component={MatchCards}
-        options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
         name="MultipleChoices"
         component={MultipleChoices}
-        options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
         name="MemoryGame"
         component={MemoryGame}
-        options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
         name="PracticeComplete"
         component={PracticeComplete}
-        options={{ tabBarStyle: { display: 'none' } }}
       />
       <HomeStack.Screen
         name="basicReview"

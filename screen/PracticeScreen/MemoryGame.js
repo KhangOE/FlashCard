@@ -7,7 +7,11 @@ import {
     Animated,
     Pressable,
     Easing,
+    TouchableHighlight,
 } from "react-native";
+import {
+    AntDesign,
+} from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
 import { checkDoc } from "../../api/firebaseApi";
 
@@ -165,29 +169,53 @@ export default function MemoryGame({ navigation, route }) {
     }
 
     return (
-        <ScrollView contentContainerStyle={{
-            flex: 1,
-            flexDirection: "row",
-            flexWrap: 'wrap',
-        }}>
-            {cards.map((card, index) => {
-                return (
-                    <Card
-                        key={index}
-                        card={card}
-                        index={index}
-                        isDisabled={shouldDisableAllCards}
-                        isInactive={checkIsInactive(card)}
-                        isFlipped={checkIsFlipped(index)}
-                        onPress={handleCardPress}
-                    />
-                );
-            })}
-        </ScrollView >
+        <View style={styles.base}>
+            <View style={styles.navbar}>
+                <View style={styles.sub_block}>
+                    <TouchableHighlight onPress={() => navigation.goBack()}>
+                        <AntDesign name="arrowleft" size={24} color="white" />
+                    </TouchableHighlight>
+                </View>
+            </View>
+
+            <ScrollView contentContainerStyle={{
+                flex: 1,
+                flexDirection: "row",
+                flexWrap: 'wrap',
+            }}>
+                {cards.map((card, index) => {
+                    return (
+                        <Card
+                            key={index}
+                            card={card}
+                            index={index}
+                            isDisabled={shouldDisableAllCards}
+                            isInactive={checkIsInactive(card)}
+                            isFlipped={checkIsFlipped(index)}
+                            onPress={handleCardPress}
+                        />
+                    );
+                })}
+            </ScrollView >
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    base: {
+        flex: 1,
+    },
+    sub_block: {
+        width: "92%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: 50,
+    },
+    navbar: {
+        backgroundColor: "#6A197D",
+        alignItems: "center",
+    },
     card: {
         width: '46%',
         height: 80,

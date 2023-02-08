@@ -4,9 +4,7 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    Button,
     TouchableHighlight,
-    TouchableOpacity,
 } from "react-native";
 import {
     AntDesign,
@@ -119,7 +117,7 @@ export default function MatchCards({ navigation, route }) {
         <View style={styles.base}>
             <View style={styles.navbar}>
                 <View style={styles.sub_block}>
-                    <TouchableHighlight>
+                    <TouchableHighlight onPress={() => navigation.goBack()}>
                         <AntDesign name="arrowleft" size={24} color="white" />
                     </TouchableHighlight>
                 </View>
