@@ -23,6 +23,7 @@ import { MatchCards, MemoryGame, MultipleChoices, PracticeComplete } from "./scr
 import { CardScreen } from './screen/cardScreen';
 import { AddCard } from './screen/addCard';
 import { BasicReviewScreen } from './screen/basicReview';
+import { PracticeWrite } from './screen/PracticeScreen/write';
 
 const HomeStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
@@ -31,17 +32,17 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
-        name="Spending"
+        name="Collection"
         component={MainScreen}
         options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
-        name="SpendingDetail"
+        name="Card"
         component={CardScreen}
         options={{ tabBarLabel: 'Home!' }}
       />
       <HomeStack.Screen
-        name="addSpending"
+        name="Add Collection"
         component={Add}
         options={{ tabBarLabel: 'Home!' }}
       />
@@ -73,6 +74,11 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="basicReview"
         component={BasicReviewScreen}
+        options={{ tabBarLabel: 'Home!' }}
+      />
+      <HomeStack.Screen
+        name="practiceWrite"
+        component={PracticeWrite}
         options={{ tabBarLabel: 'Home!' }}
       />
     </HomeStack.Navigator>
@@ -130,22 +136,14 @@ export default function App() {
 
           }} name="Home" component={HomeStackScreen} />
 
-          <Tab.Screen options={{
-            tabBarIcon: ({ focused, color, size },) => (
-              <Icon name="piggy-bank" size={30} color={focused ? "#900" : 'gray'} />),
 
-          }} name="H" component={Targets} />
           <Tab.Screen options={{
             tabBarIcon: ({ focused, color, size },) => (
               <Icon name="chart-bar" size={30} color={focused ? "#900" : 'gray'} />),
 
           }} name="Statistic" component={Statistic} />
 
-          <Tab.Screen options={{
-            tabBarIcon: ({ focused, color, size },) => (
-              <Icon name="th-list" size={30} color={focused ? "#900" : 'gray'} />),
 
-          }} name="Todos" component={Todos} />
 
         </Tab.Navigator>
       </NavigationContainer> : <View><Text>123</Text></View>

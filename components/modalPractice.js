@@ -43,6 +43,11 @@ export const ModalPractice = (props) => {
                                 <Text>Memory Game</Text>
                             </View>
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('practiceWrite', props.id)}>
+                            <View style={{ padding: 8 }}>
+                                <Text>write</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
 
 
