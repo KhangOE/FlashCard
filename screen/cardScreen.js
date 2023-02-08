@@ -115,7 +115,10 @@ function CardScreen({ navigation, route }) {
             <Text style={styles.footerText}>Thực hành</Text>
           </View>
         </TouchableHighlight>
-        <TouchableHighlight>
+        <TouchableHighlight onPress={() => {
+          navigation.navigate('addCard', route.params
+          )
+        }}>
           <View style={styles.footerButton}>
             <Feather name="plus" size={24} color="white" />
             <Text style={styles.footerText}>Thêm thẻ</Text>

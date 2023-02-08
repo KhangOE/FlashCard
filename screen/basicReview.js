@@ -28,7 +28,7 @@ function CardReview(props) {
       easing: Easing.linear,
       useNativeDriver: true
     }).start(() => setIsFlipped(!isFlipped));
-    props.sound()
+
 
   }
   return (
@@ -36,7 +36,7 @@ function CardReview(props) {
       <View style={styles.cardWrapper}>
         <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
           <Text style={styles.vocabulary}>{props.en}</Text>
-          <Pressable style={styles.sound} onPress={() => { console.log('sound here') }}>
+          <Pressable style={styles.sound} onPress={() => { props.sound() }}>
             {/* // Đặt hàm playSound ở đây */}
             <AntDesign name="sound" size={24} color="black" />
           </Pressable>
@@ -86,26 +86,22 @@ function BasicReviewScreen({ navigation, route }) {
         await sound.playAsync();
       }
       else if (data.data[0].phonetics[1].audio) {
-        const b = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
-          const { sound } = await Audio.Sound.createAsync(
-            { uri: data.data[0].phonetics[1].audio },
-            { shouldPlay: true }
-          );
-          setSound(sound);
-          console.log('Playing Sound');
-          await sound.playAsync();
-        })
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: data.data[0].phonetics[1].audio },
+          { shouldPlay: true }
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
       }
       else {
-        const c = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
-          const { sound } = await Audio.Sound.createAsync(
-            { uri: data.data[0].phonetics[2].audio },
-            { shouldPlay: true }
-          );
-          setSound(sound);
-          console.log('Playing Sound');
-          await sound.playAsync();
-        })
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: data.data[0].phonetics[2].audio },
+          { shouldPlay: true }
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
       }
 
     })

@@ -70,13 +70,13 @@ function MainScreen({ navigation }) {
 
                 {data.map((item, idx) => {
                     return (
-                        <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('SpendingDetail', item)}
+                        <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
                             pressAdd={() => { navigation.navigate('addCard', item) }} />
                     )
                 })}
             </ScrollView>
 
-            <PlusBtn press={() => { navigation.navigate({ name: 'addSpending' }) }} />
+            <PlusBtn press={() => { navigation.navigate({ name: 'Add Collection' }) }} />
         </View>
     );
 }
