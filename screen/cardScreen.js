@@ -100,7 +100,8 @@ function CardScreen({ navigation, route }) {
           {card?.map((item) => {
             return (
               <View key={item.id}>
-                <Card vi={item.vi} en={item.en}></Card>
+
+                <Card vi={item.meaning} en={item.word}></Card>
               </View>
 
             )
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    width: '45%',
+    minWidth: '45%',
     paddingVertical: 5,
     paddingHorizontal: 12,
     marginBottom: 5
