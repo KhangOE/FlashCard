@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { getCardByCid } from '../api/firebaseApi';
@@ -9,26 +9,46 @@ import { Buffer } from "buffer";
 import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
 
+// New Screen
+import {OptionBlock} from './OptionBlock';
+import {DeleteNotification} from './deleteNotification'
+import {AddCardScreen} from './addCard';
+import {RepairCardScreen} from './repairCard';
+
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 
 function Card(props) {
-
+  const [show, setShow] = useState('none');
+  
+  function showBlock() {
+    if (show == 'none') {
+      setShow('flex');
+    }
+    else {
+      setShow('none');
+    }
+  }
   return (
-    <TouchableHighlight style={styles.card}>
-      <View>
+   <TouchableHighlight style={styles.card}>
         <View>
-          <Text style={styles.cardTitle}>{props.en}</Text>
+          <View>
+            <Text style={styles.cardTitle}>green</Text>
+          </View>
+          <View style={styles.cardMeaning}>
+            <Text>màu xanh</Text>
+          </View>
+          <View style={styles.cardFooter}>
+            <AntDesign name="sound" size={18} color="black" />
+            <View style={styles.optBlock}>
+              <Pressable style={styles.cardOpion} onPress={showBlock}>
+                {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" />: <AntDesign name="close" size={15} color="black" />}
+              </Pressable>
+              <OptionBlock bottom={'101%'} right={-20} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
+          </View>
+          </View>
         </View>
-        <View style={styles.cardMeaning}>
-          <Text>{props.vi}</Text>
-        </View>
-        <View style={styles.cardFooter}>
-          <AntDesign name="sound" size={18} color="black" />
-          <TouchableHighlight style={styles.cardOpion}>
-            <Entypo name="dots-three-vertical" size={13} color="black" />
-          </TouchableHighlight>
-        </View>
-      </View>
-    </TouchableHighlight>
+      </TouchableHighlight>
   );
 }
 
@@ -82,13 +102,52 @@ function CardScreen({ navigation, route }) {
   }, [navigation]);
 
 
-
+  // Add card
+  const [isPressBtn, setIsPressBtn] = useState('none');  
+  // Repair card
+  const [isRepairBtn, setIsRepairBtn] = useState('none');
+    // Delete notification
+  const [isDelete, setIsDelete] = useState('none');
+  function displayAddTopicScreen() {
+    if (isPressBtn == 'none') {
+      setIsPressBtn('flex');
+    }
+    else {
+      setIsPressBtn('none');
+    }
+  }
+  function displayRepairTopicScreen() {
+    if (isRepairBtn == 'none') {
+      setIsRepairBtn('flex');
+    }
+    else {
+      setIsRepairBtn('none');
+    }
+  }
+  function displayDeleteNotification() {
+    if(isDelete == 'none') {
+      setIsDelete('flex');
+    }
+    else {
+      setIsDelete('none');
+    }
+  }
+  
   return (
-    <View style={styles.base}>
+      <SafeAreaView style={styles.base}>
       <View style={styles.navbar}>
+        <View style={styles.sub_block}>
+          <TouchableHighlight>
+            <AntDesign name="arrowleft" size={24} color="white" />
+          </TouchableHighlight>
+          <TouchableHighlight>
+            <FontAwesome name="search" size={20} color="white" />
+          </TouchableHighlight>
+        </View>
+      </View>
         {/* <Button title="Play Sound" onPress={playSound} /> */}
 
-      </View>
+      
 
       <View style={styles.cardList}>
         <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
@@ -96,12 +155,12 @@ function CardScreen({ navigation, route }) {
         <View style={styles.cardFirstBlock}>
           <Text style={styles.cardTotal}> Tất cả : 2 </Text>
         </View>
-        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} style={styles.cardSecondBlock}>
+        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',paddingVertical: 10 }} style={styles.cardSecondBlock}>
           {card?.map((item) => {
             return (
               <View key={item.id}>
 
-                <Card vi={item.meaning} en={item.word}></Card>
+                <Card vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification}></Card>
               </View>
 
             )
@@ -110,23 +169,34 @@ function CardScreen({ navigation, route }) {
       </View>
 
       <View style={styles.cardThirdBlock}>
-        <TouchableHighlight onPress={() => { setModalVisible(state => !state) }}>
+        <Pressable onPress={() => { setModalVisible(state => !state) }}>
           <View style={styles.footerButton}>
             <SimpleLineIcons name="graduation" size={24} color="white" />
             <Text style={styles.footerText}>Thực hành</Text>
           </View>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={() => {
+        </Pressable>
+        <Pressable onPress={() => {
           navigation.navigate('addCard', route.params
-          )
+          );
+          displayAddTopicScreen();
         }}>
           <View style={styles.footerButton}>
             <Feather name="plus" size={24} color="white" />
             <Text style={styles.footerText}>Thêm thẻ</Text>
           </View>
-        </TouchableHighlight>
+        </Pressable>
       </View>
     </View>
+
+    {/* Cửa sổ nhỏ để nhập tên Topic*/}
+      <AddCardScreen display={isPressBtn} handle={displayAddTopicScreen}/>
+
+      {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
+      <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen}/>
+
+      {/* Cửa sổ nhỏ để xóa topic*/}
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification}/>
+    </SafeAreaView>
   );
 }
 
@@ -145,6 +215,9 @@ const styles = StyleSheet.create({
   navbar: {
     backgroundColor: '#6A197D',
     alignItems: 'center'
+  },
+  optBlock: {
+    paddingHorizontal: 8
   },
   cardList: {
     backgroundColor: '#DFDFDE'
@@ -166,20 +239,21 @@ const styles = StyleSheet.create({
   },
   cardSecondBlock: {
     backgroundColor: '#DFDFDE',
-    // maxHeight: 350,
-    // minHeight: 350,
+    minHeight: height * 0.7,
+    maxHeight: height * 0.77,
     paddingHorizontal: 14
   },
   card: {
     backgroundColor: '#fff',
-    minWidth: '45%',
+    width: '48%',
     paddingVertical: 5,
     paddingHorizontal: 12,
-    marginBottom: 5
+    marginBottom: 20,
+    zIndex: 1
   },
   cardTitle: {
     fontWeight: '700',
-    fontSize: 16
+    fontSize: 18
   },
   cardMeaning: {
     marginVertical: 5
@@ -187,7 +261,8 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 20
   },
   cardOpion: {
     marginTop: 3
@@ -201,8 +276,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    // left: 0,
-    // right: 0,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#fff'
