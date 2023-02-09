@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
+import { getAuth, signOut } from 'firebase/auth';
 function TopicTag(props) {
 
     const handle = () => {
@@ -63,6 +64,15 @@ function MainScreen({ navigation }) {
 
     const [modalVisible, setModalVisible] = useState(false);
 
+    const Logout = () => {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            // Sign-out successful.
+        }).catch((error) => {
+            // An error happened.
+        });
+    }
+
     return (
         <View style={styles.base}>
             <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
@@ -77,6 +87,9 @@ function MainScreen({ navigation }) {
             </ScrollView>
 
             <PlusBtn press={() => { navigation.navigate({ name: 'Add Collection' }) }} />
+            <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
+                <Text> Logout </Text>
+            </TouchableHighlight>
         </View>
     );
 }

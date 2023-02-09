@@ -85,6 +85,7 @@ export async function checkDoc(props) {
 
 
 export async function getTopicById(props) {
+  console.log(auth.currentUser.uid)
   try {
     const urlsRef = collection(db, "Collection");
     const q = query(urlsRef, where("userID", "==", auth.currentUser.uid));
