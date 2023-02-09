@@ -2,6 +2,9 @@ import { View, Button, TextInput } from "react-native";
 import { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
+
+const db = getFirestore();
 
 export default function Login() {
   const [email, setEmail] = useState();
@@ -21,18 +24,16 @@ export default function Login() {
 
   const onGoogleSignIn = async () => {
     signInWithPopup(auth, provider).then(result => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
       const user = result.user;
+      console.log(user)
       setDoc(doc(db, "users", user.uid), {
         name: user.displayName,
         email: user.email,
       });
     }).catch((error) => {
-      // const errorCode = error.code;
-      // const errorMessage = error.message;
-      // const email = error.customData.email;
-      // const credential = GoogleAuthProvider.credentialFromError(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error(errorCode, errorMessage);
     })
   }
 
