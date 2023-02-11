@@ -19,13 +19,14 @@ export const Add = () => {
 
         <View>
             {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <Text style={{ height : 20, margin : 8}}>
+            <Text style={{ height: 20, margin: 8 }}>
                 Tên
             </Text>
             <TextInput
-                style={{ height: 40 , 
-                    backgroundColor: '#fff' , 
-                    margin : 8, 
+                style={{
+                    height: 40,
+                    backgroundColor: '#fff',
+                    margin: 8,
                     justifyContent: 'center',
                     borderRadius: 5,
                     //paddingVertical: 15,
@@ -37,13 +38,14 @@ export const Add = () => {
                 defaultValue={name}
 
             />
-            <Text style={{ height : 20, margin : 8}}>
+            <Text style={{ height: 20, margin: 8 }}>
                 Mô tả - không bắt buộc
             </Text>
             <TextInput
-                style={{ height: 40 , 
-                    backgroundColor: '#fff' , 
-                    margin : 8, 
+                style={{
+                    height: 40,
+                    backgroundColor: '#fff',
+                    margin: 8,
                     justifyContent: 'center',
                     borderRadius: 5,
                     //paddingVertical: 15,
