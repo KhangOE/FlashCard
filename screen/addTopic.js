@@ -1,34 +1,34 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions} from 'react-native';
-import {FontAwesome, AntDesign, Entypo, Feather} from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions } from 'react-native';
+import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 function AddTopicScreen(props) {
   return (
-    <View style={[styles.bigBlock, {display: props.display}]}>
+    <View style={[styles.bigBlock, { display: props.display }]}>
       <Pressable style={styles.wrapper}>
 
-      <View style={styles.dialog}>
-        <View style={styles.header}>
-          <Pressable onPress={props.handle} style={{padding: 5}}>
-            <Feather name="x" size={20} color="white" />
-          </Pressable>
-          <Pressable style={{padding: 5}}>
-            <Feather name="check" size={20} color="white" />
+        <View style={styles.dialog}>
+          <View style={styles.header}>
+            <Pressable onPress={props.handle} style={{ padding: 5 }}>
+              <Feather name="x" size={20} color="white" />
+            </Pressable>
+            <Pressable style={{ padding: 5 }}>
+              <Feather name="check" size={20} color="white" />
+            </Pressable>
+          </View>
+
+          <View style={styles.bodyContent}>
+            <TextInput style={styles.inputField}
+              placeholder="Chủ đề"
+            />
+          </View>
+
+          <Pressable style={styles.addBtn}>
+            <Text style={styles.textBtn}>Thêm thẻ</Text>
           </Pressable>
         </View>
-
-        <View style={styles.bodyContent}>
-          <TextInput style={styles.inputField}
-                  placeholder="Chủ đề"
-          />
-        </View>
-
-        <Pressable style={styles.addBtn}>
-          <Text style={styles.textBtn}>Thêm thẻ</Text>
-        </Pressable>
-      </View>
       </Pressable>
     </View>
   );
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: 30,
     marginBottom: 20,
-    transform: [{translateY: -60}]
+    transform: [{ translateY: -60 }]
   },
   header: {
     backgroundColor: '#6A197D',
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
     color: 'white'
   }
 });
-export {AddTopicScreen};
+export { AddTopicScreen };
