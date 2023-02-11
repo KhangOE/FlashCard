@@ -56,13 +56,8 @@ export default function App() {
     return (
       <NavigationContainer>
         <HomeStack.Navigator>
-          <HomeStack.Screen
-            name="Landing"
-            component={LandingScreen}
-            options={{ headerShown: false }}
-          />
-          <HomeStack.Screen name="Register" component={RegisterScreen} />
-          <HomeStack.Screen name="Login" component={LoginScreen} />
+          <HomeStack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <HomeStack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         </HomeStack.Navigator>
       </NavigationContainer>
     );
