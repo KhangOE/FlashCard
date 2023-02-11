@@ -4,26 +4,49 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 
+const db = getFirestore();
+
 export default function Register({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const db = getFirestore();
+  const [error, setError] = useState('')
+
+  const validateEmail = (email) => {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    var re = /^.{8,32}$/;
+    return re.test(password)
+  }
 
   const onSignUp = async () => {
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setDoc(doc(db, "users", user.uid), {
-          name: name,
-          email: user.email,
+    if (email === "" || password === "" || name === "") {
+      setError("Vui lòng nhập đầy đủ thông tin!")
+    } else if (!validateEmail(email)) {
+      setError("Email không đúng!")
+    } else if (!validatePassword(password)) {
+      setError("Password phải đủ 8 kí tự và nhỏ hơn 32 kí tự")
+    } else {
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: user.email,
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+          if (errorCode === "auth/email-already-in-use") {
+            setError("Email đã tồn tại!")
+          }
         });
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+    }
   };
 
   return (
@@ -42,6 +65,7 @@ export default function Register({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="name"
+          placeholderTextColor="#B0B0B0"
           onChangeText={(text) => setName(text)}
           value={name}
         />
@@ -49,6 +73,7 @@ export default function Register({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="email"
+          placeholderTextColor="#B0B0B0"
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
@@ -56,10 +81,12 @@ export default function Register({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="password"
+          placeholderTextColor="#B0B0B0"
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
         />
+        <Text style={[styles.errorMessage, error !== "" && { opacity: 1 }]}>{error}</Text>
       </View>
       <View style={styles.thirdBlock}>
         <TouchableOpacity style={styles.button} onPress={onSignUp}>
@@ -89,7 +116,7 @@ const styles = StyleSheet.create({
     color: "#B0B0B0"
   },
   secondBlock: {
-    marginVertical: 20
+    marginTop: 20,
   },
   secondBlockText: {
     fontSize: 16,
@@ -103,6 +130,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRadius: 15,
     fontSize: 16,
+    marginBottom: 10
+  },
+  errorMessage: {
+    marginBottom: 10,
+    height: 20,
+    opacity: 0,
+    color: "red",
   },
   thirdBlock: {
     marginVertical: 20,

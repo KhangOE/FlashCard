@@ -10,17 +10,33 @@ const db = getFirestore();
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('')
+
+  const validateEmail = (email) => {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  };
 
   const onSignIn = async () => {
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error(errorCode, errorMessage);
-      });
+    if (email === "" || password === "") {
+      setError("Vui lòng nhập đầy đủ thông tin!")
+    } else if (!validateEmail(email)) {
+      setError("Email không đúng!")
+    } else {
+      await signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (errorCode === "auth/user-not-found") {
+            setError("Người dùng không tìm thấy")
+          } else if (errorCode === "auth/wrong-password") {
+            setError("Sai mật khẩu")
+          }
+        });
+    }
+
   };
 
   const onGoogleSignIn = async () => {
@@ -48,12 +64,14 @@ export default function Login({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
           <Text style={[styles.firstBlockText, styles.nonSelectedText]}>Sign Up</Text>
         </TouchableOpacity>
+
       </View>
       <View style={styles.secondBlock}>
         <Text style={styles.secondBlockText}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="email"
+          placeholderTextColor="#B0B0B0"
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
@@ -61,10 +79,12 @@ export default function Login({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="password"
+          placeholderTextColor="#B0B0B0"
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
         />
+        <Text style={[styles.errorMessage, error !== "" && { opacity: 1 }]}>{error}</Text>
       </View>
       <View style={styles.thirdBlock}>
         <TouchableOpacity style={styles.button} onPress={onSignIn}>
@@ -74,6 +94,7 @@ export default function Login({ navigation }) {
         <FontAwesome.Button name="google" backgroundColor="#4285F4" style={{ fontFamily: "Roboto", alignSelf: "center" }} onPress={onGoogleSignIn}>
           Login with Google
         </FontAwesome.Button>
+
       </View>
     </View>
   );
@@ -98,7 +119,7 @@ const styles = StyleSheet.create({
     color: "#B0B0B0"
   },
   secondBlock: {
-    marginVertical: 20
+    marginTop: 20,
   },
   secondBlockText: {
     fontSize: 16,
@@ -112,6 +133,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRadius: 15,
     fontSize: 16,
+    marginBottom: 10
+  },
+  errorMessage: {
+    marginBottom: 10,
+    height: 20,
+    opacity: 0,
+    color: "red",
   },
   thirdBlock: {
     marginVertical: 20,
