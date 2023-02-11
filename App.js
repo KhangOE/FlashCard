@@ -1,22 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { addspending, deleteSpending, getspending } from './api/firebaseApi';
-import { autoSignIn } from './api/firebaseApi';
 import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase"
-import { async } from '@firebase/util';
-import { Test } from './screen/Spendings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Add } from './screen/addSpending';
-import { Detail } from './screen/collectionDetail';
+import { Add } from './screen/addCollection';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Targets } from './screen/targets';
-import { AddSpending } from './screen/addSpending';
-import { Todos } from './screen/todos';
-import { Statistic } from './screen/statistic';
+
 import { MainScreen } from './screen/main';
 import { MatchCards, MemoryGame, MultipleChoices, PracticeComplete } from "./screen/PracticeScreen"
 

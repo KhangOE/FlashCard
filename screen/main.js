@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity,  Dimensions, Pressable, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView } from 'react-native';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
@@ -10,10 +10,10 @@ import { getTopicById } from '../api/firebaseApi';
 import { getAuth, signOut } from 'firebase/auth';
 
 // New Screen
-import {OptionBlock} from './OptionBlock';
-import {AddTopicScreen} from './addTopic';
-import {RepairTopicScreen} from './repairTopic';
-import {DeleteNotification} from './deleteNotification';
+import { OptionBlock } from './OptionBlock';
+import { AddTopicScreen } from './addTopic';
+import { RepairTopicScreen } from './repairTopic';
+import { DeleteNotification } from './deleteNotification';
 
 
 const width = Dimensions.get('screen').width;
@@ -22,12 +22,12 @@ const height = Dimensions.get('screen').height;
 
 function TopicTag(props) {
 
-    const handle = () => {
-        navigation.navigate({ name: 'addSpending' })
-    }
-    
-    const [show, setShow] = useState('none');
-  
+  const handle = () => {
+    navigation.navigate({ name: 'addSpending' })
+  }
+
+  const [show, setShow] = useState('none');
+
   function showBlock() {
     if (show == 'none') {
       setShow('flex');
@@ -36,73 +36,73 @@ function TopicTag(props) {
       setShow('none');
     }
   }
-    return (
-        <TouchableOpacity onPress={props.press}>
-            <View style={styles.topicTag}>
-                <View style={styles.topicTagSet}>
-                    <View style={styles.topicFirstBlock}>
-                        <Text style={styles.topicTitle}> {props.name}</Text>
-                        <View style={styles.optBlock}>
-                          <Pressable onPress={showBlock}>
-                            {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" />: <AntDesign name="close" size={24} color="black" />}
-                          </Pressable>
-                          <OptionBlock top={'100%'} right={-10} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic}/>
-                        </View>
-                    </View>
-                    <View style={styles.topicSecondBlock}>
-                        <TouchableHighlight onPress={props.pressAdd}>
-                            <View style={styles.topicAddButton}>
-                                <AntDesign name="plus" size={16} color="white" />
-                                <Text style={styles.topicFirstText}> Thêm thẻ </Text>
-                            </View>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.topicPractise} onPress={() => {
-                            props.setvisible(state => !state)
-                            props.settopic()
-
-                        }}>
-                            <Text style={styles.topicSecondText}> Thực hành </Text>
-                        </TouchableHighlight>
-                    </View>
-                </View>
+  return (
+    <TouchableOpacity onPress={props.press}>
+      <View style={styles.topicTag}>
+        <View style={styles.topicTagSet}>
+          <View style={styles.topicFirstBlock}>
+            <Text style={styles.topicTitle}> {props.name}</Text>
+            <View style={styles.optBlock}>
+              <Pressable onPress={showBlock}>
+                {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={24} color="black" />}
+              </Pressable>
+              <OptionBlock top={'100%'} right={-10} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
             </View>
-        </TouchableOpacity>
-    );
+          </View>
+          <View style={styles.topicSecondBlock}>
+            <TouchableHighlight onPress={props.pressAdd}>
+              <View style={styles.topicAddButton}>
+                <AntDesign name="plus" size={16} color="white" />
+                <Text style={styles.topicFirstText}> Thêm thẻ </Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.topicPractise} onPress={() => {
+              props.setvisible(state => !state)
+              props.settopic()
+
+            }}>
+              <Text style={styles.topicSecondText}> Thực hành </Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 }
 
 
 
 function MainScreen({ navigation }) {
-    const [data, setdata] = useState([])
-    const [topic, setTopic] = useState()
+  const [data, setdata] = useState([])
+  const [topic, setTopic] = useState()
 
 
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            getTopicById().then(data => {
-                setdata(data)
-                console.log(data)
-            }).then(() => {
-            })
-            //  console.log('Hello World!')
-        });
-        return unsubscribe;
-    }, [navigation]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getTopicById().then(data => {
+        setdata(data)
+        console.log(data)
+      }).then(() => {
+      })
+      //  console.log('Hello World!')
+    });
+    return unsubscribe;
+  }, [navigation]);
 
-    const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-    const Logout = () => {
-        const auth = getAuth();
-        signOut(auth).then(() => {
-            // Sign-out successful.
-        }).catch((error) => {
-            // An error happened.
-        });
-    }
-    
-    
-    // Add topic
-  const [isPressBtn, setIsPressBtn] = useState('none');  
+  const Logout = () => {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+
+
+  // Add topic
+  const [isPressBtn, setIsPressBtn] = useState('none');
   // Repair topic
   const [isRepairBtn, setIsRepairBtn] = useState('none');
   // Delete notification
@@ -124,56 +124,56 @@ function MainScreen({ navigation }) {
     }
   }
   function displayDeleteNotification() {
-    if(isDelete == 'none') {
+    if (isDelete == 'none') {
       setIsDelete('flex');
     }
     else {
       setIsDelete('none');
     }
   }
-    
-    return (
-        <SafeAreaView style={styles.base}>
-            <View style={styles.navbar}>
-                <View style={styles.sub_block}>
-                  <TouchableHighlight>
-                    <AntDesign name="arrowleft" size={24} color="white" />
-                  </TouchableHighlight>
-                  <TouchableHighlight>
-                    <FontAwesome name="search" size={20} color="white" />
-                  </TouchableHighlight>
-                </View>
-              </View>
 
-            <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
+  return (
+    <SafeAreaView style={styles.base}>
+      <View style={styles.navbar}>
+        <View style={styles.sub_block}>
+          <TouchableHighlight>
+            <AntDesign name="arrowleft" size={24} color="white" />
+          </TouchableHighlight>
+          <TouchableHighlight>
+            <FontAwesome name="search" size={20} color="white" />
+          </TouchableHighlight>
+        </View>
+      </View>
 
-            <ScrollView style={styles.topicList}>
+      <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
 
-                {data.map((item, idx) => {
-                    return (
-                        <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
-                            pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
-                    )
-                })}
-            </ScrollView>
-            
-            {/* Nút bấm để thêm topic*/}
-            <PlusBtn press={() => { navigation.navigate({ name: 'Add Collection' }); displayAddTopicScreen() }} />
+      <ScrollView style={styles.topicList}>
 
-            {/* Cửa sổ nhỏ để nhập tên Topic*/}
-              <AddTopicScreen display={isPressBtn} handle={displayAddTopicScreen}/>
+        {data.map((item, idx) => {
+          return (
+            <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
+              pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
+          )
+        })}
+      </ScrollView>
 
-              {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
-              <RepairTopicScreen display={isRepairBtn} handle={displayRepairTopicScreen}/>
+      {/* Nút bấm để thêm topic*/}
+      <PlusBtn press={() => { navigation.navigate({ name: 'Add Collection' }); displayAddTopicScreen() }} />
 
-              {/* Cửa sổ nhỏ để xóa topic*/}
-              <DeleteNotification display={isDelete} handle={displayDeleteNotification}/>
-                  
-            <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
-                <Text> Logout </Text>
-            </TouchableHighlight>
-        </SafeAreaView>
-    );
+      {/* Cửa sổ nhỏ để nhập tên Topic*/}
+      {/* <AddTopicScreen display={isPressBtn} handle={displayAddTopicScreen}/> */}
+
+      {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
+      <RepairTopicScreen display={isRepairBtn} handle={displayRepairTopicScreen} />
+
+      {/* Cửa sổ nhỏ để xóa topic*/}
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} />
+
+      <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
+        <Text> Logout </Text>
+      </TouchableHighlight>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -255,4 +255,4 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
-export {MainScreen};
+export { MainScreen };

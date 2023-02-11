@@ -10,7 +10,7 @@ export const Add = () => {
     const [note, setNote] = useState('')
 
     const handle = () => {
-        addCollection({ money: name, note: note })
+        addCollection({ name: name, note: note })
         setNote('')
         setName('')
         console.log(note, name)
@@ -19,26 +19,44 @@ export const Add = () => {
 
         <View>
             {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <Text>
-                Ten
+            <Text style={{ height : 20, margin : 8}}>
+                Tên
             </Text>
             <TextInput
-                style={{ height: 40 }}
+                style={{ height: 40 , 
+                    backgroundColor: '#fff' , 
+                    margin : 8, 
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    //paddingVertical: 15,
+                    paddingHorizontal: 10,
+                    marginTop: 4,
+                }}
                 placeholder=""
-                onChangename={newname => setName(newname)}
+                onChangeText={newname => setName(newname)}
                 defaultValue={name}
 
             />
-            <name>
-                ghi chu
-            </name>
+            <Text style={{ height : 20, margin : 8}}>
+                Mô tả - không bắt buộc
+            </Text>
             <TextInput
-                style={{ height: 40 }}
+                style={{ height: 40 , 
+                    backgroundColor: '#fff' , 
+                    margin : 8, 
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    //paddingVertical: 15,
+                    paddingHorizontal: 10,
+                    marginTop: 4,
+                }}
                 placeholder=""
                 onChangeText={newText => setNote(newText)}
                 defaultValue={note}
+
+
             />
-            <Button title='add transaction' onPress={handle}>
+            <Button title='Thêm bộ' onPress={handle}>
 
             </Button>
 
