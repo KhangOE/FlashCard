@@ -10,17 +10,17 @@ import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
 
 // New Screen
-import {OptionBlock} from './OptionBlock';
-import {DeleteNotification} from './deleteNotification'
-import {AddCardScreen} from './addCard';
-import {RepairCardScreen} from './repairCard';
+import { OptionBlock } from './OptionBlock';
+import { DeleteNotification } from './deleteNotification'
+import { AddCardScreen } from './addCard';
+import { RepairCardScreen } from './repairCard';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
 function Card(props) {
   const [show, setShow] = useState('none');
-  
+
   function showBlock() {
     if (show == 'none') {
       setShow('flex');
@@ -30,25 +30,25 @@ function Card(props) {
     }
   }
   return (
-   <TouchableHighlight style={styles.card}>
+    <TouchableHighlight style={styles.card}>
+      <View>
         <View>
-          <View>
-            <Text style={styles.cardTitle}>green</Text>
-          </View>
-          <View style={styles.cardMeaning}>
-            <Text>màu xanh</Text>
-          </View>
-          <View style={styles.cardFooter}>
-            <AntDesign name="sound" size={18} color="black" />
-            <View style={styles.optBlock}>
-              <Pressable style={styles.cardOpion} onPress={showBlock}>
-                {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" />: <AntDesign name="close" size={15} color="black" />}
-              </Pressable>
-              <OptionBlock bottom={'101%'} right={-20} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
-          </View>
+          <Text style={styles.cardTitle}>green</Text>
+        </View>
+        <View style={styles.cardMeaning}>
+          <Text>màu xanh</Text>
+        </View>
+        <View style={styles.cardFooter}>
+          <AntDesign name="sound" size={18} color="black" />
+          <View style={styles.optBlock}>
+            <Pressable style={styles.cardOpion} onPress={showBlock}>
+              {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={15} color="black" />}
+            </Pressable>
+            <OptionBlock bottom={'101%'} right={-20} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
           </View>
         </View>
-      </TouchableHighlight>
+      </View>
+    </TouchableHighlight>
   );
 }
 
@@ -103,10 +103,10 @@ function CardScreen({ navigation, route }) {
 
 
   // Add card
-  const [isPressBtn, setIsPressBtn] = useState('none');  
+  const [isPressBtn, setIsPressBtn] = useState('none');
   // Repair card
   const [isRepairBtn, setIsRepairBtn] = useState('none');
-    // Delete notification
+  // Delete notification
   const [isDelete, setIsDelete] = useState('none');
   function displayAddTopicScreen() {
     if (isPressBtn == 'none') {
@@ -125,16 +125,16 @@ function CardScreen({ navigation, route }) {
     }
   }
   function displayDeleteNotification() {
-    if(isDelete == 'none') {
+    if (isDelete == 'none') {
       setIsDelete('flex');
     }
     else {
       setIsDelete('none');
     }
   }
-  
+
   return (
-      <SafeAreaView style={styles.base}>
+    <SafeAreaView style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight>
@@ -145,9 +145,9 @@ function CardScreen({ navigation, route }) {
           </TouchableHighlight>
         </View>
       </View>
-        {/* <Button title="Play Sound" onPress={playSound} /> */}
+      {/* <Button title="Play Sound" onPress={playSound} /> */}
 
-      
+
 
       <View style={styles.cardList}>
         <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
@@ -155,7 +155,7 @@ function CardScreen({ navigation, route }) {
         <View style={styles.cardFirstBlock}>
           <Text style={styles.cardTotal}> Tất cả : 2 </Text>
         </View>
-        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',paddingVertical: 10 }} style={styles.cardSecondBlock}>
+        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
           {card?.map((item) => {
             return (
               <View key={item.id}>
@@ -186,17 +186,16 @@ function CardScreen({ navigation, route }) {
           </View>
         </Pressable>
       </View>
-    </View>
 
-    {/* Cửa sổ nhỏ để nhập tên Topic*/}
-      <AddCardScreen display={isPressBtn} handle={displayAddTopicScreen}/>
+      {/* Cửa sổ nhỏ để nhập tên Topic*/}
+      <AddCardScreen display={isPressBtn} handle={displayAddTopicScreen} />
 
       {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
-      <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen}/>
+      <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} />
 
       {/* Cửa sổ nhỏ để xóa topic*/}
-      <DeleteNotification display={isDelete} handle={displayDeleteNotification}/>
-    </SafeAreaView>
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} />
+    </SafeAreaView >
   );
 }
 

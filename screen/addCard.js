@@ -1,80 +1,80 @@
 import { async } from '@firebase/util';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView,  Pressable, Dimensions } from 'react-native';
-import {FontAwesome, AntDesign, Entypo, Feather} from '@expo/vector-icons';
+import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions } from 'react-native';
+import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-export const AddCardScreen = ({ navigation, route }) => {
-    const [cname, setCname] = useState('')
-    const [cid, setCid] = useState()
-    const [en, setEn] = useState('')
-    const [vi, setVi] = useState('')
-    const [ex, setEx] = useState('')
-    useEffect(() => {
-        setCname(route.params.name)
-        setCid(route.params.id)
-    }, []);
-    useEffect(() => {
-        //   console.log(route.params)
-    }, [])
-    const handle = () => {
-        addCard({ en: en, vi: vi, cid: cid, ex: ex })
-        setEn('')
-        setVi('')
-        // console.log(note, name)
-    }
+const AddCardScreen = ({ navigation, route }) => {
+  const [cname, setCname] = useState('')
+  const [cid, setCid] = useState()
+  const [en, setEn] = useState('')
+  const [vi, setVi] = useState('')
+  const [ex, setEx] = useState('')
+  useEffect(() => {
+    setCname(route.params.name)
+    setCid(route.params.id)
+  }, []);
+  useEffect(() => {
+    //   console.log(route.params)
+  }, [])
+  const handle = () => {
+    addCard({ en: en, vi: vi, cid: cid, ex: ex })
+    setEn('')
+    setVi('')
+    // console.log(note, name)
+  }
 
-   return (
-        <SafeAreaView style={[styles.base, {display: props.display}]}>
-          <View style={styles.navbar}>
-            <View style={styles.sub_block}>
-              <Pressable onPress={props.handle}>
-                <Feather name="x" size={24} color="white" />
-              </Pressable>
-              <Pressable>
-                <Feather name="check" size={24} color="white" />
-              </Pressable>
-            </View>
+  return (
+    <SafeAreaView style={[styles.base, { display: props.display }]}>
+      <View style={styles.navbar}>
+        <View style={styles.sub_block}>
+          <Pressable onPress={props.handle}>
+            <Feather name="x" size={24} color="white" />
+          </Pressable>
+          <Pressable>
+            <Feather name="check" size={24} color="white" />
+          </Pressable>
+        </View>
+      </View>
+
+
+      <View style={styles.mainBlock}>
+        <View style={styles.wrapper}>
+          {/* <Button title='Add default' onPress={handle} ></Button> */}
+          <View style={styles.addVocabulary}>
+            <Text style={styles.title}>
+              Thuật ngữ
+            </Text>
+            <TextInput style={styles.inputField}
+              placeholder=""
+              onChangeText={newname => setEn(newname)}
+              defaultValue={en}
+            />
           </View>
-
-          
-          <View style={styles.mainBlock}>
-            <View style={styles.wrapper}>
-            {/* <Button title='Add default' onPress={handle} ></Button> */}
-            <View style={styles.addVocabulary}>
-              <Text style={styles.title}>
-                  Thuật ngữ 
-              </Text>
-              <TextInput style={styles.inputField}
-                  placeholder=""
-                  onChangeText={newname => setEn(newname)}
-                  defaultValue={en}
-              />
-            </View>
-            <View style={styles.addMeaning}>
-              <Text style={styles.title}>
-                  Định nghĩa
-              </Text>
-              <TextInput style={styles.inputField}
-                  placeholder=""
-                  onChangeText={newText => setVi(newText)}
-                  defaultValue={vi}
-              />
-            </View>
-            <View style={styles.addExample}>
-              <Text style={styles.title}>
-                  Ví dụ
-              </Text>
-              <TextInput style={styles.inputField}
-                  placeholder=""
-                  onChangeText={newname => setEn(newname)}
-                  defaultValue={en}
-              />
-            </View>
-              {/* <Text>
+          <View style={styles.addMeaning}>
+            <Text style={styles.title}>
+              Định nghĩa
+            </Text>
+            <TextInput style={styles.inputField}
+              placeholder=""
+              onChangeText={newText => setVi(newText)}
+              defaultValue={vi}
+            />
+          </View>
+          <View style={styles.addExample}>
+            <Text style={styles.title}>
+              Ví dụ
+            </Text>
+            <TextInput style={styles.inputField}
+              placeholder=""
+              onChangeText={newname => setEn(newname)}
+              defaultValue={en}
+            />
+          </View>
+          {/* <Text>
                   ex
               </Text>
               <TextInput
@@ -83,22 +83,22 @@ export const AddCardScreen = ({ navigation, route }) => {
                   onChangeText={newText => setEx(newText)}
                   defaultValue={ex}
               /> */}
-              <Pressable style={styles.addBtn} onPress={handle}>
-                <Text style={styles.textBtn}>Thêm thẻ tiếp theo</Text>
-              </Pressable>
-              {/* <Button title={cname || 'we'} onPress={handle}>
+          <Pressable style={styles.addBtn} onPress={handle}>
+            <Text style={styles.textBtn}>Thêm thẻ tiếp theo</Text>
+          </Pressable>
+          {/* <Button title={cname || 'we'} onPress={handle}>
               </Button> */}
-          </View>
         </View>
+      </View>
     </SafeAreaView>
-        
-    )
 
-    // Bugs : khi focus vào inputText thì keyboard đẩy button lên che trường ví dụ
-  }
+  )
+
+  // Bugs : khi focus vào inputText thì keyboard đẩy button lên che trường ví dụ
+}
 
 const styles = StyleSheet.create({
-    base: {
+  base: {
     flex: 1,
     position: 'absolute',
     width: '100%',
@@ -162,4 +162,4 @@ const styles = StyleSheet.create({
     color: 'white'
   }
 });
-export {AddCardScreen};
+export { AddCardScreen };

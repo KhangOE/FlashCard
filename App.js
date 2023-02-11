@@ -21,7 +21,7 @@ import { MainScreen } from './screen/main';
 import { MatchCards, MemoryGame, MultipleChoices, PracticeComplete } from "./screen/PracticeScreen"
 
 import { CardScreen } from './screen/cardScreen';
-import { AddCard } from './screen/addCard';
+import { AddCard, AddCardScreen } from './screen/addCard';
 import { BasicReviewScreen } from './screen/basicReview';
 import { PracticeWrite } from './screen/PracticeScreen/write';
 
@@ -100,7 +100,7 @@ export default function App() {
         />
         <HomeStack.Screen
           name="addCard"
-          component={AddCard}
+          component={AddCardScreen}
           options={{ tabBarLabel: 'Home!' }}
         />
         <HomeStack.Screen
