@@ -33,22 +33,25 @@ function Card(props) {
     <TouchableHighlight style={styles.card}>
       <View>
         <View>
-          <Text style={styles.cardTitle}>green</Text>
+          <Text style={styles.cardTitle}>{props.en}</Text>
         </View>
         <View style={styles.cardMeaning}>
-          <Text>màu xanh</Text>
+          <Text>{props.vi}</Text>
         </View>
         <View style={styles.cardFooter}>
           <AntDesign name="sound" size={18} color="black" />
           <View style={styles.optBlock}>
-            <Pressable style={styles.cardOpion} onPress={showBlock}>
+            <Pressable style={styles.cardOpion} onPress={() => {
+              showBlock()
+              props.setItem(props.item)
+            }}>
               {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={15} color="black" />}
             </Pressable>
             <OptionBlock bottom={'101%'} right={-20} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
           </View>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableHighlight >
   );
 }
 
@@ -56,6 +59,8 @@ function CardScreen({ navigation, route }) {
 
   const [card, setCard] = useState()
   const [cid, setCid] = useState()
+  const [item, setItem] = useState()
+  const [freshKey, setFreshKey] = useState(1)
   // const [sound, setSound] = useState();
 
 
@@ -87,19 +92,30 @@ function CardScreen({ navigation, route }) {
   // }, [sound]);
 
   useEffect(() => {
+    console.log(freshKey)
     const unsubscribe = navigation.addListener('focus', () => {
       console.log(route.params.id)
       setCid(route.params.id)
       checkDoc({ cid: route.params.id }).then(data => {
         setCard(data)
-        console.log(data)
+        console.log('data', data)
         //  console.log(data)
       }).then(() => {
       })
       //  console.log('Hello World!')
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, freshKey]);
+
+
+  useEffect(() => {
+
+    setCid(route.params.id)
+    checkDoc({ cid: route.params.id }).then(data => {
+      setCard(data)
+    })
+
+  }, [freshKey]);
 
 
   // Add card
@@ -160,7 +176,7 @@ function CardScreen({ navigation, route }) {
             return (
               <View key={item.id}>
 
-                <Card vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification}></Card>
+                <Card item={item} vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} setItem={setItem}></Card>
               </View>
 
             )
@@ -178,7 +194,7 @@ function CardScreen({ navigation, route }) {
         <Pressable onPress={() => {
           navigation.navigate('addCard', route.params
           );
-          displayAddTopicScreen();
+          //displayAddTopicScreen();
         }}>
           <View style={styles.footerButton}>
             <Feather name="plus" size={24} color="white" />
@@ -188,13 +204,13 @@ function CardScreen({ navigation, route }) {
       </View>
 
       {/* Cửa sổ nhỏ để nhập tên Topic*/}
-      <AddCardScreen display={isPressBtn} handle={displayAddTopicScreen} />
+      {/* <AddCardScreen display={isPressBtn} handle={displayAddTopicScreen} /> */}
 
       {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
-      <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} />
+      <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={item} setCard={setCard} setFreshKey={setFreshKey} />
 
       {/* Cửa sổ nhỏ để xóa topic*/}
-      <DeleteNotification display={isDelete} handle={displayDeleteNotification} />
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
     </SafeAreaView >
   );
 }
@@ -244,7 +260,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    width: '48%',
+    minWidth: '48%',
     paddingVertical: 5,
     paddingHorizontal: 12,
     marginBottom: 20,

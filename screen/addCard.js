@@ -28,10 +28,10 @@ const AddCardScreen = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={[styles.base, { display: props.display }]}>
+    <SafeAreaView style={[styles.base, { display: 'flex' }]}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <Pressable onPress={props.handle}>
+          <Pressable >
             <Feather name="x" size={24} color="white" />
           </Pressable>
           <Pressable>

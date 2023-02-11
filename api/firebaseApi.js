@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, Timestamp, increment, deleteDoc, getDocs, } from "
 import { collection, query, where, onSnapshot, updateDoc, orderBy, addDoc } from "firebase/firestore";
 import { auth } from '../firebase';
 import { Alert } from 'react-native'
+import { async } from "@firebase/util";
 
 export const autoSignIn = () => {
   signInAnonymously(auth)
@@ -132,9 +133,20 @@ export const getspending = async () => {
 }
 
 export const deleteSpending = async (ID) => {
-  await deleteDoc(doc(db, "spending", ID));
+  await deleteDoc(doc(db, "Card", ID));
 }
 
+export const updateCard = async (props) => {
+  console.log(props)
+  const washingtonRef = doc(db, "Card", props.id);
+
+  // Set the "capital" field of the city 'DC'
+  updateDoc(washingtonRef, {
+    meaning: props.meaning || null,
+    word: props.word || null,
+    example: props.example || null
+  });
+}
 
 export const updateSpending = async (props) => {
   const Ref = doc(db, "spending", props.id);
