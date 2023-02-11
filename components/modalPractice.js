@@ -22,7 +22,7 @@ export const ModalPractice = (props) => {
                     <View>
                         <TouchableOpacity onPress={() => navigation.navigate('basicReview', props.id)}>
                             <View style={{ padding: 8 }}>
-                                <Text>ôn tậpds cơ bản</Text>
+                                <Text>Ôn tập cơ bản</Text>
                             </View>
                         </TouchableOpacity>
 
@@ -34,7 +34,7 @@ export const ModalPractice = (props) => {
 
                         <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices', props.id)}>
                             <View style={{ padding: 8 }}>
-                                <Text>Multiple Answers</Text>
+                                <Text>Trắc nghiệm</Text>
                             </View>
                         </TouchableOpacity>
 
@@ -45,7 +45,7 @@ export const ModalPractice = (props) => {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => navigation.navigate('practiceWrite', props.id)}>
                             <View style={{ padding: 8 }}>
-                                <Text>write</Text>
+                                <Text>Write</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
