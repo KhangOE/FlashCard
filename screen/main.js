@@ -27,6 +27,9 @@ function TopicTag(props) {
   }
 
   const [show, setShow] = useState('none');
+  useEffect(() => {
+    setShow('none')
+  }, [])
 
   function showBlock() {
     if (show == 'none') {
@@ -42,9 +45,15 @@ function TopicTag(props) {
         <View style={styles.topicTagSet}>
           <View style={styles.topicFirstBlock}>
             <Text style={styles.topicTitle}> {props.name}</Text>
-            <View style={styles.optBlock}>
-              <Pressable onPress={showBlock}>
-                {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={24} color="black" />}
+            <View >
+              <Pressable onPress={() => {
+                showBlock()
+                props.setPick(props.item)
+              }
+              }>
+                <View style={styles.optBlock}>
+                  {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={24} color="black" />}
+                </View>
               </Pressable>
               <OptionBlock top={'100%'} right={-10} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
             </View>
@@ -75,8 +84,8 @@ function TopicTag(props) {
 function MainScreen({ navigation }) {
   const [data, setdata] = useState([])
   const [topic, setTopic] = useState()
-
-
+  const [pick, setPick] = useState()
+  const [freshKey, setFreshKey] = useState(1)
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getTopicById().then(data => {
@@ -88,6 +97,17 @@ function MainScreen({ navigation }) {
     });
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+
+    getTopicById().then(data => {
+      setdata(data)
+      console.log(data)
+    })
+      //  console.log('Hello World!')
+      ;
+
+  }, [freshKey]);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -151,7 +171,7 @@ function MainScreen({ navigation }) {
 
         {data.map((item, idx) => {
           return (
-            <TopicTag key={idx} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
+            <TopicTag key={idx} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
               pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
           )
         })}
@@ -161,13 +181,13 @@ function MainScreen({ navigation }) {
       <PlusBtn press={() => { navigation.navigate({ name: 'Add Collection' }); displayAddTopicScreen() }} />
 
       {/* Cửa sổ nhỏ để nhập tên Topic*/}
-      {/* <AddTopicScreen display={isPressBtn} handle={displayAddTopicScreen}/> */}
+      {/* <AddTopicScreen display={isPressBtn} handle={displayAddTopicScreen} /> */}
 
       {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
-      <RepairTopicScreen display={isRepairBtn} handle={displayRepairTopicScreen} />
+      <RepairTopicScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={pick} setFreshKey={setFreshKey} />
 
       {/* Cửa sổ nhỏ để xóa topic*/}
-      <DeleteNotification display={isDelete} handle={displayDeleteNotification} />
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
 
       <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
         <Text> Logout </Text>
@@ -193,7 +213,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   optBlock: {
-    paddingHorizontal: 8
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+
   },
   topicList: {
     backgroundColor: '#DFDFDE',

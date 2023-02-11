@@ -136,6 +136,12 @@ export const deleteSpending = async (ID) => {
   await deleteDoc(doc(db, "Card", ID));
 }
 
+export const deleteCollection = async (ID) => {
+  await deleteDoc(doc(db, "Collection", ID));
+  //console.log(ID)
+
+}
+
 export const updateCard = async (props) => {
   console.log(props)
   const washingtonRef = doc(db, "Card", props.id);
@@ -145,6 +151,18 @@ export const updateCard = async (props) => {
     meaning: props.meaning || null,
     word: props.word || null,
     example: props.example || null
+  });
+}
+
+
+export const updateCollection = async (props) => {
+  console.log(props)
+  const washingtonRef = doc(db, "Collection", props.id);
+
+  // Set the "capital" field of the city 'DC'
+  updateDoc(washingtonRef, {
+    name: props.name,
+    userID: props.userID
   });
 }
 

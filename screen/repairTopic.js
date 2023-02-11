@@ -1,36 +1,58 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions} from 'react-native';
-import {FontAwesome5, AntDesign, Entypo, Feather} from '@expo/vector-icons';
-
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions } from 'react-native';
+import { FontAwesome5, AntDesign, Entypo, Feather } from '@expo/vector-icons';
+import { updateCollection } from '../api/firebaseApi';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 function RepairTopicScreen(props) {
+  const [topic, setTopic] = useState()
+  useEffect(() => {
+    setTopic(props.item?.name)
+  }, [props?.item])
+
+
+  const handleUpdate = async () => {
+    console.log(topic)
+    console.log(props.item.id)
+    console.log(props.item.userID)
+    await updateCollection({
+      id: props.item.id,
+      name: topic,
+      userID: props.item.userID
+    })
+    //props.setFresKey(state => state + 1)
+    props.setFreshKey(state => state + 1)
+  }
   return (
-    <View style={[styles.bigBlock, {display: props.display}]}>
+    <View style={[styles.bigBlock, { display: props.display }]}>
       <Pressable style={styles.wrapper}>
 
-      <View style={styles.dialog}>
-        <View style={styles.header}>
-          <Pressable onPress={props.handle}>
-            <Feather name="x" size={20} color="white" />
-          </Pressable>
-          <View style={styles.optionBlock}>
-            <Pressable style={{marginRight: 10}}>
-              <FontAwesome5 name="trash" size={16} color="white" />
+        <View style={styles.dialog}>
+          <View style={styles.header}>
+            <Pressable onPress={props.handle}>
+              <Feather name="x" size={20} color="white" />
             </Pressable>
-            <Pressable style={{marginLeft: 10}}>
-              <Feather name="check" size={20} color="white" />
-            </Pressable>
+            <View style={styles.optionBlock}>
+              <Pressable style={{ marginRight: 10 }}>
+                <FontAwesome5 name="trash" size={16} color="white" />
+              </Pressable>
+              <Pressable style={{ marginLeft: 10 }} onPress={handleUpdate}>
+                <Feather name="check" size={20} color="white" />
+              </Pressable>
+            </View>
           </View>
-        </View>
+          <Text>{props.item?.name}</Text>
+          <View style={styles.bodyContent}>
+            <TextInput style={styles.inputField}
 
-        <View style={styles.bodyContent}>
-          <TextInput style={styles.inputField}
-                  placeholder="Chủ đề"
-          />
-        </View>
+              value={topic
+              }
+              defaultValue={props.item?.name}
+              onChangeText={text => setTopic(text)}
+            />
+          </View>
 
-      </View>
+        </View>
       </Pressable>
     </View>
   );
@@ -57,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: 30,
     marginBottom: 20,
-    transform: [{translateY: -60}]
+    transform: [{ translateY: -60 }]
   },
   header: {
     backgroundColor: '#6A197D',
@@ -86,4 +108,4 @@ const styles = StyleSheet.create({
     fontSize: 16
   }
 });
-export {RepairTopicScreen};
+export { RepairTopicScreen };

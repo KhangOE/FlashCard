@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions } from 'react-native';
 import { FontAwesome5, AntDesign, Entypo, Feather } from '@expo/vector-icons';
-import { deleteSpending } from '../api/firebaseApi';
+import { deleteCollection, deleteSpending } from '../api/firebaseApi';
 import { async } from '@firebase/util';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 function DeleteNotification(props) {
 
   const deleteCard = async () => {
-    await deleteSpending(props.id)
+    console.log(2)
+    if (props.isTopic) {
+      await deleteCollection(props.id)
+      console.log(1)
+      props.setFreshKey(state => state + 1)
+    }
+    else {
+      console.log(3)
+      await deleteSpending(props.id)
+      props.setCard(state => state.filter((item) => {
+        return item.id != props.id
+      }))
+    }
+
   }
   return (
     <View style={[styles.bigBlock, { display: props.display }]}>
@@ -28,9 +41,7 @@ function DeleteNotification(props) {
               props.handle()
               // props.displayDeleteNotification
               deleteCard()
-              props.setCard(state => state.filter((item) => {
-                return item.id != props.id
-              }))
+
             }}>
               <Text style={styles.textSelect}>Xóa</Text>
             </Pressable>

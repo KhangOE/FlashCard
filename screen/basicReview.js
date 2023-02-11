@@ -74,7 +74,7 @@ function BasicReviewScreen({ navigation, route }) {
 
 
   async function playSound() {
-
+    console.log('sound')
     const a = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
       if (data.data[0].phonetics[0].audio) {
         const { sound } = await Audio.Sound.createAsync(
@@ -113,6 +113,7 @@ function BasicReviewScreen({ navigation, route }) {
 
   }
   useEffect(() => {
+    console.log('ádadsd')
     axios.get('https://api.dictionaryapi.dev/api/v2/entries/en/green').then((data) => {
       console.log(data.data[0].phonetics[0].audio)
     })
