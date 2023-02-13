@@ -1,9 +1,15 @@
 import { async } from '@firebase/util';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Image } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
+import * as ImagePicker from 'expo-image-picker';
+import Icon from "react-native-vector-icons/Ionicons";
+import { uuidv4 } from '@firebase/util';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth } from '../firebase';
+
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -13,15 +19,58 @@ const AddCardScreen = ({ navigation, route }) => {
   const [en, setEn] = useState('')
   const [vi, setVi] = useState('')
   const [ex, setEx] = useState('')
+
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0]);
+    }
+  };
+
+
   useEffect(() => {
     setCname(route.params.name)
     setCid(route.params.id)
   }, []);
   useEffect(() => {
-    //   console.log(route.params)
+    // console.log(route.params)
   }, [])
-  const handle = () => {
-    addCard({ en: en, vi: vi, cid: cid, ex: ex })
+  const handle = async () => {
+    if (image) {
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+
+      const storage = getStorage();
+      const storageRef = ref(storage, childPath);
+
+
+      await uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log("uploaded image to storage");
+      });
+
+      getDownloadURL(ref(storage, childPath))
+        .then(async (url) => {
+          addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+        })
+        .catch((error) => {
+          console.log(error);
+          return null;
+        });
+    } else {
+      addCard({ en: en, vi: vi, cid: cid, ex: ex })
+    }
+
     setEn('')
     setVi('')
     // console.log(note, name)
@@ -73,6 +122,26 @@ const AddCardScreen = ({ navigation, route }) => {
               onChangeText={newname => setEn(newname)}
               defaultValue={en}
             />
+          </View>
+
+          <View style={styles.addExample}>
+            <Text style={styles.title}>
+              Hình ảnh
+            </Text>
+
+            {image ? (
+              <View style={{ position: "relative" }}>
+                <Pressable onPress={pickImage}>
+                  <Image source={{ uri: image.uri }} style={{ width: width, height: (width / image.width * image.height) }} resizeMode="contain" />
+                </Pressable>
+                <Pressable onPress={() => setImage(null)} style={{ backgroundColor: "red", zIndex: 1000, position: "absolute", top: 5, right: 5, borderRadius: 12 }}>
+                  <Feather name="x" size={24} color="white" />
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.icon}>
+                <Icon name="md-image-outline" size={26} onPress={pickImage} />
+              </View>)}
           </View>
           {/* <Text>
                   ex
@@ -160,6 +229,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: 'white'
+  },
+  icon: {
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   }
+
 });
 export { AddCardScreen };

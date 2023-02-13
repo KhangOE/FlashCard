@@ -199,7 +199,7 @@ function MainScreen({ navigation }) {
 const styles = StyleSheet.create({
   base: {
     flex: 1,
-    marginTop: 28
+    // marginTop: 28
   },
   sub_block: {
     width: '92%',
