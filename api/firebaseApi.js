@@ -57,7 +57,7 @@ export const addCard = async (props) => {
       meaning: props.vi,
       ex: props.ex || null,
       memorized: false,
-      image: props.img,
+      image: props.img || null,
     });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {

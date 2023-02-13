@@ -46,25 +46,30 @@ const AddCardScreen = ({ navigation, route }) => {
     // console.log(route.params)
   }, [])
   const handle = async () => {
-    const response = await fetch(image.uri);
-    const blob = await response.blob();
-    const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+    if (image) {
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
 
-    const storage = getStorage();
-    const storageRef = ref(storage, childPath);
+      const storage = getStorage();
+      const storageRef = ref(storage, childPath);
 
-    await uploadBytes(storageRef, blob).then((snapshot) => {
-      console.log("uploaded image to storage");
-    });
 
-    getDownloadURL(ref(storage, childPath))
-      .then(async (url) => {
-        addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
-      })
-      .catch((error) => {
-        console.log(error);
-        return null;
+      await uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log("uploaded image to storage");
       });
+
+      getDownloadURL(ref(storage, childPath))
+        .then(async (url) => {
+          addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+        })
+        .catch((error) => {
+          console.log(error);
+          return null;
+        });
+    } else {
+      addCard({ en: en, vi: vi, cid: cid, ex: ex })
+    }
 
     setEn('')
     setVi('')
