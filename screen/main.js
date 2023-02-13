@@ -111,15 +111,6 @@ function MainScreen({ navigation }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const Logout = () => {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      // Sign-out successful.
-    }).catch((error) => {
-      // An error happened.
-    });
-  }
-
 
   // Add topic
   const [isPressBtn, setIsPressBtn] = useState('none');
@@ -188,10 +179,6 @@ function MainScreen({ navigation }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
-
-      <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
-        <Text> Logout </Text>
-      </TouchableHighlight>
     </SafeAreaView>
   );
 }
@@ -220,8 +207,8 @@ const styles = StyleSheet.create({
   topicList: {
     backgroundColor: '#DFDFDE',
     paddingTop: 5,
-    minHeight: height * 0.7,
-    maxHeight: height * 0.77
+    // minHeight: height * 0.7,
+    // maxHeight: height * 0.77
   },
   topicTag: {
     backgroundColor: '#fff',

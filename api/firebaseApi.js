@@ -175,3 +175,13 @@ export const updateSpending = async (props) => {
     category: props.category || null
   });
 }
+
+
+export const getCurrentUser = async () => {
+  const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid))
+  if (userSnap.exists()) {
+    return userSnap.data()
+  } else {
+    console.log("No such document!");
+  }
+}

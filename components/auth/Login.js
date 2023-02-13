@@ -42,10 +42,10 @@ export default function Login({ navigation }) {
   const onGoogleSignIn = async () => {
     signInWithPopup(auth, provider).then(result => {
       const user = result.user;
-      console.log(user)
       setDoc(doc(db, "users", user.uid), {
         name: user.displayName,
         email: user.email,
+        image: user.photoURL
       });
     }).catch((error) => {
       const errorCode = error.code;
