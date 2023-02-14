@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TouchableHighlight, TouchableOpacity, Animated, Easing, Dimensions, SafeAreaView } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { checkDoc, getTopicById } from '../api/firebaseApi';
+import { getCardsbyCID, getTopicById } from '../api/firebaseApi';
 import { Audio } from 'expo-av';
 import { auth } from '../firebase';
 //import { getTopicById } from '../api/firebaseApi';
@@ -58,7 +58,7 @@ function BasicReviewScreen({ navigation, route }) {
   useEffect(() => {
     // console.log(route?.params)
     const callApi = async () => {
-      await checkDoc({ cid: route.params || 1 }).then(data => {
+      await getCardsbyCID({ cid: route.params || 1 }).then(data => {
         console.log('data', data)
         setCard(data)
         // console.log(data)
@@ -166,7 +166,7 @@ function BasicReviewScreen({ navigation, route }) {
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <View style={styles.heading}>
-            <TouchableHighlight>
+            <TouchableHighlight onPress={() => navigation.goBack()}>
               <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableHighlight>
             <Text style={styles.topicTitle}> Color </Text>
@@ -217,7 +217,7 @@ function BasicReviewScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   base: {
     flex: 1,
-    marginTop: 24
+    // marginTop: 24
   },
   sub_block: {
     width: '92%',

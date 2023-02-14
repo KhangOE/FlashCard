@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, Touchab
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { getCardByCid } from '../api/firebaseApi';
-import { checkDoc } from '../api/firebaseApi';
+import { getCardsbyCID } from '../api/firebaseApi';
 import { Audio } from 'expo-av';
 import { Buffer } from "buffer";
 import SoundPlayer from 'react-native-sound-player'
@@ -96,7 +96,7 @@ function CardScreen({ navigation, route }) {
     const unsubscribe = navigation.addListener('focus', () => {
       console.log(route.params.id)
       setCid(route.params.id)
-      checkDoc({ cid: route.params.id }).then(data => {
+      getCardsbyCID({ cid: route.params.id }).then(data => {
         setCard(data)
         console.log('data', data)
         //  console.log(data)
@@ -111,7 +111,7 @@ function CardScreen({ navigation, route }) {
   useEffect(() => {
 
     setCid(route.params.id)
-    checkDoc({ cid: route.params.id }).then(data => {
+    getCardsbyCID({ cid: route.params.id }).then(data => {
       setCard(data)
     })
 
@@ -153,7 +153,7 @@ function CardScreen({ navigation, route }) {
     <SafeAreaView style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight>
+          <TouchableHighlight onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableHighlight>
           <TouchableHighlight>
@@ -166,8 +166,7 @@ function CardScreen({ navigation, route }) {
 
 
       <View style={styles.cardList}>
-        <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation}
-          tobasic={() => { navigation.navigate('basicreview', cid) }} id={cid}></ModalPractice>
+        <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={cid}></ModalPractice>
         <View style={styles.cardFirstBlock}>
           <Text style={styles.cardTotal}> Tất cả : 2 </Text>
         </View>

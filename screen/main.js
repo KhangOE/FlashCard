@@ -1,17 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView } from 'react-native';
-import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
 import { getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
-import { getAuth, signOut } from 'firebase/auth';
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
-import { AddTopicScreen } from './addTopic';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
 
@@ -111,15 +109,6 @@ function MainScreen({ navigation }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const Logout = () => {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      // Sign-out successful.
-    }).catch((error) => {
-      // An error happened.
-    });
-  }
-
 
   // Add topic
   const [isPressBtn, setIsPressBtn] = useState('none');
@@ -156,8 +145,8 @@ function MainScreen({ navigation }) {
     <SafeAreaView style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight>
-            <AntDesign name="arrowleft" size={24} color="white" />
+          <TouchableHighlight onPress={() => navigation.openDrawer()}>
+            <Ionicons name="menu" size={24} color="white" />
           </TouchableHighlight>
           <TouchableHighlight>
             <FontAwesome name="search" size={20} color="white" />
@@ -165,7 +154,7 @@ function MainScreen({ navigation }) {
         </View>
       </View>
 
-      <ModalPractice visible={modalVisible} setVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
+      <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
 
       <ScrollView style={styles.topicList}>
 
@@ -188,10 +177,6 @@ function MainScreen({ navigation }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
-
-      <TouchableHighlight style={styles.topicPractise} onPress={() => Logout()}>
-        <Text> Logout </Text>
-      </TouchableHighlight>
     </SafeAreaView>
   );
 }
@@ -220,8 +205,8 @@ const styles = StyleSheet.create({
   topicList: {
     backgroundColor: '#DFDFDE',
     paddingTop: 5,
-    minHeight: height * 0.7,
-    maxHeight: height * 0.77
+    // minHeight: height * 0.7,
+    // maxHeight: height * 0.77
   },
   topicTag: {
     backgroundColor: '#fff',

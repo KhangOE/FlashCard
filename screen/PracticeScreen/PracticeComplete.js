@@ -3,7 +3,8 @@ import { TouchableOpacity, Image, StyleSheet, Text, View, Modal, Pressable } fro
 import { Feather } from '@expo/vector-icons'
 import { AntDesign } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { ScrollView } from 'react-native-web';
+import { ScrollView } from 'react-native';
+import CustomModal from "../../components/CustomModal"
 
 
 function ReviewPage(props) {
@@ -36,28 +37,12 @@ export default function PracticeComplete({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            <Modal
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                    setModalVisible(!modalVisible);
-                }}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <View style={styles.modalTop}>
-                            <TouchableOpacity
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Feather name="x" size={20} color="white" />
-                            </TouchableOpacity>
-                        </View>
-                        <Tab.Navigator>
-                            <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Wrong: ' + wrongList?.length }} />
-                            <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Correct: ' + correctList?.length }} />
-                        </Tab.Navigator>
-                    </View>
-                </View>
-            </Modal>
+            <CustomModal setModalVisible={setModalVisible} modalVisible={modalVisible} fixedHeight={true}>
+                <Tab.Navigator>
+                    <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Wrong: ' + wrongList?.length }} />
+                    <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Correct: ' + correctList?.length }} />
+                </Tab.Navigator>
+            </CustomModal>
             <View style={{ flex: 1, width: '100%', alignItems: "center" }}>
                 <Image
                     source={require('../../assets/image/checked-icon.png')}
@@ -104,35 +89,6 @@ const styles = StyleSheet.create({
         gap: 10,
     },
 
-    // modal
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 22,
-    },
-    modalView: {
-        margin: 20,
-        // backgroundColor: 'white',
-        // borderRadius: 20,
-        // padding: 35,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        height: '80%',
-        width: '80%'
-    },
-    modalTop: {
-        height: 40,
-        paddingLeft: 10,
-        backgroundColor: "blue",
-        justifyContent: "center"
-    },
     reviewContainer: {
         flex: 1,
     },

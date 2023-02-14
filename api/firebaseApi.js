@@ -66,7 +66,7 @@ export const addCard = async (props) => {
 }
 
 
-export async function checkDoc(props) {
+export async function getCardsbyCID(props) {
   try {
     const urlsRef = collection(db, "Card");
     const q = query(urlsRef, where("cid", "==", props.cid));
@@ -174,4 +174,14 @@ export const updateSpending = async (props) => {
     note: props.note,
     category: props.category || null
   });
+}
+
+
+export const getCurrentUser = async () => {
+  const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid))
+  if (userSnap.exists()) {
+    return userSnap.data()
+  } else {
+    console.log("No such document!");
+  }
 }
