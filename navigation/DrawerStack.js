@@ -14,6 +14,7 @@ export default function DrawerStack() {
         <Drawer.Navigator
             drawerContent={props => <CustomDrawer {...props} />}
             screenOptions={{
+                headerShown: false,
                 drawerActiveBackgroundColor: "#6A197D",
                 drawerActiveTintColor: "#fff",
                 drawerInactiveTintColor: "#333",

@@ -13,7 +13,7 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { checkDoc } from "../../api/firebaseApi";
+import { getCardsbyCID } from "../../api/firebaseApi";
 
 function Card({ onPress, card, index, isInactive, isFlipped, isDisabled }) {
     const rotate = useRef(new Animated.Value(0)).current;
@@ -81,7 +81,7 @@ export default function MemoryGame({ navigation, route }) {
             setComplete(false);
             setShouldDisableAllCards(false);
             const callApi = async () => {
-                await checkDoc({ cid: route.params || 1 }).then(d => {
+                await getCardsbyCID({ cid: route.params || 1 }).then(d => {
                     setData(d)
                     var words = (d.slice(0)).map(item => ({ data: item.word, id: item.id, isFlipped: false }))
                     var meanings = (d.slice(0)).map(item => ({ data: item.meaning, id: item.id, isFlipped: false }))

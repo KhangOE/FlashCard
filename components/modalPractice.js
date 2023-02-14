@@ -1,65 +1,97 @@
-import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, Image } from "react-native";
+import CustomModal from "./CustomModal";
+import { getCardsbyCID } from "../api/firebaseApi"
 //import { PracticeTag } from "./practicetag";
 
 
 export const ModalPractice = (props) => {
+    const [error0, setError0] = useState(false)
+    const [error4, setError4] = useState(false);
+    const { id } = props;
+    useEffect(() => {
+        if (id) {
+            getCardsbyCID({ cid: id }).then(data => {
+                setError0(data.length === 0)
+                setError4(data.length < 4)
+            })
+        }
+    }, [id])
     const { navigation } = props;
-    //const [modalVisible, setModalVisible] = useState(false);
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={props.visible}
-            onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                // props.setVisible(state => !state);
-            }}
-        >
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.modalText}>{props.id}</Text>
-                    <View>
-                        <TouchableOpacity onPress={() => navigation.navigate('basicReview', props.id)}>
-                            <View style={{ padding: 8 }}>
-                                <Text>Ôn tập cơ bản</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => navigation.navigate('MatchCards', props.id)}>
-                            <View style={{ padding: 8 }}>
-                                <Text>Nối từ</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => navigation.navigate('MultipleChoices', props.id)}>
-                            <View style={{ padding: 8 }}>
-                                <Text>Trắc nghiệm</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => navigation.navigate('MemoryGame', props.id)}>
-                            <View style={{ padding: 8 }}>
-                                <Text>Memory Game</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate('practiceWrite', props.id)}>
-                            <View style={{ padding: 8 }}>
-                                <Text>Write</Text>
-                            </View>
-                        </TouchableOpacity>
+        <CustomModal modalVisible={props.modalVisible} setModalVisible={props.setModalVisible} title='Practice'>
+            {error0 && <Text style={{ textAlign: 'center', margin: 10 }}>Topic chưa có thẻ nào!</Text>}
+            <View style={error0 && { opacity: 0.5 }}>
+                <TouchableOpacity
+                    disabled={error0}
+                    onPress={() => {
+                        navigation.navigate('basicReview', props.id)
+                        props.setModalVisible(false);
+                    }}>
+                    <View style={styles.reviewItem}>
+                        <View style={[styles.icon, { backgroundColor: "#F6E6C2" }]}>
+                            <Image source={require("../assets/image/basic-review-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
+                        </View>
+                        <Text style={styles.reviewText}>Basic review</Text>
                     </View>
+                </TouchableOpacity>
 
+                <TouchableOpacity
+                    disabled={error0}
+                    onPress={() => {
+                        navigation.navigate('MatchCards', props.id)
+                        props.setModalVisible(false);
+                    }}>
+                    <View style={styles.reviewItem}>
+                        <View style={[styles.icon, { backgroundColor: "#913175" }]}>
+                            <Image source={require("../assets/image/match-cards-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
+                        </View>
+                        <Text style={styles.reviewText}>Match cards</Text>
+                    </View>
+                </TouchableOpacity>
 
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => props.setVisible(state => !state)}
-                    >
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
-                </View>
+                <TouchableOpacity
+                    disabled={error0 || error4}
+                    onPress={() => {
+                        navigation.navigate('MultipleChoices', props.id)
+                        props.setModalVisible(false);
+                    }}>
+                    <View style={[styles.reviewItem, error4 && { opacity: 0.5 }]}>
+                        <View style={styles.icon}>
+                            <Image source={require("../assets/image/multiple-choices-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
+                        </View>
+                        <Text style={styles.reviewText}>Multiple answers</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    disabled={error0}
+                    onPress={() => {
+                        navigation.navigate('MemoryGame', props.id)
+                        props.setModalVisible(false);
+                    }}>
+                    <View style={styles.reviewItem}>
+                        <View style={styles.icon}>
+                            <Image source={require("../assets/image/memory-game-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
+                        </View>
+                        <Text style={styles.reviewText}>Memory game</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    disabled={error0}
+                    onPress={() => {
+                        navigation.navigate('practiceWrite', props.id)
+                        props.setModalVisible(false);
+                    }}>
+                    <View style={styles.reviewItem}>
+                        <View style={styles.icon}>
+                            <Image source={require("../assets/image/writing-review-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
+                        </View>
+                        <Text style={styles.reviewText}>Writing review</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
-        </Modal >
+        </CustomModal>
 
     );
 };
@@ -106,6 +138,16 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: "center"
-    }
+    },
+    reviewItem: { padding: 8, flexDirection: 'row', marginVertical: 5, alignItems: 'center' },
+    icon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 10
+    },
+    reviewText: {
+        fontWeight: '500'
+    },
 });
 

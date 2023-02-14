@@ -66,7 +66,7 @@ export const addCard = async (props) => {
 }
 
 
-export async function checkDoc(props) {
+export async function getCardsbyCID(props) {
   try {
     const urlsRef = collection(db, "Card");
     const q = query(urlsRef, where("cid", "==", props.cid));

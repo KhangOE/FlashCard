@@ -10,7 +10,7 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { checkDoc } from "../../api/firebaseApi";
+import { getCardsbyCID } from "../../api/firebaseApi";
 
 
 function Card(props) {
@@ -50,7 +50,7 @@ export default function MatchCards({ navigation, route }) {
             setComplete(false)
             setWrongList([])
             const callApi = async () => {
-                await checkDoc({ cid: route.params || 1 }).then(d => {
+                await getCardsbyCID({ cid: route.params || 1 }).then(d => {
                     setCard(d)
                     setCorrectList(d)
                     setWords(d)
