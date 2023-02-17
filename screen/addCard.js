@@ -22,7 +22,7 @@ const AddCardScreen = ({ navigation, route }) => {
   const [exist, setExist] = useState([])
   const [image, setImage] = useState(null);
   const [checkWord, setCheckWord] = useState(false)
-  const [showErr, setShowErr] = useState(false)
+  const [showErr, setShowErr] = useState('')
   const [freshCall, setFreshCall] = useState(1)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -61,44 +61,51 @@ const AddCardScreen = ({ navigation, route }) => {
   }, [])
 
   useEffect(() => {
-    setShowErr(false)
+    setShowErr('')
   }, [checkWord])
 
   const handle = async () => {
 
-    if (checkWord) {
-      if (image) {
-        const response = await fetch(image.uri);
-        const blob = await response.blob();
-        const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+    if (en) {
+      if (checkWord) {
+        if (image) {
+          const response = await fetch(image.uri);
+          const blob = await response.blob();
+          const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
 
-        const storage = getStorage();
-        const storageRef = ref(storage, childPath);
+          const storage = getStorage();
+          const storageRef = ref(storage, childPath);
 
 
-        await uploadBytes(storageRef, blob).then((snapshot) => {
-          console.log("uploaded image to storage");
-        });
-
-        getDownloadURL(ref(storage, childPath))
-          .then(async (url) => {
-            addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
-          })
-          .catch((error) => {
-            console.log(error);
-            return null;
+          await uploadBytes(storageRef, blob).then((snapshot) => {
+            console.log("uploaded image to storage");
           });
-      } else {
-        await addCard({ en: en, vi: vi, cid: cid, ex: ex })
-        setFreshCall(state => state + 1)
+
+          getDownloadURL(ref(storage, childPath))
+            .then(async (url) => {
+              addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+            })
+            .catch((error) => {
+              console.log(error);
+              return null;
+            });
+        } else {
+          await addCard({ en: en, vi: vi, cid: cid, ex: ex })
+          setFreshCall(state => state + 1)
+        }
+
+        setEn('')
+        setVi('')
       }
 
-      setEn('')
-      setVi('')
+      else {
+        setShowErr('Word existed !')
+      }
     }
     else {
-      setShowErr(true)
+      setShowErr('Word is required !')
     }
+
 
     // console.log(note, name)
   }
@@ -175,7 +182,7 @@ const AddCardScreen = ({ navigation, route }) => {
               defaultValue={en}
             />
             <Text style={{ color: 'red', fontSize: 18 }}>
-              {showErr ? 'Word exist !' : ''}
+              {showErr ? showErr : ''}
             </Text>
           </View>
           <View style={styles.addMeaning}>

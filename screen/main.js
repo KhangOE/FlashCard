@@ -87,7 +87,7 @@ function MainScreen({ navigation }) {
   const [freshKey, setFreshKey] = useState(1)
   const [filteredData, setFilteredData] = useState([])
   const [search, setSearch] = useState('')
-  const [showSearch, setShowSearch] = useState(true)
+  const [showSearch, setShowSearch] = useState(false)
 
   useEffect(() => {
     console.log(search)

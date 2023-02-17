@@ -18,7 +18,7 @@ export const AddCollection = ({ navigation }) => {
   const [note, setNote] = useState('')
   const [exist, setExist] = useState([])
   const [checkName, setChechName] = useState(false)
-  const [showErr, setShowErr] = useState(false)
+  const [showErr, setShowErr] = useState('')
   const [freshCall, setFreshCall] = useState(1)
   useEffect(() => {
     getTopicById().then((data) => {
@@ -32,34 +32,43 @@ export const AddCollection = ({ navigation }) => {
   }, [name])
 
   useEffect(() => {
-    setShowErr(false)
+    setShowErr('')
   }, [checkName])
 
   const handle = async () => {
-    if (checkName) {
-      await addCollection({ name: name, note: note })
-      setNote('')
-      setName('')
-      console.log(note, name)
-      setFreshCall(state => state + 1)
+    if (name) {
+      if (checkName) {
+        await addCollection({ name: name, note: note })
+        setNote('')
+        setName('')
+        console.log(note, name)
+      }
+      else {
+        setShowErr('Name existed')
+      }
     }
     else {
-      setShowErr(true)
+      setShowErr('Name is required !')
     }
   }
 
   const handleComplte = async () => {
-    if (checkName) {
-      await addCollection({ name: name, note: note })
-      setNote('')
-      setName('')
-      console.log(note, name)
-
-      navigation.navigate('Collection')
+    if (name) {
+      if (checkName) {
+        await addCollection({ name: name, note: note })
+        setNote('')
+        setName('')
+        console.log(note, name)
+        navigation.navigate('Collection')
+      }
+      else {
+        setShowErr('Name existed')
+      }
     }
     else {
-      setShowErr(true)
+      setShowErr('Name is required !')
     }
+
 
   }
   return (<>
@@ -91,7 +100,7 @@ export const AddCollection = ({ navigation }) => {
               defaultValue={name}
             />
             <Text style={{ fontSize: 18, color: 'red' }}>
-              {showErr ? 'Name exist' : ''}
+              {showErr ? showErr : ''}
             </Text>
           </View>
           <View style={styles.addMeaning}>
