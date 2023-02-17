@@ -8,6 +8,7 @@ import { Audio } from 'expo-av';
 import { Buffer } from "buffer";
 import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
+import SafeViewAndroid from "../safeAreaViewAndroid";
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
@@ -150,7 +151,7 @@ function CardScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.base}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight onPress={() => navigation.goBack()}>
@@ -168,7 +169,7 @@ function CardScreen({ navigation, route }) {
       <View style={styles.cardList}>
         <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={cid}></ModalPractice>
         <View style={styles.cardFirstBlock}>
-          <Text style={styles.cardTotal}> Tất cả : 2 </Text>
+          <Text style={styles.cardTotal}> Tất cả : {card?.length} </Text>
         </View>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
           {card?.map((item) => {
@@ -210,7 +211,7 @@ function CardScreen({ navigation, route }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
-    </SafeAreaView >
+    </SafeAreaView>
   );
 }
 

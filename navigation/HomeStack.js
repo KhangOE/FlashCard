@@ -16,17 +16,20 @@ export default function HomeStack() {
             <Stack.Screen
                 name="Card"
                 component={CardScreen}
-                options={{ tabBarLabel: 'Home!' }}
+                options={{ tabBarLabel: 'Home!', headerShown: false }}
             />
             <Stack.Screen
                 name="Add Collection"
                 component={AddCollection}
-                options={{ tabBarLabel: 'Home!' }}
+                options={{
+                    tabBarLabel: 'Home!',
+                    headerShown: false
+                }}
             />
             <Stack.Screen
                 name="addCard"
                 component={AddCardScreen}
-                options={{ tabBarLabel: 'Home!' }}
+                options={{ tabBarLabel: 'Home!', headerShown: false }}
             />
             <Stack.Screen
                 name="MatchCards"

@@ -4,32 +4,75 @@ import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
-
+import { getTopicById } from '../api/firebaseApi';
+import SafeViewAndroid from "../safeAreaViewAndroid";
+import safeAreaViewAndroid from '../safeAreaViewAndroid';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
 
 
-export const AddCollection = () => {
+export const AddCollection = ({ navigation }) => {
 
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
+  const [exist, setExist] = useState([])
+  const [checkName, setChechName] = useState(false)
+  const [showErr, setShowErr] = useState(false)
+  const [freshCall, setFreshCall] = useState(1)
+  useEffect(() => {
+    getTopicById().then((data) => {
+      setExist(data.map(a => a.name))
+    })
+  }, [freshCall])
 
-  const handle = () => {
-    addCollection({ name: name, note: note })
-    setNote('')
-    setName('')
-    console.log(note, name)
+  useEffect(() => {
+    console.log(checkName)
+    exist.includes(name) || name === '' ? setChechName(false) : setChechName(true)
+  }, [name])
+
+  useEffect(() => {
+    setShowErr(false)
+  }, [checkName])
+
+  const handle = async () => {
+    if (checkName) {
+      await addCollection({ name: name, note: note })
+      setNote('')
+      setName('')
+      console.log(note, name)
+      setFreshCall(state => state + 1)
+    }
+    else {
+      setShowErr(true)
+    }
+  }
+
+  const handleComplte = async () => {
+    if (checkName) {
+      await addCollection({ name: name, note: note })
+      setNote('')
+      setName('')
+      console.log(note, name)
+
+      navigation.navigate('Collection')
+    }
+    else {
+      setShowErr(true)
+    }
+
   }
   return (<>
 
-    <SafeAreaView style={[styles.base, { display: 'flex' }]}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <Pressable >
+          <Pressable onPress={() => {
+            navigation.navigate('Collection')
+          }}>
             <Feather name="x" size={24} color="white" />
           </Pressable>
-          <Pressable>
+          <Pressable onPress={handleComplte}>
             <Feather name="check" size={24} color="white" />
           </Pressable>
         </View>
@@ -47,6 +90,9 @@ export const AddCollection = () => {
               onChangeText={newname => setName(newname)}
               defaultValue={name}
             />
+            <Text style={{ fontSize: 18, color: 'red' }}>
+              {showErr ? 'Name exist' : ''}
+            </Text>
           </View>
           <View style={styles.addMeaning}>
             <Text style={styles.title}>
@@ -59,7 +105,7 @@ export const AddCollection = () => {
             />
           </View>
 
-          <Pressable style={styles.addBtn} onPress={handle}>
+          <Pressable style={[styles.addBtn]} onPress={handle}  >
             <Text style={styles.textBtn}>Thêm bộ</Text>
           </Pressable>
 
@@ -96,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addVocabulary: {
-    marginBottom: 20
+    marginBottom: 5
   },
   addMeaning: {
     marginTop: 10,

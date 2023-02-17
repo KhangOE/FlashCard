@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
-
+import SafeViewAndroid from "../safeAreaViewAndroid";
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
@@ -142,7 +142,7 @@ function MainScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.base}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight onPress={() => navigation.openDrawer()}>

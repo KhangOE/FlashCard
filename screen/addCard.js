@@ -3,13 +3,13 @@ import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Image } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
-import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
+import { addCard, addCollection, addspending, getCardsbyCID, getspending, main } from '../api/firebaseApi';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from "react-native-vector-icons/Ionicons";
 import { uuidv4 } from '@firebase/util';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth } from '../firebase';
-
+import SafeViewAndroid from "../safeAreaViewAndroid";
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -19,9 +19,11 @@ const AddCardScreen = ({ navigation, route }) => {
   const [en, setEn] = useState('')
   const [vi, setVi] = useState('')
   const [ex, setEx] = useState('')
-
+  const [exist, setExist] = useState([])
   const [image, setImage] = useState(null);
-
+  const [checkWord, setCheckWord] = useState(false)
+  const [showErr, setShowErr] = useState(false)
+  const [freshCall, setFreshCall] = useState(1)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -30,7 +32,7 @@ const AddCardScreen = ({ navigation, route }) => {
       quality: 1,
     });
 
-    console.log(result);
+
 
     if (!result.canceled) {
       setImage(result.assets[0]);
@@ -42,48 +44,118 @@ const AddCardScreen = ({ navigation, route }) => {
     setCname(route.params.name)
     setCid(route.params.id)
   }, []);
+
+
   useEffect(() => {
+    exist.includes(en) ? setCheckWord(false) : setCheckWord(true)
+  }, [en])
+  useEffect(() => {
+    getCardsbyCID({ cid: route.params.id }).then((item) => {
+      console.log('daa', item)
+      setExist(item.map(i => i.word))
+    })
+  }, [freshCall])
+  useEffect(() => {
+    console.log('d', exist)
     // console.log(route.params)
   }, [])
+
+  useEffect(() => {
+    setShowErr(false)
+  }, [checkWord])
+
   const handle = async () => {
-    if (image) {
-      const response = await fetch(image.uri);
-      const blob = await response.blob();
-      const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
 
-      const storage = getStorage();
-      const storageRef = ref(storage, childPath);
+    if (checkWord) {
+      if (image) {
+        const response = await fetch(image.uri);
+        const blob = await response.blob();
+        const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+
+        const storage = getStorage();
+        const storageRef = ref(storage, childPath);
 
 
-      await uploadBytes(storageRef, blob).then((snapshot) => {
-        console.log("uploaded image to storage");
-      });
-
-      getDownloadURL(ref(storage, childPath))
-        .then(async (url) => {
-          addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
-        })
-        .catch((error) => {
-          console.log(error);
-          return null;
+        await uploadBytes(storageRef, blob).then((snapshot) => {
+          console.log("uploaded image to storage");
         });
-    } else {
-      addCard({ en: en, vi: vi, cid: cid, ex: ex })
+
+        getDownloadURL(ref(storage, childPath))
+          .then(async (url) => {
+            addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+          })
+          .catch((error) => {
+            console.log(error);
+            return null;
+          });
+      } else {
+        await addCard({ en: en, vi: vi, cid: cid, ex: ex })
+        setFreshCall(state => state + 1)
+      }
+
+      setEn('')
+      setVi('')
+    }
+    else {
+      setShowErr(true)
     }
 
-    setEn('')
-    setVi('')
     // console.log(note, name)
   }
 
+
+  const handleComplte = async () => {
+
+    if (checkWord) {
+      if (image) {
+        const response = await fetch(image.uri);
+        const blob = await response.blob();
+        const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+
+        const storage = getStorage();
+        const storageRef = ref(storage, childPath);
+
+
+        await uploadBytes(storageRef, blob).then((snapshot) => {
+          console.log("uploaded image to storage");
+        });
+
+        getDownloadURL(ref(storage, childPath))
+          .then(async (url) => {
+            addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+          })
+          .catch((error) => {
+            console.log(error);
+            return null;
+          });
+      } else {
+        addCard({ en: en, vi: vi, cid: cid, ex: ex })
+      }
+
+      navigation.goBack()
+    }
+    else {
+      setShowErr(true)
+    }
+
+    // console.log(note, name)
+  }
+
+
+
+
   return (
-    <SafeAreaView style={[styles.base, { display: 'flex' }]}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <Pressable >
+          <Pressable onPress={() => {
+            navigation.goBack()
+          }}>
             <Feather name="x" size={24} color="white" />
           </Pressable>
-          <Pressable>
+          <Pressable onPress={handleComplte
+
+          }>
             <Feather name="check" size={24} color="white" />
           </Pressable>
         </View>
@@ -102,12 +174,15 @@ const AddCardScreen = ({ navigation, route }) => {
               onChangeText={newname => setEn(newname)}
               defaultValue={en}
             />
+            <Text style={{ color: 'red', fontSize: 18 }}>
+              {showErr ? 'Word exist !' : ''}
+            </Text>
           </View>
           <View style={styles.addMeaning}>
-            <Text style={styles.title}>
+            <Text style={[styles.title, { marginBottom: 10 }]}>
               Định nghĩa
             </Text>
-            <TextInput style={styles.inputField}
+            <TextInput style={[styles.inputField, { marginBottom: 20 }]}
               placeholder=""
               onChangeText={newText => setVi(newText)}
               defaultValue={vi}
@@ -159,7 +234,7 @@ const AddCardScreen = ({ navigation, route }) => {
               </Button> */}
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaView >
 
   )
 
@@ -193,25 +268,25 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addVocabulary: {
-    marginBottom: 20
+    marginBottom: 10
   },
   addMeaning: {
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 10
   },
   addExample: {
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 10
   },
   title: {
     fontSize: 18,
     fontWeight: '500',
-    marginBottom: 10
+    marginBottom: 4
   },
   inputField: {
     borderWidth: 1,
     height: 40,
-    padding: 10,
+    padding: 5,
     borderRadius: 5,
     fontSize: 16
   },
