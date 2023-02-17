@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
@@ -69,27 +69,33 @@ function CardScreen({ navigation, route }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-
+  const ref_input = useRef();
   useEffect(() => {
-    console.log(search)
+
     setFilteredData(card.filter(i => {
       return i.word.toLowerCase().includes(search.toLowerCase()) ||
         i.meaning.toLowerCase().includes(search.toLowerCase())
     }))
-    console.log(filteredData, 'filter data')
+
   }, [search])
   useEffect(() => {
     setFilteredData(card)
   }, [card])
 
   useEffect(() => {
-    console.log(freshKey)
+    if (showSearch) {
+      () => ref_input.current.focus()
+    }
+
+  }, [showSearch])
+  useEffect(() => {
+
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log(route.params.id)
+
       setCid(route.params.id)
       getCardsbyCID({ cid: route.params.id }).then(data => {
         setCard(data)
-        console.log('data', data)
+
         //  console.log(data)
       }).then(() => {
       })
@@ -144,7 +150,7 @@ function CardScreen({ navigation, route }) {
     <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight onPress={() => navigation.goBack()}>
+          <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableHighlight>
           {/* <TouchableHighlight>
@@ -154,12 +160,15 @@ function CardScreen({ navigation, route }) {
           {
             showSearch ?
               [
-                <TouchableHighlight onPress={() => {
+                <TouchableHighlight style={{ padding: 10 }} onPress={() => {
                   setShowSearch(false)
                   setSearch('')
                 }}>
                   <FontAwesome name="arrow-left" size={20} color="white" />
-                </TouchableHighlight>, <TextInput
+                </TouchableHighlight>,
+                <TextInput
+                  autoFocus
+                  ref={ref_input}
                   style={styles.input}
                   onChangeText={(e) => {
                     setSearch(e)
@@ -170,7 +179,7 @@ function CardScreen({ navigation, route }) {
                 />
 
               ]
-              : <TouchableHighlight style={{ marginRight: 20 }} onPress={() => setShowSearch(true)}>
+              : <TouchableHighlight style={{ marginRight: 20, padding: 10 }} onPress={() => setShowSearch(true)}>
                 <FontAwesome name="search" size={20} color="white" />
               </TouchableHighlight>
           }

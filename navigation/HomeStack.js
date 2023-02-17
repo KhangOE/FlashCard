@@ -54,7 +54,7 @@ export default function HomeStack() {
             <Stack.Screen
                 name="basicReview"
                 component={BasicReviewScreen}
-                options={{ tabBarLabel: 'Home!' }}
+                options={{ tabBarLabel: 'Home!', headerShown: false }}
             />
             <Stack.Screen
                 name="practiceWrite"

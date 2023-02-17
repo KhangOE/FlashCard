@@ -27,7 +27,7 @@ export const AddCollection = ({ navigation }) => {
   }, [freshCall])
 
   useEffect(() => {
-    console.log(checkName)
+
     exist.includes(name) || name === '' ? setChechName(false) : setChechName(true)
   }, [name])
 

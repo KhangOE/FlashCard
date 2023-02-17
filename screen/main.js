@@ -90,7 +90,7 @@ function MainScreen({ navigation }) {
   const [showSearch, setShowSearch] = useState(false)
 
   useEffect(() => {
-    console.log(search)
+
     setFilteredData(data.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
     }))
@@ -102,14 +102,12 @@ function MainScreen({ navigation }) {
 
 
 
-  useEffect(() => {
-    console.log(filteredData, 'fil')
-  }, [filteredData])
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getTopicById().then(data => {
         setdata(data)
-        console.log(data)
+
       }).then(() => {
       })
       //  console.log('Hello World!')
@@ -121,7 +119,7 @@ function MainScreen({ navigation }) {
 
     getTopicById().then(data => {
       setdata(data)
-      console.log(data)
+
     })
       //  console.log('Hello World!')
       ;
@@ -168,13 +166,13 @@ function MainScreen({ navigation }) {
     <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight onPress={() => navigation.openDrawer()}>
+          <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.openDrawer()}>
             <Ionicons name="menu" size={24} color="white" />
           </TouchableHighlight>
           {
             showSearch ?
               [
-                <TouchableHighlight onPress={() => {
+                <TouchableHighlight style={{ padding: 10 }} onPress={() => {
                   setShowSearch(false)
                   setSearch('')
                 }}>
@@ -184,13 +182,13 @@ function MainScreen({ navigation }) {
                   onChangeText={(e) => {
                     setSearch(e)
                   }}
+                  autoFocus
                   value={search}
                   placeholder="search..."
 
                 />
-
               ]
-              : <TouchableHighlight style={{ marginRight: 20 }} onPress={() => setShowSearch(true)}>
+              : <TouchableHighlight style={{ marginRight: 20, padding: 10 }} onPress={() => setShowSearch(true)}>
                 <FontAwesome name="search" size={20} color="white" />
               </TouchableHighlight>
           }

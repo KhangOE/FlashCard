@@ -5,6 +5,7 @@ import axios from 'axios';
 import { getCardsbyCID, getTopicById } from '../api/firebaseApi';
 import { Audio } from 'expo-av';
 import { auth } from '../firebase';
+import SafeViewAndroid from "../safeAreaViewAndroid";
 //import { getTopicById } from '../api/firebaseApi';
 const tenvhHeight = Dimensions.get('screen').height * 0.1;
 const cardWidth = Dimensions.get('window').width * 0.8;
@@ -162,7 +163,7 @@ function BasicReviewScreen({ navigation, route }) {
   }
   // Trang chia thành 3 thành phần chính : navbar, scrollview , footer
   return (
-    <SafeAreaView style={styles.base}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <View style={styles.heading}>
