@@ -1,6 +1,6 @@
 import { View, Button, TextInput, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 import { useState } from "react";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('')
+  const [user, setUser] = useState()
 
   const validateEmail = (email) => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -39,20 +40,42 @@ export default function Login({ navigation }) {
 
   };
 
+  // const onGoogleSignIn = async () => {
+  //   signInWithPopup(auth, provider).then(result => {
+  //     const user = result.user;
+  //     setDoc(doc(db, "users", user.uid), {
+  //       name: user.displayName,
+  //       email: user.email,
+  //       image: user.photoURL
+  //     });
+  //   }).catch((error) => {
+  //     const errorCode = error.code;
+  //     const errorMessage = error.message;
+  //     console.error(errorCode, errorMessage);
+  //   })
+  // }
+
   const onGoogleSignIn = async () => {
-    signInWithPopup(auth, provider).then(result => {
-      const user = result.user;
-      setDoc(doc(db, "users", user.uid), {
-        name: user.displayName,
-        email: user.email,
-        image: user.photoURL
-      });
-    }).catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
-    })
-  }
+    try {
+      const result = await Expo.Google.logInAsync({
+        androidClientId: "Your Client ID",
+        //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
+        scopes: ["profile", "email"]
+
+      })
+      if (result.type === "success") {
+        const credential = firebase.auth.GoogleAuthProvider.credential(result.idToken, result.accessToken);
+        firebase.auth().signInAndRetrieveDataWithCredential(credential).then(function (result) {
+          console.log(result);
+        });
+        this.props.navigation.navigate('Where you want to go');
+      } else {
+        console.log("cancelled")
+      }
+    } catch (e) {
+      console.log("error", e)
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -112,7 +135,6 @@ const styles = StyleSheet.create({
   },
   firstBlockText: {
     fontSize: 30,
-    fontWeight: 600,
     color: "#0D2841"
   },
   nonSelectedText: {
@@ -152,7 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   thirdBlockText: {
-    fontWeight: 500,
     fontSize: 24,
     color: "#FAFAFA"
   }

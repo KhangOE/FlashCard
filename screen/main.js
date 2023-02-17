@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
-import { getCollection } from '../api/firebaseApi';
+import { getCategories, getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
 
@@ -12,6 +12,7 @@ import { getTopicById } from '../api/firebaseApi';
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
+import CategoryModal from '../components/CategoryModal';
 
 
 const width = Dimensions.get('screen').width;
@@ -80,34 +81,46 @@ function TopicTag(props) {
 
 
 function MainScreen({ navigation }) {
+  const [categories, setCategories] = useState([])
+  const [selectedC, setSelectedC] = useState(null)
   const [data, setdata] = useState([])
+  const [shownData, setShownData] = useState([])
   const [topic, setTopic] = useState()
   const [pick, setPick] = useState()
   const [freshKey, setFreshKey] = useState(1)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false)
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getTopicById().then(data => {
-        setdata(data)
-        console.log(data)
-      }).then(() => {
+      getCategories().then(data => {
+        setCategories(data)
       })
-      //  console.log('Hello World!')
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-
     getTopicById().then(data => {
       setdata(data)
-      console.log(data)
+      setShownData(data)
     })
-      //  console.log('Hello World!')
-      ;
-
   }, [freshKey]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    if (selectedC === null) {
+      setShownData(data)
+    } else
+      setShownData(data.filter(d => d.category === selectedC.id))
+  }, [selectedC]);
+
+
+  const updateCategory = () => {
+    getCategories().then(data => {
+      setCategories(data)
+    })
+  }
+
 
 
   // Add topic
@@ -155,10 +168,19 @@ function MainScreen({ navigation }) {
       </View>
 
       <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
-
+      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
+      <View style={{ height: 50, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        <TouchableOpacity onPress={() => setCategoryModalVisible(true)} style={styles.categoryBar}>
+          <View style={{ height: 25, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minWidth: 60, flexDirection: 'row', paddingHorizontal: 10 }}>
+            <View style={{ height: 10, width: 10, borderRadius: 5, backgroundColor: selectedC?.color ?? '#6A197D', marginRight: 5 }}></View>
+            <Text>{selectedC?.name ?? 'all'}</Text>
+          </View>
+          <SimpleLineIcons style={{}} name='arrow-down' size={16} />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.topicList}>
 
-        {data.map((item, idx) => {
+        {shownData.map((item, idx) => {
           return (
             <TopicTag key={idx} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
               pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
@@ -201,6 +223,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
 
+  },
+  categoryBar: {
+    height: 35,
+    minWidth: 200,
+    width: '80%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10
   },
   topicList: {
     backgroundColor: '#DFDFDE',

@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
   firstBlockText: {
     fontSize: 30,
-    fontWeight: 600,
     color: "#0D2841"
   },
   nonSelectedText: {
@@ -149,7 +148,6 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   thirdBlockText: {
-    fontWeight: 500,
     fontSize: 24,
     color: "#FAFAFA"
   }

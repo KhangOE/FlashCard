@@ -3,7 +3,7 @@ import { Modal, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Feather from "react-native-vector-icons/Feather"
 
 
-export default function CustomModal({ children, setModalVisible, modalVisible, title, fixedHeight = false }) {
+export default function CustomModal({ children, setModalVisible, modalVisible, title, fixedHeight = false, checkBtn = false, checkFunc, themeColor = "#6A197D" }) {
     return (
         <Modal
             transparent={true}
@@ -13,12 +13,22 @@ export default function CustomModal({ children, setModalVisible, modalVisible, t
             }}>
             <View style={styles.centeredView}>
                 <View style={[styles.modalView, fixedHeight && { height: "80%" }]}>
-                    <View style={styles.modalTop}>
-                        <TouchableOpacity
-                            onPress={() => setModalVisible(!modalVisible)}>
-                            <Feather name="x" size={20} color="white" />
-                        </TouchableOpacity>
-                        <Text style={{ color: "#fff", marginLeft: 10 }}>{title}</Text>
+                    <View style={[styles.modalTop, { backgroundColor: themeColor }]}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <Feather name="x" size={20} color="white" />
+                            </TouchableOpacity>
+                            <Text style={{ color: "#fff", marginLeft: 10 }}>{title}</Text>
+                        </View>
+                        {checkBtn && <TouchableOpacity
+                            style={{ marginRight: 10 }}
+                            onPress={() => {
+                                checkFunc()
+                                setModalVisible(!modalVisible)
+                            }}>
+                            <Feather name="check" size={20} color="white" />
+                        </TouchableOpacity>}
                     </View>
                     {children}
                 </View>
@@ -53,8 +63,9 @@ const styles = StyleSheet.create({
     modalTop: {
         height: 40,
         paddingLeft: 10,
-        backgroundColor: "#6A197D",
+        // backgroundColor: "#6A197D",
         alignItems: "center",
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: "space-between"
     },
 })
