@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { getCardByCid } from '../api/firebaseApi';
@@ -58,39 +58,29 @@ function Card(props) {
 
 function CardScreen({ navigation, route }) {
 
-  const [card, setCard] = useState()
+  const [card, setCard] = useState([])
   const [cid, setCid] = useState()
   const [item, setItem] = useState()
   const [freshKey, setFreshKey] = useState(1)
-  // const [sound, setSound] = useState();
+  const [search, setSearch] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+  const [filteredData, setFilteredData] = useState([])
 
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  // async function playSound() {
-  //     const { sound } = await Audio.Sound.createAsync(
-  //         { uri: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3' },
-  //         { shouldPlay: true }
-  //     );
-  //     setSound(sound);
 
-  //     console.log('Playing Sound');
-  //     await sound.playAsync();
-  // }
-
-
-
-  // useEffect(() => {
-  //     playSound()
-  // }, [])
-  // React.useEffect(() => {
-  //     return sound
-  //         ? () => {
-  //             console.log('Unloading Sound');
-  //             sound.unloadAsync();
-  //         }
-  //         : undefined;
-  // }, [sound]);
+  useEffect(() => {
+    console.log(search)
+    setFilteredData(card.filter(i => {
+      return i.word.toLowerCase().includes(search.toLowerCase()) ||
+        i.meaning.toLowerCase().includes(search.toLowerCase())
+    }))
+    console.log(filteredData, 'filter data')
+  }, [search])
+  useEffect(() => {
+    setFilteredData(card)
+  }, [card])
 
   useEffect(() => {
     console.log(freshKey)
@@ -157,9 +147,33 @@ function CardScreen({ navigation, route }) {
           <TouchableHighlight onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableHighlight>
-          <TouchableHighlight>
+          {/* <TouchableHighlight>
             <FontAwesome name="search" size={20} color="white" />
-          </TouchableHighlight>
+          </TouchableHighlight> */}
+
+          {
+            showSearch ?
+              [
+                <TouchableHighlight onPress={() => {
+                  setShowSearch(false)
+                  setSearch('')
+                }}>
+                  <FontAwesome name="arrow-left" size={20} color="white" />
+                </TouchableHighlight>, <TextInput
+                  style={styles.input}
+                  onChangeText={(e) => {
+                    setSearch(e)
+                  }}
+                  value={search}
+                  placeholder="search..."
+
+                />
+
+              ]
+              : <TouchableHighlight style={{ marginRight: 20 }} onPress={() => setShowSearch(true)}>
+                <FontAwesome name="search" size={20} color="white" />
+              </TouchableHighlight>
+          }
         </View>
       </View>
       {/* <Button title="Play Sound" onPress={playSound} /> */}
@@ -172,7 +186,7 @@ function CardScreen({ navigation, route }) {
           <Text style={styles.cardTotal}> Tất cả : {card?.length} </Text>
         </View>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
-          {card?.map((item) => {
+          {filteredData?.map((item) => {
             return (
               <View key={item.id}>
 
@@ -265,6 +279,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 20,
     zIndex: 1
+  },
+  input: {
+    width: '70%',
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: 'white'
   },
   cardTitle: {
     fontWeight: '700',
