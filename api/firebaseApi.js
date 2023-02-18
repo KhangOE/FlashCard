@@ -1,6 +1,6 @@
 import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { db } from '../firebase';
-import { doc, getDoc, setDoc, Timestamp, increment, deleteDoc, getDocs, } from "firebase/firestore";
+import { doc, getDoc, setDoc, Timestamp, increment, deleteDoc, getDocs, arrayUnion, } from "firebase/firestore";
 import { collection, query, where, onSnapshot, updateDoc, orderBy, addDoc } from "firebase/firestore";
 import { auth } from '../firebase';
 import { Alert } from 'react-native'
@@ -110,7 +110,6 @@ export async function getCardsbyUID() {
 
 
 export async function getTopicById(props) {
-  console.log(auth.currentUser.uid)
   try {
     const urlsRef = collection(db, "Collection");
     const q = query(urlsRef, where("userID", "==", auth.currentUser.uid));
@@ -218,17 +217,56 @@ export const getCategories = async () => {
   return l
 }
 
+export const addCategory = async (props) => {
+  const docRef = await addDoc(collection(db, "categories", auth.currentUser.uid, "categories"), {
+    name: props.category,
+    color: props.color
+  });
+}
+
 export const addCardToFavorite = async (id) => {
-  //console.log(id)
   const categorySnap = await updateDoc(doc(db, "Card", id), {
     favorited: true
   })
-  //return l
 }
 
 export const removeCardFromFavorite = async (id) => {
   const categorySnap = await updateDoc(doc(db, "Card", id), {
     favorited: false
   })
-  //return l
+}
+
+export const memorizedCard = async (id) => {
+  const categorySnap = await updateDoc(doc(db, "Card", id), {
+    memorized: true
+  })
+}
+
+export const notMemorizedCard = async (id) => {
+  const categorySnap = await updateDoc(doc(db, "Card", id), {
+    memorized: false
+  })
+}
+
+export const getProgress = async () => {
+  const progressSnap = await getDoc(doc(db, "progress", auth.currentUser.uid))
+  if (progressSnap.exists()) {
+    return progressSnap.data()
+  } else {
+    console.log("No such document!");
+  }
+}
+
+export const addDate = async (date) => {
+  getProgress().then(async data => {
+    if (data === undefined) {
+      await setDoc(doc(db, "progress", auth.currentUser.uid), {
+        dates: [date]
+      })
+    } else if (data.dates.indexOf(date) === -1) {
+      await updateDoc(doc(db, "progress", auth.currentUser.uid), {
+        dates: arrayUnion(date)
+      })
+    }
+  })
 }

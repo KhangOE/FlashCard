@@ -147,11 +147,14 @@ export default function AllCards({ navigation, route }) {
                     <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'all' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card), setSelected('all') }}>
                         <Text style={[styles.cardTotal, selected === 'all' && { color: "#fff" }]}> Tất cả : {card?.length} </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20 }, selected === 'memorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === true)), setSelected('memorized') }}>
+                    <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'memorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === true)), setSelected('memorized') }}>
                         <Text style={[styles.cardTotal, selected === 'memorized' && { color: "#fff" }]}> Đã ghi nhớ : {card?.slice(0).filter(item => item.memorized === true).length} </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[{ borderColor: '#6A197D', borderWidth: 1, borderRadius: 20 }, selected === 'notMemorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === false)), setSelected('notMemorized') }}>
+                    <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'notMemorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === false)), setSelected('notMemorized') }}>
                         <Text style={[styles.cardTotal, selected === 'notMemorized' && { color: "#fff" }]}> Chưa ghi nhớ : {card?.slice(0).filter(item => item.memorized === false).length} </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[{ borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'favorited' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.favorited === true)), setSelected('favorited') }}>
+                        <Text style={[styles.cardTotal, selected === 'favorited' && { color: "#fff" }]}> Đã thích : {card?.slice(0).filter(item => item.favorited === true).length} </Text>
                     </TouchableOpacity>
                 </View>
                 <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
@@ -185,6 +188,12 @@ export default function AllCards({ navigation, route }) {
                     </View>
                 </Pressable>
             </View>
+
+            {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
+            <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={item} setCard={setCard} setFreshKey={setFreshKey} />
+
+            {/* Cửa sổ nhỏ để xóa topic*/}
+            <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
         </View>
     )
 }
@@ -215,14 +224,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 15,
-        paddingVertical: 10
+        paddingVertical: 10,
+        flexWrap: 'wrap'
     },
     cardTotal: {
-        backgroundColor: '#6A197D',
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 20,
-        color: '#fff',
         fontWeight: '400',
         fontSize: 16
     },
