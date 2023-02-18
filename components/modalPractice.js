@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, Image } from "react-native";
 import CustomModal from "./CustomModal";
 import { getCardsbyCID } from "../api/firebaseApi"
-//import { PracticeTag } from "./practicetag";
-
 
 export const ModalPractice = (props) => {
     const [error0, setError0] = useState(false)

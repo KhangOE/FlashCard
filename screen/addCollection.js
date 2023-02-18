@@ -73,7 +73,7 @@ export const AddCollection = ({ navigation }) => {
   }
   return (<>
 
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <Pressable onPress={() => {
@@ -120,7 +120,7 @@ export const AddCollection = ({ navigation }) => {
 
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   </>)
 }
 

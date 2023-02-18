@@ -185,3 +185,12 @@ export const getCurrentUser = async () => {
     console.log("No such document!");
   }
 }
+
+export const getCategories = async () => {
+  const categorySnap = await getDocs(collection(db, "categories", auth.currentUser.uid, "categories"))
+  const l = []
+  categorySnap.forEach(docSnap => {
+    l.push({ ...docSnap.data(), id: docSnap.id });
+  })
+  return l
+}

@@ -28,7 +28,7 @@ export const PracticeWrite = () => {
   const isFocused = useIsFocused();
 
   return (<>
-    <View>
+    <View style={styles.base}>
       <TextInput
         style={styles.inputField}
         placeholder=""

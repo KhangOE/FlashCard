@@ -46,27 +46,27 @@ export default function PracticeComplete({ route, navigation }) {
             <View style={{ flex: 1, width: '100%', alignItems: "center" }}>
                 <Image
                     source={require('../../assets/image/checked-icon.png')}
-                    style={{ width: 50, height: 50 }}
+                    style={{ width: 80, height: 80 }}
                 />
-                <Text>Review complete!</Text>
+                <Text style={{ fontSize: 20, marginVertical: 10 }}>Review complete!</Text>
                 <View style={styles.sub_container}>
-                    <Text>Summary</Text>
-                    <Text style={{ color: "green" }}>Correct answers: {correctList?.length}</Text>
-                    <Text style={{ color: "red" }}>Incorrect answers: {wrongList?.length}</Text>
-                    {moves !== undefined ? <Text style={{ color: "yellow" }}>Number of moves: {moves}</Text> :
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Summary</Text>
+                    <Text style={{ color: "green", fontSize: 20, marginBottom: 10 }}>Correct answers: {correctList?.length}</Text>
+                    <Text style={{ color: "red", fontSize: 20, marginBottom: 10 }}>Incorrect answers: {wrongList?.length}</Text>
+                    {moves !== undefined ? <Text style={{ color: "orange", fontSize: 20, marginBottom: 10 }}>Number of moves: {moves}</Text> :
                         <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.viewResultButton}>
-                            <Text style={{ color: "blue" }}>view results</Text>
+                            <Text style={{ color: "blue", fontSize: 20, height: 30, justifyContent: 'center' }}>view results</Text>
                         </TouchableOpacity>}
                 </View>
             </View>
             <View style={{ width: '100%' }}>
-                <View style={{ flexDirection: "row", width: '100%', marginBottom: 5 }}>
-                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue" }}>repeat all</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue" }}>repeat cards</Text></TouchableOpacity>
+                <View style={{ flexDirection: "row", width: '100%', marginBottom: 10 }}>
+                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue", fontSize: 20 }}>repeat all</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue", fontSize: 20 }}>repeat cards</Text></TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.doneButton} onPress={() => navigation.popToTop()}><Text style={{ color: "white" }}>done</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.doneButton} onPress={() => navigation.popToTop()}><Text style={{ color: "white", fontSize: 20 }}>done</Text></TouchableOpacity>
             </View>
-        </View>
+        </View >
     )
 }
 
@@ -119,22 +119,27 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 1,
         borderColor: 'blue',
+        marginVertical: 10
     },
     repeatButton: {
         paddingVertical: 5,
         paddingHorizontal: 10,
-        textAlign: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 20,
         borderWidth: 1,
         borderColor: 'blue',
         width: '50%',
+        height: 40,
     },
     doneButton: {
         backgroundColor: 'blue',
-        textAlign: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         paddingVertical: 5,
         borderRadius: 20,
         width: '100%',
+        height: 40
     },
     button: {
         borderRadius: 20,

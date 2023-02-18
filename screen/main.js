@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView, TextInput } from 'react-native';
+import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
-import { getCollection } from '../api/firebaseApi';
+import { getCategories, getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
 import SafeViewAndroid from "../safeAreaViewAndroid";
@@ -12,7 +12,7 @@ import SafeViewAndroid from "../safeAreaViewAndroid";
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
-import { TextInput } from 'react-native-gesture-handler';
+import CategoryModal from '../components/CategoryModal';
 
 
 const width = Dimensions.get('screen').width;
@@ -81,53 +81,61 @@ function TopicTag(props) {
 
 
 function MainScreen({ navigation }) {
+  const [categories, setCategories] = useState([])
+  const [selectedC, setSelectedC] = useState(null)
   const [data, setdata] = useState([])
+  const [shownData, setShownData] = useState([])
   const [topic, setTopic] = useState()
   const [pick, setPick] = useState()
   const [freshKey, setFreshKey] = useState(1)
   const [filteredData, setFilteredData] = useState([])
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false)
 
   useEffect(() => {
-
-    setFilteredData(data.filter(i => {
+    setFilteredData(shownData.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
     }))
-
   }, [search])
+
+
   useEffect(() => {
-    setFilteredData(data)
-  }, [data])
-
-
-
+    setFilteredData(shownData.filter(i => {
+      return i.name.toLowerCase().includes(search.toLowerCase())
+    }))
+  }, [shownData])
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getTopicById().then(data => {
-        setdata(data)
-
-      }).then(() => {
+      getCategories().then(data => {
+        setCategories(data)
       })
-      //  console.log('Hello World!')
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-
     getTopicById().then(data => {
       setdata(data)
-
+      setShownData(data)
     })
-      //  console.log('Hello World!')
-      ;
-
   }, [freshKey]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    if (selectedC === null) {
+      setShownData(data)
+    } else
+      setShownData(data.filter(d => d.category === selectedC.id))
+  }, [selectedC]);
 
+
+  const updateCategory = () => {
+    getCategories().then(data => {
+      setCategories(data)
+    })
+  }
 
   // Add topic
   const [isPressBtn, setIsPressBtn] = useState('none');
@@ -163,7 +171,7 @@ function MainScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.openDrawer()}>
@@ -201,7 +209,16 @@ function MainScreen({ navigation }) {
       </View>
 
       <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
-
+      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
+      <View style={{ height: 50, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        <TouchableOpacity onPress={() => setCategoryModalVisible(true)} style={styles.categoryBar}>
+          <View style={{ height: 25, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minWidth: 60, flexDirection: 'row', paddingHorizontal: 10 }}>
+            <View style={{ height: 10, width: 10, borderRadius: 5, backgroundColor: selectedC?.color ?? '#6A197D', marginRight: 5 }}></View>
+            <Text>{selectedC?.name ?? 'all'}</Text>
+          </View>
+          <SimpleLineIcons style={{}} name='arrow-down' size={16} />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.topicList}>
 
         {filteredData.map((item, idx) => {
@@ -223,7 +240,7 @@ function MainScreen({ navigation }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -256,6 +273,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
 
+  },
+  categoryBar: {
+    height: 35,
+    minWidth: 200,
+    width: '80%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10
   },
   topicList: {
     backgroundColor: '#DFDFDE',
