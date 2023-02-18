@@ -218,7 +218,7 @@ function CardScreen({ navigation, route }) {
       <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={item} setCard={setCard} setFreshKey={setFreshKey} />
 
       {/* Cửa sổ nhỏ để xóa topic*/}
-      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} setFreshKey={setFreshKey} />
     </View>
   );
 }
