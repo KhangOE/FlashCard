@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
   },
   secondBlockText: {
     fontSize: 16,
+    fontWeight: '600',
     color: "#0D2841"
   },
   input: {
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
   },
   thirdBlockText: {
     fontSize: 24,
+    fontWeight: '500',
     color: "#FAFAFA"
   }
 })

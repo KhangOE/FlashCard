@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView, TextInput } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
@@ -12,7 +12,6 @@ import SafeViewAndroid from "../safeAreaViewAndroid";
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
-import { TextInput } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
 
 
@@ -92,23 +91,21 @@ function MainScreen({ navigation }) {
   const [filteredData, setFilteredData] = useState([])
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
-
-  useEffect(() => {
-
-    setFilteredData(data.filter(i => {
-      return i.name.toLowerCase().includes(search.toLowerCase())
-    }))
-
-  }, [search])
-  useEffect(() => {
-    setFilteredData(data)
-  }, [data])
-
-
-
-
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
+
+  useEffect(() => {
+    setFilteredData(shownData.filter(i => {
+      return i.name.toLowerCase().includes(search.toLowerCase())
+    }))
+  }, [search])
+
+
+  useEffect(() => {
+    setFilteredData(shownData.filter(i => {
+      return i.name.toLowerCase().includes(search.toLowerCase())
+    }))
+  }, [shownData])
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -139,8 +136,6 @@ function MainScreen({ navigation }) {
       setCategories(data)
     })
   }
-
-
 
   // Add topic
   const [isPressBtn, setIsPressBtn] = useState('none');
@@ -226,7 +221,7 @@ function MainScreen({ navigation }) {
       </View>
       <ScrollView style={styles.topicList}>
 
-        {shownData.map((item, idx) => {
+        {filteredData.map((item, idx) => {
           return (
             <TopicTag key={idx} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
               pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />

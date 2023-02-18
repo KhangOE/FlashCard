@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#dfdfdf"
     },
     item: {
-        zIndex: 'auto',
         height: 40,
         borderRadius: 10,
         backgroundColor: "white",
