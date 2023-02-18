@@ -40,7 +40,7 @@ export const addCollection = async (props) => {
       userID: auth.currentUser.uid,
       name: props.name,
       note: props.note,
-
+      category: props.category
     });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
@@ -57,6 +57,7 @@ export const addCard = async (props) => {
       meaning: props.vi,
       ex: props.ex || null,
       memorized: false,
+      favorited: false,
       image: props.img || null,
     });
     console.log("Document written with ID: ", docRef.id);
@@ -70,6 +71,26 @@ export async function getCardsbyCID(props) {
   try {
     const urlsRef = collection(db, "Card");
     const q = query(urlsRef, where("cid", "==", props.cid));
+
+    const querySnapshot = await getDocs(q);
+    const l = []
+    querySnapshot.forEach(docSnap => {
+      l.push({ ...docSnap.data(), id: docSnap.id });
+    })
+
+    return l   // Generate the returned object in the forEach loop, see link below
+
+  } catch (e) {
+    console.error("Error querying document: ", e);
+    return e.response
+  }
+}
+
+
+export async function getCardsbyUID() {
+  try {
+    const urlsRef = collection(db, "Card");
+    const q = query(urlsRef, where("userID", "==", auth.currentUser.uid));
 
     const querySnapshot = await getDocs(q);
     const l = []
@@ -191,6 +212,21 @@ export const getCategories = async () => {
   const l = []
   categorySnap.forEach(docSnap => {
     l.push({ ...docSnap.data(), id: docSnap.id });
+  })
+  return l
+}
+
+export const addCardToFavorite = async (id) => {
+  console.log(id)
+  const categorySnap = await updateDoc(doc(db, "Card", id), {
+    favorited: true
+  })
+  return l
+}
+
+export const removeCardFromFavorite = async (id) => {
+  const categorySnap = await updateDoc(doc(db, "Card", id), {
+    favorited: false
   })
   return l
 }
