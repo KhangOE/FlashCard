@@ -96,6 +96,7 @@ const AddCardScreen = ({ navigation, route }) => {
 
         setEn('')
         setVi('')
+        setImage(null)
       }
 
       else {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, TouchableHighlight, TouchableOpacity, Animated, Easing, Dimensions, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TouchableHighlight, Image, TouchableOpacity, Animated, Easing, Dimensions, SafeAreaView } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { getCardsbyCID, getTopicById } from '../api/firebaseApi';
@@ -34,18 +34,46 @@ function CardReview(props) {
   }
   return (
     <Pressable style={styles.card} onPress={flipCard} android_disableSound={true}>
-      <View style={styles.cardWrapper}>
-        <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
-          <Text style={styles.vocabulary}>{props.en}</Text>
-          <Pressable style={styles.sound} onPress={() => { props.sound() }}>
-            {/* // Đặt hàm playSound ở đây */}
-            <AntDesign name="sound" size={24} color="black" />
-          </Pressable>
-        </Animated.View>
-        <Animated.View style={[styles.cardBack, { transform: [{ rotateY: rotateBack }] }]}>
-          <Text style={styles.cardBackText}>{props.vi} </Text>
-        </Animated.View>
-      </View>
+
+      {
+        props.item.image ?
+          <View style={styles.cardWrapper}>
+            <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
+              <Image
+                style={styles.tinyLogo}
+                source={{
+                  uri: props.item.image,
+                }}
+              />
+              <Text style={styles.vocabulary}>{props.en}</Text>
+              <Pressable style={styles.sound} onPress={() => { props.sound() }}>
+                {/* // Đặt hàm playSound ở đây */}
+                <AntDesign name="sound" size={24} color="black" />
+              </Pressable>
+
+            </Animated.View>
+            <Animated.View style={[styles.cardBack, { transform: [{ rotateY: rotateBack }] }]}>
+              <Text style={styles.cardBackText}>{props.vi} </Text>
+            </Animated.View>
+          </View>
+
+          :
+
+          <View style={styles.cardWrapper}>
+            <Animated.View style={[styles.cardFront, { transform: [{ rotateY: rotateFront }] }]}>
+              <Text style={styles.vocabulary2}>{props.en}</Text>
+              <Pressable style={styles.sound} onPress={() => { props.sound() }}>
+                {/* // Đặt hàm playSound ở đây */}
+                <AntDesign name="sound" size={24} color="black" />
+              </Pressable>
+
+            </Animated.View>
+            <Animated.View style={[styles.cardBack, { transform: [{ rotateY: rotateBack }] }]}>
+              <Text style={styles.cardBackText}>{props.vi} </Text>
+            </Animated.View>
+          </View>
+      }
+
     </Pressable>
   );
 }
@@ -106,34 +134,9 @@ function BasicReviewScreen({ navigation, route }) {
       }
 
     })
-
-
-
-
-
-
   }
-  useEffect(() => {
-    console.log('ádadsd')
-    axios.get('https://api.dictionaryapi.dev/api/v2/entries/en/green').then((data) => {
-      console.log(data.data[0].phonetics[0].audio)
-    })
-    //playSound()
-    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1]?.en}-uk.mp3`)
-  }, [])
 
-  useEffect(() => {
-    getTopicById().then(data => {
-      console.log('data ne ', data)
-    })
-    // console.log('id user', auth.currentUser.uid)
-    // console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
-  }, [])
-  useEffect(() => {
 
-    //playSound()
-    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1]?.en}-uk.mp3`)
-  }, [cardNumber])
 
 
   React.useEffect(() => {
@@ -146,7 +149,7 @@ function BasicReviewScreen({ navigation, route }) {
   }, [sound]);
 
   // Xử lý animation flip va scroll
-  const cardTotal = 12;     // Tong so luong card
+  const cardTotal = card.length || 10;     // Tong so luong card
   const scrollPoint = useRef(0);
   let distance = cardWidth + 20;
 
@@ -193,7 +196,7 @@ function BasicReviewScreen({ navigation, route }) {
       >
         {card.map((item, index) => {
           return (<>
-            <CardReview en={item.word} vi={item.meaning} key={index} sound={playSound} />
+            <CardReview item={item} en={item.word} vi={item.meaning} key={index} sound={playSound} />
           </>)
         })}
 
@@ -272,8 +275,14 @@ const styles = StyleSheet.create({
   vocabulary: {
     fontSize: 35,
     fontWeight: '700',
-    marginTop: '30%',
-    marginBottom: '20%'
+    marginTop: '15%',
+    marginBottom: '8%'
+  },
+  vocabulary2: {
+    fontSize: 35,
+    fontWeight: '700',
+    marginTop: '55%',
+    marginBottom: '15%'
   },
   sound: {
     borderWidth: 1,
@@ -310,7 +319,22 @@ const styles = StyleSheet.create({
   cardPosition: {
     fontSize: 18,
     fontWeight: '400'
-  }
+  },
+  container: {
+    paddingTop: 50,
+  },
+  tinyLogo: {
+    width: '80%',
+    height: 250,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: 'black'
+  },
+  logo: {
+    width: 66,
+    height: 58,
+  },
+
 });
 
 export { BasicReviewScreen };

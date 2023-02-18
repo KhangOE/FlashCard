@@ -217,16 +217,16 @@ export const getCategories = async () => {
 }
 
 export const addCardToFavorite = async (id) => {
-  console.log(id)
+  //console.log(id)
   const categorySnap = await updateDoc(doc(db, "Card", id), {
     favorited: true
   })
-  return l
+  //return l
 }
 
 export const removeCardFromFavorite = async (id) => {
   const categorySnap = await updateDoc(doc(db, "Card", id), {
     favorited: false
   })
-  return l
+  //return l
 }

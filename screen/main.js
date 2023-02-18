@@ -40,7 +40,7 @@ function TopicTag(props) {
     }
   }
   return (
-    <TouchableOpacity onPress={props.press}>
+    <TouchableOpacity onPress={props.press} key={props.id}>
       <View style={styles.topicTag}>
         <View style={styles.topicTagSet}>
           <View style={styles.topicFirstBlock}>
@@ -174,7 +174,7 @@ function MainScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.base}>
+    <View style={styles.base} >
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.openDrawer()}>

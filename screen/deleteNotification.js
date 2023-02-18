@@ -15,10 +15,11 @@ function DeleteNotification(props) {
       props.setFreshKey(state => state + 1)
     }
     else {
-
       await deleteSpending(props.id)
+      props.setFreshKey(state => state + 1)
       props.setCard(state => state.filter((item) => {
         return item.id != props.id
+
       }))
     }
 
