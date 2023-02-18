@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TouchableOpacity, Image, StyleSheet, Text, View, Modal, Pressable } from 'react-native'
-import { Feather } from '@expo/vector-icons'
 import { AntDesign } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ScrollView } from 'react-native';
 import CustomModal from "../../components/CustomModal"
+import { addCardToFavorite, addDate, memorizedCard, notMemorizedCard, removeCardFromFavorite } from '../../api/firebaseApi';
 
 
 function ReviewPage(props) {
@@ -12,15 +12,20 @@ function ReviewPage(props) {
         <View style={styles.reviewContainer}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsHorizontalScrollIndicator={false}>
                 {props.data.map((obj, index) => {
+                    const [favorited, setFavorited] = useState(obj.favorited)
                     return (
                         <View key={index} style={styles.reviewItem}>
                             <View>
                                 <Text style={styles.reviewItemWord}>{obj.word}</Text>
                                 <Text style={styles.reviewItemMeaning}>{obj.meaning}</Text>
                             </View>
-                            <TouchableOpacity>
-                                {obj.favorited ? <AntDesign name="heart" size={18} color="red" /> : <AntDesign name="hearto" size={18} color="red" />}
-                            </TouchableOpacity>
+                            {favorited ?
+                                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { removeCardFromFavorite(obj.id), setFavorited(false) }}>
+                                    <AntDesign name="heart" size={18} color="red" />
+                                </TouchableOpacity> :
+                                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { addCardToFavorite(obj.id), setFavorited(true) }}>
+                                    <AntDesign name="hearto" size={18} color="black" />
+                                </TouchableOpacity>}
                         </View>
                     )
                 })}
@@ -34,6 +39,15 @@ const Tab = createMaterialTopTabNavigator();
 export default function PracticeComplete({ route, navigation }) {
     const { correctList, wrongList, moves } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+        let yourDate = new Date()
+        addDate(yourDate.toISOString().split('T')[0])
+        if (!moves) {
+            wrongList?.map(item => notMemorizedCard(item.id))
+            correctList?.map(item => memorizedCard(item.id))
+        }
+    }, [])
 
     return (
         <View style={styles.container}>

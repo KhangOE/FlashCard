@@ -5,7 +5,8 @@ import CustomModal from './CustomModal'
 import { PlusBtn } from './PlusButton'
 import { addDoc, collection, deleteDoc, doc, getFirestore, setDoc } from "firebase/firestore";
 import { app, auth } from '../firebase'
-import CategoryMenu from './CategoryMenu'
+import { FontAwesome5 } from '@expo/vector-icons';
+import { addCategory } from '../api/firebaseApi'
 
 
 const db = getFirestore(app);
@@ -17,12 +18,9 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
     const [color, setColor] = useState('#6A197D')
     const [selectedCategory, setSelectedCategory] = useState(null)
 
-    const addCategory = async () => {
+    const onAddCategory = async () => {
         try {
-            const docRef = await addDoc(collection(db, "categories", auth.currentUser.uid, "categories"), {
-                name: category,
-                color: color
-            });
+            addCategory({ category, color })
             updateCategory()
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -56,7 +54,7 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
 
     return (
         <CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} title='category' fixedHeight={true}>
-            <CustomModal modalVisible={addCategoryVisible} setModalVisible={setAddCategoryVisible} title={selectedCategory ? "edit category" : "add category"} checkBtn={true} checkFunc={selectedCategory ? editCategory : addCategory} themeColor={color}>
+            <CustomModal modalVisible={addCategoryVisible} setModalVisible={setAddCategoryVisible} title={selectedCategory ? "edit category" : "add category"} checkBtn={true} checkFunc={selectedCategory ? editCategory : onAddCategory} themeColor={color}>
                 <View style={{ height: 200 }}>
                     <TextInput
                         style={styles.input}
@@ -93,9 +91,14 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
                             setSelected(item)
                         }} style={[styles.item, selected === item && { backgroundColor: item.color }]}>
                             <Text style={selected === item && { color: "white" }}>{item.name}</Text>
-                            <CategoryMenu
-                                editCategory={() => { setAddCategoryVisible(true), setSelectedCategory(item) }}
-                                deleteCategory={() => deleteCategory(item.id)}></CategoryMenu>
+                            <View style={{ flexDirection: 'row', width: 50, justifyContent: 'space-between', marginRight: 10 }}>
+                                <TouchableOpacity onPress={() => deleteCategory(item.id)}>
+                                    <FontAwesome5 name="trash" size={18} color="black" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => { setAddCategoryVisible(true), setSelectedCategory(item), setCategory(item.name) }}>
+                                    <FontAwesome5 name="pen" size={18} color="black" />
+                                </TouchableOpacity>
+                            </View>
                         </TouchableOpacity>
                     )
                 })}
