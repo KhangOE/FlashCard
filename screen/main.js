@@ -226,7 +226,7 @@ function MainScreen({ navigation }) {
 
         {filteredData.map((item, idx) => {
           return (
-            <TopicTag key={idx} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
+            <TopicTag key={item.id} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
               pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
           )
         })}
