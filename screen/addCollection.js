@@ -1,12 +1,14 @@
 import { async } from '@firebase/util';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Touchable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
-import { addCard, addCollection, addspending, getspending, main } from '../api/firebaseApi';
+import { addCard, addCollection, addspending, getCategories, getspending, main } from '../api/firebaseApi';
 import { getTopicById } from '../api/firebaseApi';
 import SafeViewAndroid from "../safeAreaViewAndroid";
 import safeAreaViewAndroid from '../safeAreaViewAndroid';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import CategoryModal from '../components/CategoryModal';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
@@ -20,6 +22,19 @@ export const AddCollection = ({ navigation }) => {
   const [checkName, setChechName] = useState(false)
   const [showErr, setShowErr] = useState('')
   const [freshCall, setFreshCall] = useState(1)
+  const [categories, setCategories] = useState([])
+  const [selectedC, setSelectedC] = useState(null)
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false)
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getCategories().then(data => {
+        setCategories(data)
+      })
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   useEffect(() => {
     getTopicById().then((data) => {
       setExist(data.map(a => a.name))
@@ -35,31 +50,14 @@ export const AddCollection = ({ navigation }) => {
     setShowErr('')
   }, [checkName])
 
-  const handle = async () => {
-    if (name) {
-      if (checkName) {
-        await addCollection({ name: name, note: note })
-        setNote('')
-        setName('')
-        console.log(note, name)
-      }
-      else {
-        setShowErr('Name existed')
-      }
-    }
-    else {
-      setShowErr('Name is required !')
-    }
-  }
-
   const handleComplte = async () => {
     if (name) {
       if (checkName) {
-        await addCollection({ name: name, note: note })
+        await addCollection({ name: name, note: note, category: selectedC.id })
         setNote('')
         setName('')
-        console.log(note, name)
-        navigation.navigate('Collection')
+        setSelectedC(null)
+        navigation.navigate("Main")
       }
       else {
         setShowErr('Name existed')
@@ -77,7 +75,7 @@ export const AddCollection = ({ navigation }) => {
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <Pressable onPress={() => {
-            navigation.navigate('Collection')
+            navigation.navigate("Main")
           }}>
             <Feather name="x" size={24} color="white" />
           </Pressable>
@@ -87,7 +85,7 @@ export const AddCollection = ({ navigation }) => {
         </View>
       </View>
 
-
+      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC}></CategoryModal>
       <View style={styles.mainBlock}>
         <View style={styles.wrapper}>
           <View style={styles.addVocabulary}>
@@ -113,8 +111,16 @@ export const AddCollection = ({ navigation }) => {
               defaultValue={note}
             />
           </View>
+          <View style={styles.addMeaning}>
+            <Text style={styles.title}>
+              Category
+            </Text>
+            {selectedC ? <Text>{selectedC.name}</Text> : <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+              <Text>Category</Text>
+            </TouchableOpacity>}
+          </View>
 
-          <Pressable style={[styles.addBtn]} onPress={handle}  >
+          <Pressable style={[styles.addBtn]} onPress={handleComplte}  >
             <Text style={styles.textBtn}>Thêm bộ</Text>
           </Pressable>
 

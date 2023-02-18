@@ -7,7 +7,8 @@ import { useState, useEffect } from 'react';
 import { getCategories, getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
-import SafeViewAndroid from "../safeAreaViewAndroid";
+import { useIsFocused } from '@react-navigation/native';
+
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
@@ -94,6 +95,8 @@ function MainScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     setFilteredData(shownData.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
@@ -121,7 +124,7 @@ function MainScreen({ navigation }) {
       setdata(data)
       setShownData(data)
     })
-  }, [freshKey]);
+  }, [freshKey, isFocused]);
 
   useEffect(() => {
     if (selectedC === null) {

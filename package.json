@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.2",
-    "@react-native-community/async-storage": "^1.12.1",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/material-top-tabs": "^6.5.2",

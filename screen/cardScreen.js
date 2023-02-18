@@ -9,6 +9,7 @@ import { Buffer } from "buffer";
 import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
 import SafeViewAndroid from "../safeAreaViewAndroid";
+import Card from '../components/Card';
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
@@ -19,42 +20,7 @@ import { RepairCardScreen } from './repairCard';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
-function Card(props) {
-  const [show, setShow] = useState('none');
 
-  function showBlock() {
-    if (show == 'none') {
-      setShow('flex');
-    }
-    else {
-      setShow('none');
-    }
-  }
-  return (
-    <TouchableHighlight style={styles.card}>
-      <View>
-        <View>
-          <Text style={styles.cardTitle}>{props.en}</Text>
-        </View>
-        <View style={styles.cardMeaning}>
-          <Text>{props.vi}</Text>
-        </View>
-        <View style={styles.cardFooter}>
-          <AntDesign name="sound" size={18} color="black" />
-          <View style={styles.optBlock}>
-            <Pressable style={styles.cardOpion} onPress={() => {
-              showBlock()
-              props.setItem(props.item)
-            }}>
-              {(show == 'none') ? <Entypo name="dots-three-vertical" size={15} color="black" /> : <AntDesign name="close" size={15} color="black" />}
-            </Pressable>
-            <OptionBlock bottom={'101%'} right={-20} display={show} isRepairBtn={props.isRepairBtn} repairTopic={props.repairTopic} isDelete={props.isDelete} deleteTopic={props.deleteTopic} />
-          </View>
-        </View>
-      </View>
-    </TouchableHighlight >
-  );
-}
 
 function CardScreen({ navigation, route }) {
 
@@ -64,7 +30,10 @@ function CardScreen({ navigation, route }) {
   const [freshKey, setFreshKey] = useState(1)
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
+  const [shownData, setShownData] = useState([])
   const [filteredData, setFilteredData] = useState([])
+
+  const [selected, setSelected] = useState('all')
 
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,15 +41,20 @@ function CardScreen({ navigation, route }) {
   const ref_input = useRef();
   useEffect(() => {
 
-    setFilteredData(card.filter(i => {
+    setFilteredData(shownData.filter(i => {
       return i.word.toLowerCase().includes(search.toLowerCase()) ||
         i.meaning.toLowerCase().includes(search.toLowerCase())
     }))
 
   }, [search])
+
+
   useEffect(() => {
-    setFilteredData(card)
-  }, [card])
+    setFilteredData(shownData.filter(i => {
+      return i.word.toLowerCase().includes(search.toLowerCase()) ||
+        i.meaning.toLowerCase().includes(search.toLowerCase())
+    }))
+  }, [shownData])
 
   useEffect(() => {
     if (showSearch) {
@@ -88,12 +62,14 @@ function CardScreen({ navigation, route }) {
     }
 
   }, [showSearch])
+
   useEffect(() => {
 
     const unsubscribe = navigation.addListener('focus', () => {
 
       setCid(route.params.id)
       getCardsbyCID({ cid: route.params.id }).then(data => {
+        setShownData(data)
         setCard(data)
 
         //  console.log(data)
@@ -109,6 +85,7 @@ function CardScreen({ navigation, route }) {
 
     setCid(route.params.id)
     getCardsbyCID({ cid: route.params.id }).then(data => {
+      setShownData(data)
       setCard(data)
     })
 
@@ -192,14 +169,22 @@ function CardScreen({ navigation, route }) {
       <View style={styles.cardList}>
         <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={cid}></ModalPractice>
         <View style={styles.cardFirstBlock}>
-          <Text style={styles.cardTotal}> Tất cả : {card?.length} </Text>
+          <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'all' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card), setSelected('all') }}>
+            <Text style={[styles.cardTotal, selected === 'all' && { color: "#fff" }]}> Tất cả : {card?.length} </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'memorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === true)), setSelected('memorized') }}>
+            <Text style={[styles.cardTotal, selected === 'memorized' && { color: "#fff" }]}> Đã ghi nhớ : {card?.slice(0).filter(item => item.memorized === true).length} </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[{ borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'notMemorized' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card.slice(0).filter(item => item.memorized === false)), setSelected('notMemorized') }}>
+            <Text style={[styles.cardTotal, selected === 'notMemorized' && { color: "#fff" }]}> Chưa ghi nhớ : {card?.slice(0).filter(item => item.memorized === false).length} </Text>
+          </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
           {filteredData?.map((item) => {
             return (
               <View key={item.id}>
 
-                <Card item={item} vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} setItem={setItem}></Card>
+                <Card item={item} vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} id={item.id} favorited={item.favorited} setFreshKey={setFreshKey} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} setItem={setItem}></Card>
               </View>
 
             )
@@ -264,14 +249,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
+    flexWrap: 'wrap',
   },
   cardTotal: {
-    backgroundColor: '#6A197D',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 20,
-    color: '#fff',
     fontWeight: '400',
     fontSize: 16
   },
