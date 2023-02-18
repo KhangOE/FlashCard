@@ -8,14 +8,14 @@ const height = Dimensions.get('window').height;
 function DeleteNotification(props) {
 
   const deleteCard = async () => {
-    console.log(2)
+
     if (props.isTopic) {
       await deleteCollection(props.id)
-      console.log(1)
+
       props.setFreshKey(state => state + 1)
     }
     else {
-      console.log(3)
+
       await deleteSpending(props.id)
       props.setCard(state => state.filter((item) => {
         return item.id != props.id
@@ -29,7 +29,7 @@ function DeleteNotification(props) {
 
         <View style={styles.dialog}>
           <View style={styles.notification}>
-            <Text style={styles.msg}> Bạn có chắc muốn xóa ? {props.id}</Text>
+            <Text style={styles.msg}> Bạn có chắc muốn xóa ? </Text>
           </View>
 
           <View style={styles.selectBtn}>

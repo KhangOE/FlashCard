@@ -7,11 +7,12 @@ import { useState, useEffect } from 'react';
 import { getCategories, getCollection } from '../api/firebaseApi';
 import { collection } from 'firebase/firestore';
 import { getTopicById } from '../api/firebaseApi';
-
+import SafeViewAndroid from "../safeAreaViewAndroid";
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
+import { TextInput } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
 
 
@@ -88,6 +89,24 @@ function MainScreen({ navigation }) {
   const [topic, setTopic] = useState()
   const [pick, setPick] = useState()
   const [freshKey, setFreshKey] = useState(1)
+  const [filteredData, setFilteredData] = useState([])
+  const [search, setSearch] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+
+  useEffect(() => {
+
+    setFilteredData(data.filter(i => {
+      return i.name.toLowerCase().includes(search.toLowerCase())
+    }))
+
+  }, [search])
+  useEffect(() => {
+    setFilteredData(data)
+  }, [data])
+
+
+
+
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
 
@@ -129,6 +148,8 @@ function MainScreen({ navigation }) {
   const [isRepairBtn, setIsRepairBtn] = useState('none');
   // Delete notification
   const [isDelete, setIsDelete] = useState('none');
+
+
   function displayAddTopicScreen() {
     if (isPressBtn == 'none') {
       setIsPressBtn('flex');
@@ -155,15 +176,40 @@ function MainScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.base}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight onPress={() => navigation.openDrawer()}>
+          <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.openDrawer()}>
             <Ionicons name="menu" size={24} color="white" />
           </TouchableHighlight>
-          <TouchableHighlight>
+          {
+            showSearch ?
+              [
+                <TouchableHighlight style={{ padding: 10 }} onPress={() => {
+                  setShowSearch(false)
+                  setSearch('')
+                }}>
+                  <FontAwesome name="arrow-left" size={20} color="white" />
+                </TouchableHighlight>, <TextInput
+                  style={styles.input}
+                  onChangeText={(e) => {
+                    setSearch(e)
+                  }}
+                  autoFocus
+                  value={search}
+                  placeholder="search..."
+
+                />
+              ]
+              : <TouchableHighlight style={{ marginRight: 20, padding: 10 }} onPress={() => setShowSearch(true)}>
+                <FontAwesome name="search" size={20} color="white" />
+              </TouchableHighlight>
+          }
+          {/* <TouchableHighlight>
             <FontAwesome name="search" size={20} color="white" />
-          </TouchableHighlight>
+          </TouchableHighlight> */}
+
+
         </View>
       </View>
 
@@ -204,6 +250,15 @@ function MainScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    width: '70%',
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: 'white'
+  },
   base: {
     flex: 1,
     // marginTop: 28

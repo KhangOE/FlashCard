@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { getCardByCid } from '../api/firebaseApi';
@@ -8,6 +8,7 @@ import { Audio } from 'expo-av';
 import { Buffer } from "buffer";
 import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
+import SafeViewAndroid from "../safeAreaViewAndroid";
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
@@ -57,48 +58,44 @@ function Card(props) {
 
 function CardScreen({ navigation, route }) {
 
-  const [card, setCard] = useState()
+  const [card, setCard] = useState([])
   const [cid, setCid] = useState()
   const [item, setItem] = useState()
   const [freshKey, setFreshKey] = useState(1)
-  // const [sound, setSound] = useState();
+  const [search, setSearch] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+  const [filteredData, setFilteredData] = useState([])
 
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  // async function playSound() {
-  //     const { sound } = await Audio.Sound.createAsync(
-  //         { uri: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3' },
-  //         { shouldPlay: true }
-  //     );
-  //     setSound(sound);
+  const ref_input = useRef();
+  useEffect(() => {
 
-  //     console.log('Playing Sound');
-  //     await sound.playAsync();
-  // }
+    setFilteredData(card.filter(i => {
+      return i.word.toLowerCase().includes(search.toLowerCase()) ||
+        i.meaning.toLowerCase().includes(search.toLowerCase())
+    }))
 
-
-
-  // useEffect(() => {
-  //     playSound()
-  // }, [])
-  // React.useEffect(() => {
-  //     return sound
-  //         ? () => {
-  //             console.log('Unloading Sound');
-  //             sound.unloadAsync();
-  //         }
-  //         : undefined;
-  // }, [sound]);
+  }, [search])
+  useEffect(() => {
+    setFilteredData(card)
+  }, [card])
 
   useEffect(() => {
-    console.log(freshKey)
+    if (showSearch) {
+      () => ref_input.current.focus()
+    }
+
+  }, [showSearch])
+  useEffect(() => {
+
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log(route.params.id)
+
       setCid(route.params.id)
       getCardsbyCID({ cid: route.params.id }).then(data => {
         setCard(data)
-        console.log('data', data)
+
         //  console.log(data)
       }).then(() => {
       })
@@ -150,15 +147,42 @@ function CardScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.base}>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
-          <TouchableHighlight onPress={() => navigation.goBack()}>
+          <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableHighlight>
-          <TouchableHighlight>
+          {/* <TouchableHighlight>
             <FontAwesome name="search" size={20} color="white" />
-          </TouchableHighlight>
+          </TouchableHighlight> */}
+
+          {
+            showSearch ?
+              [
+                <TouchableHighlight style={{ padding: 10 }} onPress={() => {
+                  setShowSearch(false)
+                  setSearch('')
+                }}>
+                  <FontAwesome name="arrow-left" size={20} color="white" />
+                </TouchableHighlight>,
+                <TextInput
+                  autoFocus
+                  ref={ref_input}
+                  style={styles.input}
+                  onChangeText={(e) => {
+                    setSearch(e)
+                  }}
+                  value={search}
+                  placeholder="search..."
+
+                />
+
+              ]
+              : <TouchableHighlight style={{ marginRight: 20, padding: 10 }} onPress={() => setShowSearch(true)}>
+                <FontAwesome name="search" size={20} color="white" />
+              </TouchableHighlight>
+          }
         </View>
       </View>
       {/* <Button title="Play Sound" onPress={playSound} /> */}
@@ -168,10 +192,10 @@ function CardScreen({ navigation, route }) {
       <View style={styles.cardList}>
         <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={cid}></ModalPractice>
         <View style={styles.cardFirstBlock}>
-          <Text style={styles.cardTotal}> Tất cả : 2 </Text>
+          <Text style={styles.cardTotal}> Tất cả : {card?.length} </Text>
         </View>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingVertical: 10 }} style={styles.cardSecondBlock}>
-          {card?.map((item) => {
+          {filteredData?.map((item) => {
             return (
               <View key={item.id}>
 
@@ -210,7 +234,7 @@ function CardScreen({ navigation, route }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
-    </SafeAreaView >
+    </SafeAreaView>
   );
 }
 
@@ -264,6 +288,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 20,
     zIndex: 1
+  },
+  input: {
+    width: '70%',
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: 'white'
   },
   cardTitle: {
     fontWeight: '700',
