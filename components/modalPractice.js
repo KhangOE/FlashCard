@@ -19,6 +19,7 @@ export const ModalPractice = (props) => {
     return (
         <CustomModal modalVisible={props.modalVisible} setModalVisible={props.setModalVisible} title='Practice'>
             {error0 && <Text style={{ textAlign: 'center', margin: 10 }}>Topic chưa có thẻ nào!</Text>}
+            {!error0 && error4 && <Text style={{ textAlign: 'center', margin: 10 }}>Cần ít nhất 4 thẻ để sử dụng các chức năng luyện tập!</Text>}
             <View style={error0 && { opacity: 0.5 }}>
                 <TouchableOpacity
                     disabled={error0}
@@ -35,12 +36,12 @@ export const ModalPractice = (props) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    disabled={error0}
+                    disabled={error0 || error4}
                     onPress={() => {
                         navigation.navigate('MatchCards', props.id)
                         props.setModalVisible(false);
                     }}>
-                    <View style={styles.reviewItem}>
+                    <View style={[styles.reviewItem, error4 && { opacity: 0.5 }]}>
                         <View style={[styles.icon, { backgroundColor: "#913175" }]}>
                             <Image source={require("../assets/image/match-cards-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
                         </View>
@@ -63,12 +64,12 @@ export const ModalPractice = (props) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    disabled={error0}
+                    disabled={error0 || error4}
                     onPress={() => {
                         navigation.navigate('MemoryGame', props.id)
                         props.setModalVisible(false);
                     }}>
-                    <View style={styles.reviewItem}>
+                    <View style={[styles.reviewItem, error4 && { opacity: 0.5 }]}>
                         <View style={styles.icon}>
                             <Image source={require("../assets/image/memory-game-icon.png")} style={{ flex: 1, width: undefined, height: undefined, resizeMode: "cover" }} />
                         </View>
