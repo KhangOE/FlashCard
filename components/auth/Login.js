@@ -1,9 +1,14 @@
-import { View, Button, TextInput, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { View, Button, TextInput, TouchableOpacity, Text, StyleSheet, Image, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as Google from "expo-auth-session/providers/google"
+
+//ios: 980173626462-1kg3bj0ff4ii35sfdbi0n7vqsjlevuqc.apps.googleusercontent.com
+//android: 980173626462-2p1u32ugvp4cdk9g8adr0cqdbtde1u2t.apps.googleusercontent.com
+//web: 980173626462-mtq2np79s57a5l553tbecuqfr2m90n9h.apps.googleusercontent.com
 
 const db = getFirestore();
 
@@ -12,6 +17,44 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('')
   const [user, setUser] = useState()
+  const [accessToken, setAccessToken] = useState()
+  const [idToken, setIdToken] = useState()
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    androidClientId: "980173626462-2p1u32ugvp4cdk9g8adr0cqdbtde1u2t.apps.googleusercontent.com",
+    iosClientId: "980173626462-1kg3bj0ff4ii35sfdbi0n7vqsjlevuqc.apps.googleusercontent.com",
+    expoClientId: "980173626462-mtq2np79s57a5l553tbecuqfr2m90n9h.apps.googleusercontent.com",
+    webClientId: "980173626462-036mfnvst586no07f55h4gihsmlu2p97.apps.googleusercontent.com"
+  })
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      setIdToken(response.params.id_token)
+      idToken && getUserDataWithIDToken();
+    }
+  }, [response, idToken])
+
+
+  const getUserDataWithIDToken = async () => {
+    const credential = GoogleAuthProvider.credential(idToken);
+    signInWithCredential(auth, credential).then(result => {
+      const user = result.user;
+      setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL
+      });
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The credential that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+  };
 
   const validateEmail = (email) => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -40,42 +83,20 @@ export default function Login({ navigation }) {
 
   };
 
-  // const onGoogleSignIn = async () => {
-  //   signInWithPopup(auth, provider).then(result => {
-  //     const user = result.user;
-  //     setDoc(doc(db, "users", user.uid), {
-  //       name: user.displayName,
-  //       email: user.email,
-  //       image: user.photoURL
-  //     });
-  //   }).catch((error) => {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     console.error(errorCode, errorMessage);
-  //   })
-  // }
-
   const onGoogleSignIn = async () => {
-    try {
-      const result = await Expo.Google.logInAsync({
-        androidClientId: "Your Client ID",
-        //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
-        scopes: ["profile", "email"]
-
-      })
-      if (result.type === "success") {
-        const credential = firebase.auth.GoogleAuthProvider.credential(result.idToken, result.accessToken);
-        firebase.auth().signInAndRetrieveDataWithCredential(credential).then(function (result) {
-          console.log(result);
-        });
-        this.props.navigation.navigate('Where you want to go');
-      } else {
-        console.log("cancelled")
-      }
-    } catch (e) {
-      console.log("error", e)
-    }
-  };
+    signInWithPopup(auth, provider).then(result => {
+      const user = result.user;
+      setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL
+      });
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error(errorCode, errorMessage);
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -114,7 +135,7 @@ export default function Login({ navigation }) {
           <Text style={styles.thirdBlockText}>Log in</Text>
         </TouchableOpacity>
         <Text style={{ alignSelf: "center", marginVertical: 10 }}>or</Text>
-        <FontAwesome.Button name="google" backgroundColor="#4285F4" style={{ fontFamily: "Roboto", alignSelf: "center" }} onPress={onGoogleSignIn}>
+        <FontAwesome.Button name="google" backgroundColor="#4285F4" style={{ fontFamily: "Roboto", alignSelf: "center" }} onPress={Platform.OS === 'web' ? onGoogleSignIn : () => promptAsync({ useProxy: true, showInRecents: true })}>
           Login with Google
         </FontAwesome.Button>
 
