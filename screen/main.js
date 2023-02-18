@@ -171,7 +171,7 @@ function MainScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.openDrawer()}>
@@ -240,7 +240,7 @@ function MainScreen({ navigation }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -152,7 +152,7 @@ const AddCardScreen = ({ navigation, route }) => {
 
 
   return (
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <Pressable onPress={() => {
@@ -241,7 +241,7 @@ const AddCardScreen = ({ navigation, route }) => {
               </Button> */}
         </View>
       </View>
-    </SafeAreaView >
+    </View>
 
   )
 

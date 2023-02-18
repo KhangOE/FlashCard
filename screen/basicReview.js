@@ -163,7 +163,7 @@ function BasicReviewScreen({ navigation, route }) {
   }
   // Trang chia thành 3 thành phần chính : navbar, scrollview , footer
   return (
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <View style={styles.heading}>
@@ -211,7 +211,7 @@ function BasicReviewScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

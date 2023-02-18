@@ -147,7 +147,7 @@ function CardScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+    <View style={styles.base}>
       <View style={styles.navbar}>
         <View style={styles.sub_block}>
           <TouchableHighlight style={{ padding: 10 }} onPress={() => navigation.goBack()}>
@@ -234,7 +234,7 @@ function CardScreen({ navigation, route }) {
 
       {/* Cửa sổ nhỏ để xóa topic*/}
       <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
-    </SafeAreaView>
+    </View>
   );
 }
 
