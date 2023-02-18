@@ -84,6 +84,8 @@ function BasicReviewScreen({ navigation, route }) {
   const [card, setCard] = useState([])
   const [sound, setSound] = useState();
   const [cardNumber, setCardNumber] = useState(1);
+
+
   useEffect(() => {
     // console.log(route?.params)
     const callApi = async () => {
@@ -104,7 +106,8 @@ function BasicReviewScreen({ navigation, route }) {
 
   async function playSound() {
     console.log('sound')
-    const a = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`).then(async (data) => {
+    const a = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`
+    ).then(async (data) => {
       if (data.data[0].phonetics[0].audio) {
         const { sound } = await Audio.Sound.createAsync(
           { uri: data.data[0].phonetics[0].audio },
@@ -135,6 +138,44 @@ function BasicReviewScreen({ navigation, route }) {
 
     })
   }
+
+
+  async function playSound2() {
+    console.log('sound')
+    const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${card[cardNumber - 1].word.toLowerCase()}?strictMatch=false`
+    const a = axios.get(URL,
+      {
+        headers: {
+          app_id: '20d5be5c',
+          app_key: '3689eaa3c8bbb54c633611ce106adb70'
+        }
+      }).then(async (data) => {
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: data.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile },
+          { shouldPlay: true }
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
+        console.log(data.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+      }
+      )
+  }
+
+  async function playSound3() {
+    console.log('sound')
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: card[cardNumber - 1].sound },
+      { shouldPlay: true }
+    );
+    setSound(sound);
+    console.log('Playing Sound');
+    await sound.playAsync();
+
+
+
+  }
+
 
 
 
@@ -196,7 +237,7 @@ function BasicReviewScreen({ navigation, route }) {
       >
         {card.map((item, index) => {
           return (<>
-            <CardReview item={item} en={item.word} vi={item.meaning} key={index} sound={playSound} />
+            <CardReview item={item} en={item.word} vi={item.meaning} key={index} sound={playSound3} />
           </>)
         })}
 
@@ -281,7 +322,7 @@ const styles = StyleSheet.create({
   vocabulary2: {
     fontSize: 35,
     fontWeight: '700',
-    marginTop: '55%',
+    marginTop: '50%',
     marginBottom: '15%'
   },
   sound: {

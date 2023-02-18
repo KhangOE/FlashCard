@@ -10,7 +10,7 @@ import { uuidv4 } from '@firebase/util';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth } from '../firebase';
 import SafeViewAndroid from "../safeAreaViewAndroid";
-
+import axios from 'axios';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 const AddCardScreen = ({ navigation, route }) => {
@@ -20,10 +20,12 @@ const AddCardScreen = ({ navigation, route }) => {
   const [vi, setVi] = useState('')
   const [ex, setEx] = useState('')
   const [exist, setExist] = useState([])
+  const [sound, setSound] = useState(null)
   const [image, setImage] = useState(null);
   const [checkWord, setCheckWord] = useState(false)
   const [showErr, setShowErr] = useState('')
   const [freshCall, setFreshCall] = useState(1)
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -51,23 +53,74 @@ const AddCardScreen = ({ navigation, route }) => {
   }, [en])
   useEffect(() => {
     getCardsbyCID({ cid: route.params.id }).then((item) => {
-      console.log('daa', item)
+      // console.log('daa', item)
       setExist(item.map(i => i.word))
     })
   }, [freshCall])
-  useEffect(() => {
-    console.log('d', exist)
-    // console.log(route.params)
-  }, [])
+
+
+
 
   useEffect(() => {
     setShowErr('')
   }, [checkWord])
 
+  const callSound = async () => {
+    const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`
+    await axios.get(URL,
+      {
+        headers: {
+          app_id: '20d5be5c',
+          app_key: '3689eaa3c8bbb54c633611ce106adb70'
+        }
+      }).then((res) => {
+        console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+        //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+        return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
+      })
+  }
+
+  // useEffect(() => {
+  //   const a = async () => {
+  //     const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/yellow?strictMatch=false`
+  //     await axios.get(URL,
+  //       {
+  //         headers: {
+  //           app_id: '20d5be5c',
+  //           app_key: '3689eaa3c8bbb54c633611ce106adb70'
+  //         }
+  //       }).then((res) => {
+  //         console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+  //         setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+  //       })
+  //   }
+
+  // }, [])
+
+  useEffect(() => {
+    console.log('lll', sound)
+  }, [sound])
   const handle = async () => {
 
     if (en) {
+
       if (checkWord) {
+        // const s = await callSound().then(() => {
+        //   console.log('call sound')
+        //   console.log('soundddd ', sound)
+        // })
+        const s = await axios.get(`https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`,
+          {
+            headers: {
+              app_id: '20d5be5c',
+              app_key: '3689eaa3c8bbb54c633611ce106adb70'
+            }
+          }).then((res) => {
+            console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+            //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+            return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
+          })
+        console.log('ssss', s)
         if (image) {
           const response = await fetch(image.uri);
           const blob = await response.blob();
@@ -77,21 +130,25 @@ const AddCardScreen = ({ navigation, route }) => {
           const storageRef = ref(storage, childPath);
 
 
+
           await uploadBytes(storageRef, blob).then((snapshot) => {
             console.log("uploaded image to storage");
           });
 
           getDownloadURL(ref(storage, childPath))
             .then(async (url) => {
-              addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url })
+              addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url, sound: s })
             })
             .catch((error) => {
               console.log(error);
               return null;
             });
-        } else {
-          await addCard({ en: en, vi: vi, cid: cid, ex: ex })
+        }
+        else {
+          await addCard({ en: en, vi: vi, cid: cid, ex: ex, sound: s })
+
           setFreshCall(state => state + 1)
+          console.log('add card')
         }
 
         setEn('')

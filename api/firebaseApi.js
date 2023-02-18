@@ -50,6 +50,7 @@ export const addCollection = async (props) => {
 
 export const addCard = async (props) => {
   try {
+    console.log('add')
     const docRef = await addDoc(collection(db, "Card"), {
       userID: auth.currentUser.uid,
       cid: props.cid,
@@ -59,6 +60,7 @@ export const addCard = async (props) => {
       memorized: false,
       favorited: false,
       image: props.img || null,
+      sound: props.sound || null,
     });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
