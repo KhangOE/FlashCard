@@ -173,14 +173,13 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: "white",
         width: "100%",
-        height: 50,
+        height: 60,
         margin: 3,
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 5
     },
     cardTitle: {
-        //fontWeight: 700,
-        fontSize: 16,
+        fontSize: 20,
     },
 });

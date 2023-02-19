@@ -2,7 +2,7 @@ import { async } from '@firebase/util';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Touchable } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { addCard, addCollection, addspending, getCategories, getspending, main } from '../api/firebaseApi';
 import { getTopicById } from '../api/firebaseApi';
 import SafeViewAndroid from "../safeAreaViewAndroid";
@@ -113,11 +113,14 @@ export const AddCollection = ({ navigation }) => {
           </View>
           <View style={styles.addMeaning}>
             <Text style={styles.title}>
-              Category
+              Chủ đề
             </Text>
-            {selectedC ? <Text>{selectedC.name}</Text> : <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
-              <Text>Category</Text>
-            </TouchableOpacity>}
+            {selectedC ? <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+              <Text>{selectedC.name}</Text>
+            </TouchableOpacity> :
+              <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+                <MaterialIcons name='topic' size={28} />
+              </TouchableOpacity>}
           </View>
 
           <Pressable style={[styles.addBtn]} onPress={handleComplte}  >

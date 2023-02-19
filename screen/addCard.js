@@ -1,11 +1,10 @@
 import { async } from '@firebase/util';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Image } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather } from '@expo/vector-icons';
+import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Image, Alert } from 'react-native';
+import { FontAwesome, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
 import { addCard, addCollection, addspending, getCardsbyCID, getspending, main } from '../api/firebaseApi';
 import * as ImagePicker from 'expo-image-picker';
-import Icon from "react-native-vector-icons/Ionicons";
 import { uuidv4 } from '@firebase/util';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth } from '../firebase';
@@ -154,6 +153,11 @@ const AddCardScreen = ({ navigation, route }) => {
         setEn('')
         setVi('')
         setImage(null)
+
+        Alert.alert(
+          'Thông báo',
+          'Thêm thẻ thành công',
+        )
       }
 
       else {
@@ -280,7 +284,7 @@ const AddCardScreen = ({ navigation, route }) => {
               </View>
             ) : (
               <View style={styles.icon}>
-                <Icon name="md-image-outline" size={26} onPress={pickImage} />
+                <Ionicons name="md-image-outline" size={26} onPress={pickImage} />
               </View>)}
           </View>
           {/* <Text>

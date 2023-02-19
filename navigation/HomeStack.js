@@ -54,12 +54,12 @@ export default function HomeStack() {
             <Stack.Screen
                 name="basicReview"
                 component={BasicReviewScreen}
-                options={{ tabBarLabel: 'Home!', headerShown: false }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="practiceWrite"
                 component={PracticeWrite}
-                options={{ tabBarLabel: 'Home!' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     )

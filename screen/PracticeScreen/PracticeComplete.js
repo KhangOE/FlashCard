@@ -21,10 +21,10 @@ function ReviewPage(props) {
                             </View>
                             {favorited ?
                                 <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { removeCardFromFavorite(obj.id), setFavorited(false) }}>
-                                    <AntDesign name="heart" size={18} color="red" />
+                                    <AntDesign name="heart" size={22} color="red" />
                                 </TouchableOpacity> :
                                 <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { addCardToFavorite(obj.id), setFavorited(true) }}>
-                                    <AntDesign name="hearto" size={18} color="black" />
+                                    <AntDesign name="hearto" size={22} color="black" />
                                 </TouchableOpacity>}
                         </View>
                     )
@@ -53,8 +53,8 @@ export default function PracticeComplete({ route, navigation }) {
         <View style={styles.container}>
             <CustomModal setModalVisible={setModalVisible} modalVisible={modalVisible} fixedHeight={true}>
                 <Tab.Navigator>
-                    <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Wrong: ' + wrongList?.length }} />
-                    <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Correct: ' + correctList?.length }} />
+                    <Tab.Screen name="wrong" children={() => <ReviewPage data={wrongList} />} options={{ tabBarLabel: 'Sai: ' + wrongList?.length }} />
+                    <Tab.Screen name="correct" children={() => <ReviewPage data={correctList} />} options={{ tabBarLabel: 'Đúng: ' + correctList?.length }} />
                 </Tab.Navigator>
             </CustomModal>
             <View style={{ flex: 1, width: '100%', alignItems: "center" }}>
@@ -62,23 +62,22 @@ export default function PracticeComplete({ route, navigation }) {
                     source={require('../../assets/image/checked-icon.png')}
                     style={{ width: 80, height: 80 }}
                 />
-                <Text style={{ fontSize: 20, marginVertical: 10 }}>Review complete!</Text>
+                <Text style={{ fontSize: 20, marginVertical: 10 }}>Ôn tập hoàn tất!</Text>
                 <View style={styles.sub_container}>
-                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Summary</Text>
-                    <Text style={{ color: "green", fontSize: 20, marginBottom: 10 }}>Correct answers: {correctList?.length}</Text>
-                    <Text style={{ color: "red", fontSize: 20, marginBottom: 10 }}>Incorrect answers: {wrongList?.length}</Text>
-                    {moves !== undefined ? <Text style={{ color: "orange", fontSize: 20, marginBottom: 10 }}>Number of moves: {moves}</Text> :
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tổng quan</Text>
+                    <Text style={{ color: "green", fontSize: 20, marginBottom: 10 }}>Số câu trả lời đúng: {correctList?.length}</Text>
+                    <Text style={{ color: "red", fontSize: 20, marginBottom: 10 }}>Số câu trả lời sai: {wrongList?.length}</Text>
+                    {moves !== undefined ? <Text style={{ color: "orange", fontSize: 20, marginBottom: 10 }}>Số lượt chọn: {moves}</Text> :
                         <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.viewResultButton}>
-                            <Text style={{ color: "blue", fontSize: 20, height: 30, justifyContent: 'center' }}>view results</Text>
+                            <Text style={{ color: "#A91079", fontSize: 20, height: 30, justifyContent: 'center' }}>Xem kết quả</Text>
                         </TouchableOpacity>}
                 </View>
             </View>
             <View style={{ width: '100%' }}>
                 <View style={{ flexDirection: "row", width: '100%', marginBottom: 10 }}>
-                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue", fontSize: 20 }}>repeat all</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "blue", fontSize: 20 }}>repeat cards</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.repeatButton} onPress={() => navigation.goBack()}><Text style={{ color: "#A91079", fontSize: 20 }}>Thử lại</Text></TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.doneButton} onPress={() => navigation.popToTop()}><Text style={{ color: "white", fontSize: 20 }}>done</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.doneButton} onPress={() => navigation.popToTop()}><Text style={{ color: "white", fontSize: 20 }}>Hoàn thành</Text></TouchableOpacity>
             </View>
         </View >
     )
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     reviewItem: {
-        height: 40,
+        height: 60,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: 'white',
@@ -115,14 +114,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderRadius: 2,
         margin: 2,
-        paddingHorizontal: 5,
+        paddingHorizontal: 10,
     },
     reviewItemWord: {
         fontWeight: "bold",
-        fontSize: 14
+        fontSize: 18
     },
     reviewItemMeaning: {
-        fontSize: 12
+        fontSize: 14
     },
 
     // main
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: 'blue',
+        borderColor: '#570A57',
         marginVertical: 10
     },
     repeatButton: {
@@ -141,13 +140,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 20,
-        borderWidth: 1,
-        borderColor: 'blue',
-        width: '50%',
+        borderWidth: 2,
+        borderColor: '#A91079',
+        width: '100%',
         height: 40,
     },
     doneButton: {
-        backgroundColor: 'blue',
+        backgroundColor: '#570A57',
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 5,

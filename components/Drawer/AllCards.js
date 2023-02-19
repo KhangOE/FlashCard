@@ -170,25 +170,6 @@ export default function AllCards({ navigation, route }) {
                 </ScrollView>
             </View>
 
-            <View style={styles.cardThirdBlock}>
-                <Pressable onPress={() => { setModalVisible(state => !state) }}>
-                    <View style={styles.footerButton}>
-                        <SimpleLineIcons name="graduation" size={24} color="white" />
-                        <Text style={styles.footerText}>Thực hành</Text>
-                    </View>
-                </Pressable>
-                <Pressable onPress={() => {
-                    navigation.navigate('addCard', route.params
-                    );
-                    //displayAddTopicScreen();
-                }}>
-                    <View style={styles.footerButton}>
-                        <Feather name="plus" size={24} color="white" />
-                        <Text style={styles.footerText}>Thêm thẻ</Text>
-                    </View>
-                </Pressable>
-            </View>
-
             {/* Cửa sổ nhỏ để sửa thông tin Topic*/}
             <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={item} setCard={setCard} setFreshKey={setFreshKey} />
 
@@ -256,47 +237,5 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         backgroundColor: 'white'
-    },
-    cardTitle: {
-        fontWeight: '700',
-        fontSize: 18
-    },
-    cardMeaning: {
-        marginVertical: 5
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 20
-    },
-    cardOpion: {
-        marginTop: 3
-    },
-    cardThirdBlock: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        paddingTop: 5,
-        paddingBottom: 8,
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#fff'
-    },
-    footerButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#6A197D',
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20
-    },
-    footerText: {
-        marginLeft: 12,
-        color: '#fff',
-        fontWeight: '500'
     }
 });

@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginHorizontal: 6,
         marginVertical: 3,
-        minHeight: 50,
+        minHeight: 60,
         backgroundColor: "white",
         borderRadius: 5
     },
@@ -203,6 +203,6 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         //fontWeight: 700,
-        fontSize: 16,
+        fontSize: 20,
     },
 });

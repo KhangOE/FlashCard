@@ -82,7 +82,7 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
                     setModalVisible(false)
                     setSelected(null)
                 }} style={[styles.item, selected === null && { backgroundColor: "#6A197D" }]}>
-                    <Text style={selected === null && { color: "white" }}>all</Text>
+                    <Text style={selected === null && { color: "white" }}>Tất cả</Text>
                 </TouchableOpacity>
                 {data.map((item, index) => {
                     return (

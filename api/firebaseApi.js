@@ -173,7 +173,8 @@ export const updateCard = async (props) => {
   updateDoc(washingtonRef, {
     meaning: props.meaning || null,
     word: props.word || null,
-    example: props.example || null
+    example: props.example || null,
+    image: props.image || null
   });
 }
 
@@ -185,7 +186,9 @@ export const updateCollection = async (props) => {
   // Set the "capital" field of the city 'DC'
   updateDoc(washingtonRef, {
     name: props.name,
-    userID: props.userID
+    userID: props.userID,
+    note: props.note,
+    category: props.category
   });
 }
 
@@ -215,6 +218,11 @@ export const getCategories = async () => {
     l.push({ ...docSnap.data(), id: docSnap.id });
   })
   return l
+}
+
+export const getCategorybyCID = async (cid) => {
+  const categorySnap = await getDoc(doc(db, "categories", auth.currentUser.uid, "categories", cid))
+  return categorySnap.data()
 }
 
 export const addCategory = async (props) => {

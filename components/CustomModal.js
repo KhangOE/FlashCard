@@ -17,7 +17,7 @@ export default function CustomModal({ children, setModalVisible, modalVisible, t
                         <View style={{ flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={() => setModalVisible(!modalVisible)}>
-                                <Feather name="x" size={20} color="white" />
+                                <Feather name="x" size={24} color="white" />
                             </TouchableOpacity>
                             <Text style={{ color: "#fff", marginLeft: 10 }}>{title}</Text>
                         </View>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         width: '80%'
     },
     modalTop: {
-        height: 40,
+        height: 50,
         paddingLeft: 10,
         // backgroundColor: "#6A197D",
         alignItems: "center",

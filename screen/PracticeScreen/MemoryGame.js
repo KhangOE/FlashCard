@@ -8,6 +8,7 @@ import {
     Pressable,
     Easing,
     TouchableHighlight,
+    TouchableOpacity,
 } from "react-native";
 import {
     AntDesign,
@@ -46,7 +47,7 @@ function Card({ onPress, card, index, isInactive, isFlipped, isDisabled }) {
     };
 
     return (
-        <Pressable style={[styles.card, { opacity: isInactive ? 0 : 100 }]} onPress={() => {
+        <TouchableOpacity style={[styles.card, { opacity: isInactive ? 0 : 100 }]} onPress={() => {
             handlePress()
         }}
             android_disableSound={true}>
@@ -57,7 +58,7 @@ function Card({ onPress, card, index, isInactive, isFlipped, isDisabled }) {
                     <Text style={styles.cardBackText}>{card.data} </Text>
                 </Animated.View>
             </View>
-        </Pressable>
+        </TouchableOpacity>
     );
 }
 
@@ -218,9 +219,9 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '46%',
-        height: 80,
+        height: 100,
         marginTop: 10,
-        marginHorizontal: '2%'
+        marginHorizontal: '2%',
     },
     cardWrapper: {
         width: '100%',
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backfaceVisibility: 'hidden',
-        backgroundColor: 'gray'
+        backgroundColor: '#570A57'
     },
     cardBack: {
         width: '100%',

@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions } from 'react-native';
-import { FontAwesome5, AntDesign, Entypo, Feather } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions, Image } from 'react-native';
+import { FontAwesome5, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
 import { updateCard } from '../api/firebaseApi';
 import { async } from '@firebase/util';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { auth } from '../firebase';
+import { uuidv4 } from '@firebase/util';
+
+
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 function RepairCardScreen(props) {
@@ -10,21 +16,62 @@ function RepairCardScreen(props) {
   const [word, setWord] = useState(props.item?.word)
   const [meaning, setMeaning] = useState(props.item?.meaning)
   const [example, setExample] = useState(props.item?.example)
+  const [image, setImage] = useState(props.item?.image)
   const handleUpdate = async () => {
-    await updateCard({
-      id: props.item?.id,
-      word: word,
-      meaning: meaning,
-      example: example
-    })
-    props.setFreshKey(state => state + 1)
+    if (image) {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+
+      const storage = getStorage();
+      const storageRef = ref(storage, childPath);
+
+
+
+      await uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log("uploaded image to storage");
+      });
+
+      getDownloadURL(ref(storage, childPath))
+        .then(async (url) => {
+          await updateCard({
+            id: props.item?.id,
+            word: word,
+            meaning: meaning,
+            example: example,
+            image: url
+          })
+          props.setFreshKey(state => state + 1)
+        })
+        .catch((error) => {
+          console.log(error);
+          return null;
+        });
+    }
+
 
   }
   useEffect(() => {
     setExample(props.item?.example)
     setMeaning(props.item?.meaning)
     setWord(props.item?.word)
-  }, [props.item?.example, props.item?.meaning, props.item?.word])
+    setImage(props.item?.image)
+  }, [props.item?.example, props.item?.meaning, props.item?.word, props.item?.image])
+
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  }
+
   return (
     <SafeAreaView style={[styles.base, { display: props.display }]}>
       <View style={styles.navbar}>
@@ -49,7 +96,7 @@ function RepairCardScreen(props) {
           {/* <Button title='Add default' onPress={handle} ></Button> */}
           <View style={styles.addVocabulary}>
             <Text style={styles.title}>
-              Thuật ngữ {props.item?.id}
+              Thuật ngữ
             </Text>
             <TextInput style={styles.inputField}
               placeholder=""
@@ -79,9 +126,24 @@ function RepairCardScreen(props) {
               defaultValue={props.item?.example}
               value={example}
             />
-            <Text>
-              {meaning}
-            </Text>
+            <View style={styles.addExample}>
+              <Text style={styles.title}>
+                Hình ảnh
+              </Text>
+              {image ? (
+                <View style={{ position: "relative" }}>
+                  <Pressable onPress={pickImage}>
+                    <Image source={{ uri: image }} style={{ width: width, height: 200 }} resizeMode="contain" />
+                  </Pressable>
+                  <Pressable onPress={() => setImage(null)} style={{ backgroundColor: "red", zIndex: 1000, position: "absolute", top: 5, right: 5, borderRadius: 12 }}>
+                    <Feather name="x" size={24} color="white" />
+                  </Pressable>
+                </View>
+              ) : (
+                <View style={styles.icon}>
+                  <Ionicons name="md-image-outline" size={26} onPress={pickImage} />
+                </View>)}
+            </View>
           </View>
           {/* <Text>
                   ex
