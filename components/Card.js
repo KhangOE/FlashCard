@@ -1,12 +1,41 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { OptionBlock } from '../screen/OptionBlock';
 import { addCardToFavorite, removeCardFromFavorite } from '../api/firebaseApi';
-
+import { Audio } from 'expo-av';
 
 export default function Card(props) {
     const [show, setShow] = useState('none');
+    const [sound, setSound] = useState();
+
+    async function playSound3() {
+        console.log('sound')
+        const { sound } = await Audio.Sound.createAsync(
+            { uri: props?.sound },
+            { shouldPlay: true }
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
+
+
+
+    }
+
+
+
+    useEffect(() => {
+        console.log(props)
+    }, [])
+    React.useEffect(() => {
+        return sound
+            ? () => {
+                console.log('Unloading Sound');
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound]);
 
     function showBlock() {
         if (show == 'none') {
@@ -26,7 +55,12 @@ export default function Card(props) {
                     <Text>{props.vi}</Text>
                 </View>
                 <View style={styles.cardFooter}>
-                    <AntDesign name="sound" size={18} color="black" />
+                    <Pressable onPress={() => {
+                        playSound3()
+                    }}>
+                        <AntDesign name="sound" size={18} color="black" />
+                    </Pressable>
+
 
                     <View style={styles.optBlock}>
 
