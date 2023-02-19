@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   },
   firstBlockText: {
     fontSize: 30,
+    fontWeight: '600',
     color: "#0D2841"
   },
   nonSelectedText: {

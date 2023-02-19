@@ -24,7 +24,7 @@ export default function Login({ navigation }) {
     androidClientId: "980173626462-2p1u32ugvp4cdk9g8adr0cqdbtde1u2t.apps.googleusercontent.com",
     iosClientId: "980173626462-1kg3bj0ff4ii35sfdbi0n7vqsjlevuqc.apps.googleusercontent.com",
     expoClientId: "980173626462-mtq2np79s57a5l553tbecuqfr2m90n9h.apps.googleusercontent.com",
-    webClientId: "980173626462-036mfnvst586no07f55h4gihsmlu2p97.apps.googleusercontent.com"
+    webClientId: "980173626462-036mfnvst586no07f55h4gihsmlu2p97.apps.googleusercontent.com",
   })
 
   useEffect(() => {
@@ -138,7 +138,6 @@ export default function Login({ navigation }) {
         <FontAwesome.Button name="google" backgroundColor="#4285F4" style={{ fontFamily: "Roboto", alignSelf: "center" }} onPress={Platform.OS === 'web' ? onGoogleSignIn : () => promptAsync({ useProxy: true, showInRecents: true })}>
           Login with Google
         </FontAwesome.Button>
-
       </View>
     </View>
   );
@@ -167,6 +166,7 @@ const styles = StyleSheet.create({
   },
   secondBlockText: {
     fontSize: 16,
+    fontWeight: '600',
     color: "#0D2841"
   },
   input: {

@@ -27,7 +27,7 @@ export default function CustomDrawer(props) {
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView {...props} contentContainerStyle={{ backgroundColor: "#6A197D", paddingTop: 0 }}>
                 <ImageBackground source={require('../assets/image/drawer-background.jpg')} style={{ padding: 20 }}>
-                    <Image source={user?.image || require("../assets/image/user-icon.png")} style={{ width: 60, height: 60, borderRadius: 30, marginBottom: 5 }} />
+                    <Image source={user?.image ? { uri: user?.image } : require("../assets/image/user-icon.png")} style={{ width: 60, height: 60, borderRadius: 30, marginBottom: 5 }} />
                     <Text style={{ color: "#fff", fontSize: 14 }}>{user?.name}</Text>
                 </ImageBackground>
                 <View style={{ flex: 1, backgroundColor: "#fff", paddingTop: 10 }}>
