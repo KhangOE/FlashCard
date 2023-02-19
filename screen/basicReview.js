@@ -214,7 +214,7 @@ function BasicReviewScreen({ navigation, route }) {
             <TouchableHighlight onPress={() => navigation.goBack()}>
               <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableHighlight>
-            <Text style={styles.topicTitle}> Color </Text>
+
           </View>
           <TouchableHighlight style={{ opacity: 0 }}>
             <FontAwesome name="search" size={20} color="white" />
