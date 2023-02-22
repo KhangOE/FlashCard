@@ -4,28 +4,21 @@ import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
-import { getCategories, getCollection } from '../api/firebaseApi';
-import { collection } from 'firebase/firestore';
+import { getCategories } from '../api/firebaseApi';
 import { getTopicById } from '../api/firebaseApi';
 import { useIsFocused } from '@react-navigation/native';
-
+import safeAreaViewAndroid from '../safeAreaViewAndroid';
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
 import CategoryModal from '../components/CategoryModal';
+import * as SQLite from 'expo-sqlite'
 
-
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
+const db = SQLite.openDatabase('db.testDb') // returns Database object
 
 
 function TopicTag(props) {
-
-  const handle = () => {
-    navigation.navigate({ name: 'addSpending' })
-  }
-
   const [show, setShow] = useState('none');
   useEffect(() => {
     setShow('none')
@@ -97,15 +90,33 @@ function MainScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
+
+
+  const newCollection = async () => {
+    await db.transaction(tx => {
+      tx.executeSql("insert into Collection (name, note) values (?, ?)", ['df', 'sdf']);
+      // tx.executeSql('INSERT INTO items (text, count) values (?, ?)',
+      //   (txObj, resultSet) => this.setState({
+      //     data:
+      //       { id: resultSet.insertId, text: 'gibberish', count: 0 }
+      //   }),
+      //   (txObj, error) => console.log('Error', error))
+    })
+    setFreshKey(state => state + 1)
+  }
+
   useEffect(() => {
-    setFilteredData(shownData.filter(i => {
+    setShownData(data)
+  }, [data])
+  useEffect(() => {
+    setFilteredData(shownData?.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
     }))
   }, [search])
 
 
   useEffect(() => {
-    setFilteredData(shownData.filter(i => {
+    setFilteredData(shownData?.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
     }))
   }, [shownData])
@@ -119,12 +130,40 @@ function MainScreen({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
+
   useEffect(() => {
-    getTopicById().then(data => {
-      setdata(data)
-      setShownData(data)
-    })
-  }, [freshKey, isFocused]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      db.transaction(tx => {
+        // sending 4 arguments in executeSql
+        tx.executeSql('SELECT * FROM Collection', null, // passing sql query and parameters:null
+          // success callback which sends two things Transaction object and ResultSet Object
+          (txObj, { rows: { _array } }) => setdata(_array),
+          // failure callback which sends two things Transaction object and Error
+          (txObj, error) => console.log('Error ', error)
+        ) // end executeSQL
+      }) // end transaction
+    });
+    return unsubscribe;
+  }, [navigation, freshKey]);
+
+  useEffect(() => {
+    db.transaction(tx => {
+      // sending 4 arguments in executeSql
+      tx.executeSql('SELECT * FROM Collection', null, // passing sql query and parameters:null
+        // success callback which sends two things Transaction object and ResultSet Object
+        (txObj, { rows: { _array } }) => setdata(_array),
+        // failure callback which sends two things Transaction object and Error
+        (txObj, error) => console.log('Error ', error)
+      ) // end executeSQL
+    }) // end transaction
+  }, [freshKey])
+
+  // useEffect(() => {
+  //   getTopicById().then(data => {
+  //     setdata(data)
+  //     setShownData(data)
+  //   })
+  // }, [freshKey, isFocused]);
 
   useEffect(() => {
     if (selectedC === null) {
@@ -223,8 +262,7 @@ function MainScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.topicList}>
-
-        {filteredData.map((item, idx) => {
+        {filteredData?.map((item, idx) => {
           return (
             <TopicTag key={item.id} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
               pressAdd={() => { navigation.navigate('addCard', item) }} isRepairBtn={isRepairBtn} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} />
@@ -242,7 +280,7 @@ function MainScreen({ navigation }) {
       <RepairTopicScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={pick} setFreshKey={setFreshKey} />
 
       {/* Cửa sổ nhỏ để xóa topic*/}
-      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKey={setFreshKey} />
+      <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={pick?.id} isTopic={1} setFreshKeyc={setFreshKey} />
     </View>
   );
 }

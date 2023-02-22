@@ -16,6 +16,9 @@ import { OptionBlock } from './OptionBlock';
 import { DeleteNotification } from './deleteNotification'
 import { AddCardScreen } from './addCard';
 import { RepairCardScreen } from './repairCard';
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb') // returns Database object
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -39,6 +42,8 @@ function CardScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const ref_input = useRef();
+
+
   useEffect(() => {
 
     setFilteredData(shownData.filter(i => {
@@ -57,38 +62,49 @@ function CardScreen({ navigation, route }) {
   }, [shownData])
 
   useEffect(() => {
+    setFilteredData(card)
+  }, [card])
+
+  useEffect(() => {
+    console.log(2)
     if (showSearch) {
       () => ref_input.current.focus()
     }
 
   }, [showSearch])
 
+
+
+
+
   useEffect(() => {
-
     const unsubscribe = navigation.addListener('focus', () => {
-
-      setCid(route.params.id)
-      getCardsbyCID({ cid: route.params.id }).then(data => {
-        setShownData(data)
-        setCard(data)
-
-        //  console.log(data)
-      }).then(() => {
-      })
-      //  console.log('Hello World!')
+      db.transaction(tx => {
+        // sending 4 arguments in executeSql
+        tx.executeSql('SELECT * FROM Cards', null, // passing sql query and parameters:null
+          // success callback which sends two things Transaction object and ResultSet Object
+          (txObj, { rows: { _array } }) => setCard(_array),
+          // failure callback which sends two things Transaction object and Error
+          (txObj, error) => console.log('Error ', error)
+        ) // end executeSQL
+      }) // end transaction
     });
     return unsubscribe;
-  }, [navigation, freshKey]);
+  }, [navigation]);
 
 
   useEffect(() => {
 
     setCid(route.params.id)
-    getCardsbyCID({ cid: route.params.id }).then(data => {
-      setShownData(data)
-      setCard(data)
-    })
-
+    db.transaction(tx => {
+      // sending 4 arguments in executeSql
+      tx.executeSql('SELECT * FROM Cards', null, // passing sql query and parameters:null
+        // success callback which sends two things Transaction object and ResultSet Object
+        (txObj, { rows: { _array } }) => setCard(_array),
+        // failure callback which sends two things Transaction object and Error
+        (txObj, error) => console.log('Error ', error)
+      ) // end executeSQL
+    }) // end transaction
   }, [freshKey]);
 
 

@@ -20,27 +20,15 @@ export const autoSignIn = () => {
     });
 }
 
-export const addspending = async (props) => {
-  try {
-    const docRef = await addDoc(collection(db, "spending"), {
-      userID: auth.currentUser.uid,
-      money: props.money,
-      note: props.note,
-      category: props.category || null
-    });
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-}
+
 
 export const addCollection = async (props) => {
   try {
     const docRef = await addDoc(collection(db, "Collection"), {
-      userID: auth.currentUser.uid,
-      name: props.name,
-      note: props.note,
-      category: props.category
+      //  userID: auth.currentUser.uid,
+      name: props.name || null,
+      note: props.note || null,
+      category: props.category || null
     });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
@@ -112,7 +100,7 @@ export async function getCardsbyUID() {
 export async function getTopicById(props) {
   try {
     const urlsRef = collection(db, "Collection");
-    const q = query(urlsRef, where("userID", "==", auth.currentUser.uid));
+    const q = query(urlsRef);
 
     const querySnapshot = await getDocs(q);
     const l = []
@@ -129,35 +117,6 @@ export async function getTopicById(props) {
 }
 
 
-export const getCollection = async () => {
-  console.log("iddd", auth.currentUser.uid)
-  const querySnapshot = await getDocs(collection(db, "Collection"));
-  const docs = []
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    docs.push({ ...doc.data(), id: doc.id });
-    // console.log(doc.data())
-  });
-  //   console.log(docs)
-  return docs
-}
-
-export const getspending = async () => {
-  console.log("iddd", auth.currentUser.uid)
-  const querySnapshot = await getDocs(collection(db, "spending"), where("userID", "==", "YgxH9eZSqBaFJRpzz3sM1hyGB7H3"));
-  const docs = []
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    docs.push({ ...doc.data(), id: doc.id });
-    // console.log(doc.data())
-  });
-  //   console.log(docs)
-  return docs
-}
-
-export const deleteSpending = async (ID) => {
-  await deleteDoc(doc(db, "Card", ID));
-}
 
 export const deleteCollection = async (ID) => {
   await deleteDoc(doc(db, "Collection", ID));
@@ -192,14 +151,6 @@ export const updateCollection = async (props) => {
   });
 }
 
-export const updateSpending = async (props) => {
-  const Ref = doc(db, "spending", props.id);
-  await updateDoc(Ref, {
-    money: props.money,
-    note: props.note,
-    category: props.category || null
-  });
-}
 
 
 export const getCurrentUser = async () => {
