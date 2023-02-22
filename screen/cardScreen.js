@@ -66,7 +66,8 @@ function CardScreen({ navigation, route }) {
   }, [card])
 
   useEffect(() => {
-    console.log(2)
+    console.log(route.params.id)
+    console.log(card)
     if (showSearch) {
       () => ref_input.current.focus()
     }
@@ -81,7 +82,7 @@ function CardScreen({ navigation, route }) {
     const unsubscribe = navigation.addListener('focus', () => {
       db.transaction(tx => {
         // sending 4 arguments in executeSql
-        tx.executeSql('SELECT * FROM Cards', null, // passing sql query and parameters:null
+        tx.executeSql('SELECT * FROM Cards where CID = ?', [route.params.id], // passing sql query and parameters:null
           // success callback which sends two things Transaction object and ResultSet Object
           (txObj, { rows: { _array } }) => setCard(_array),
           // failure callback which sends two things Transaction object and Error
@@ -95,10 +96,11 @@ function CardScreen({ navigation, route }) {
 
   useEffect(() => {
 
-    setCid(route.params.id)
+    //setCid(route.params.id)
+    //  console.log(route.params.id)
     db.transaction(tx => {
       // sending 4 arguments in executeSql
-      tx.executeSql('SELECT * FROM Cards', null, // passing sql query and parameters:null
+      tx.executeSql('SELECT * FROM Cards where CID = ?', [route.params.id], // passing sql query and parameters:null
         // success callback which sends two things Transaction object and ResultSet Object
         (txObj, { rows: { _array } }) => setCard(_array),
         // failure callback which sends two things Transaction object and Error

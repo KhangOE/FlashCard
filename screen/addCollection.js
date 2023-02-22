@@ -46,6 +46,7 @@ export const AddCollection = ({ navigation }) => {
     })
     //setFreshkey(state => state + 1)
   }
+
   useEffect(() => {
     getTopicById().then((data) => {
       setExist(data.map(a => a.name))
@@ -63,7 +64,7 @@ export const AddCollection = ({ navigation }) => {
 
   const handleComplte = async () => {
     if (name) {
-      if (checkName) {
+      if (1) {
         await newCollection()
         setNote('')
         setName('')
@@ -87,7 +88,8 @@ export const AddCollection = ({ navigation }) => {
         <View style={styles.navbar}>
           <View style={styles.sub_block}>
             <Pressable onPress={() => {
-              navigation.navigate("Main")
+              // navigation.navigate("Main")
+              navigation.goBack()
             }}>
               <Feather name="x" size={24} color="white" />
             </Pressable>

@@ -101,7 +101,7 @@ const AddCardScreen = ({ navigation, route }) => {
 
   const newCard = async () => {
     await db.transaction(tx => {
-      tx.executeSql("insert into Cards (word, meaning, memorized, favorite, image, CID, ex) values (?, ?, ?, ?, ?, ?, ?)", [vi, en, 0, 0, image, route.params.id, ex]);
+      tx.executeSql("insert into Cards (word, meaning, memorized, favorite, image, CID, ex) values (?, ?, ?, ?, ?, ?, ?)", [en, vi, 0, 0, image, route.params.id, ex]);
       // tx.executeSql('INSERT INTO items (text, count) values (?, ?)',
       //   (txObj, resultSet) => this.setState({
       //     data:

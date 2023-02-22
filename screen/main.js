@@ -5,14 +5,14 @@ import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
 import { getCategories } from '../api/firebaseApi';
-import { getTopicById } from '../api/firebaseApi';
+//import { getTopicById } from '../api/firebaseApi';
 import { useIsFocused } from '@react-navigation/native';
 import safeAreaViewAndroid from '../safeAreaViewAndroid';
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
-import CategoryModal from '../components/CategoryModal';
+//import CategoryModal from '../components/CategoryModal';
 import * as SQLite from 'expo-sqlite'
 
 const db = SQLite.openDatabase('db.testDb') // returns Database object
@@ -121,14 +121,14 @@ function MainScreen({ navigation }) {
     }))
   }, [shownData])
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getCategories().then(data => {
-        setCategories(data)
-      })
-    });
-    return unsubscribe;
-  }, [navigation]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getCategories().then(data => {
+  //       setCategories(data)
+  //     })
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
 
   useEffect(() => {
@@ -251,7 +251,7 @@ function MainScreen({ navigation }) {
       </View>
 
       <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
-      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
+      {/* <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
       <View style={{ height: 50, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         <TouchableOpacity onPress={() => setCategoryModalVisible(true)} style={styles.categoryBar}>
           <View style={{ height: 25, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minWidth: 60, flexDirection: 'row', paddingHorizontal: 10 }}>
@@ -260,8 +260,9 @@ function MainScreen({ navigation }) {
           </View>
           <SimpleLineIcons style={{}} name='arrow-down' size={16} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <ScrollView style={styles.topicList}>
+        <Button title='add collection' onPress={newCollection}></Button>
         {filteredData?.map((item, idx) => {
           return (
             <TopicTag key={item.id} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
