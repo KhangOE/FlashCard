@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import CustomModal from "./CustomModal";
-import { getCardsbyCID } from "../api/firebaseApi"
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb')
 
 export const ModalPractice = (props) => {
     const [error0, setError0] = useState(false)
@@ -9,9 +11,11 @@ export const ModalPractice = (props) => {
     const { id } = props;
     useEffect(() => {
         if (id) {
-            getCardsbyCID({ cid: id }).then(data => {
-                setError0(data.length === 0)
-                setError4(data.length < 4)
+            db.transaction(tx => {
+                tx.executeSql('SELECT * FROM Cards WHERE id = ?', [id],
+                    (txObj, { rows: { _array } }) => { setError0(_array.length === 0); setError4(_array.length < 4) },
+                    (txObj, error) => console.log('Error ', error)
+                )
             })
         }
     }, [id])
