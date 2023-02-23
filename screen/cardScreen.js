@@ -1,20 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Pressable } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
-import { PlusBtn } from '../components/PlusButton'
-import { getCardByCid } from '../api/firebaseApi';
-import { getCardsbyCID } from '../api/firebaseApi';
-import { Audio } from 'expo-av';
-import { Buffer } from "buffer";
-import SoundPlayer from 'react-native-sound-player'
 import { ModalPractice } from '../components/modalPractice';
-import SafeViewAndroid from "../safeAreaViewAndroid";
 import Card from '../components/Card';
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { DeleteNotification } from './deleteNotification'
-import { AddCardScreen } from './addCard';
 import { RepairCardScreen } from './repairCard';
 import * as SQLite from 'expo-sqlite'
 
@@ -28,17 +20,13 @@ const height = Dimensions.get('screen').height;
 function CardScreen({ navigation, route }) {
 
   const [card, setCard] = useState([])
-  const [cid, setCid] = useState()
   const [item, setItem] = useState()
   const [freshKey, setFreshKey] = useState(1)
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
   const [shownData, setShownData] = useState([])
   const [filteredData, setFilteredData] = useState([])
-
   const [selected, setSelected] = useState('all')
-
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const ref_input = useRef();
@@ -65,14 +53,7 @@ function CardScreen({ navigation, route }) {
     setFilteredData(card)
   }, [card])
 
-  useEffect(() => {
-    console.log(route.params.id)
-    console.log(card)
-    if (showSearch) {
-      () => ref_input.current.focus()
-    }
 
-  }, [showSearch])
 
 
 
@@ -96,8 +77,6 @@ function CardScreen({ navigation, route }) {
 
   useEffect(() => {
 
-    //setCid(route.params.id)
-    //  console.log(route.params.id)
     db.transaction(tx => {
       // sending 4 arguments in executeSql
       tx.executeSql('SELECT * FROM Cards where CID = ?', [route.params.id], // passing sql query and parameters:null
@@ -185,7 +164,7 @@ function CardScreen({ navigation, route }) {
 
 
       <View style={styles.cardList}>
-        <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={cid}></ModalPractice>
+        <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={route.params.id}></ModalPractice>
         <View style={styles.cardFirstBlock}>
           <TouchableOpacity style={[{ marginRight: 5, borderColor: '#6A197D', borderWidth: 1, borderRadius: 20, marginBottom: 10 }, selected === 'all' && { backgroundColor: "#6A197D" }]} onPress={() => { setShownData(card), setSelected('all') }}>
             <Text style={[styles.cardTotal, selected === 'all' && { color: "#fff" }]}> Tất cả : {card?.length} </Text>

@@ -28,10 +28,11 @@ export default function App() {
       tx.executeSql(
         'CREATE TABLE IF NOT EXISTS Progress (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT)'
       )
-      //tx.executeSql('DROP TABLE IF EXISTS Card', []);
+      //tx.executeSql('DROP TABLE IF EXISTS ', []);
     })
     setIsLoading(false)
   }, [])
+
 
   if (isLoading) {
     <View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>

@@ -3,38 +3,19 @@ import { Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { OptionBlock } from '../screen/OptionBlock';
 import { addCardToFavorite, removeCardFromFavorite } from '../api/firebaseApi';
-import { Audio } from 'expo-av';
 
+import * as Speech from 'expo-speech';
 export default function Card(props) {
     const [show, setShow] = useState('none');
-    const [sound, setSound] = useState();
+
 
     async function playSound3() {
-        console.log('sound')
-        const { sound } = await Audio.Sound.createAsync(
-            { uri: props?.sound },
-            { shouldPlay: true }
-        );
-        setSound(sound);
-        console.log('Playing Sound');
-        await sound.playAsync();
+        const thingToSay = props.en;
+        Speech.speak(thingToSay, { language: "en-US" });
     }
 
 
 
-    useEffect(() => {
-        console.log(3)
-        console.log(props)
-    }, [])
-
-    React.useEffect(() => {
-        return sound
-            ? () => {
-                console.log('Unloading Sound');
-                sound.unloadAsync();
-            }
-            : undefined;
-    }, [sound]);
 
     function showBlock() {
         if (show == 'none') {

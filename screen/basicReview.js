@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TouchableHighlight, Image, TouchableOpacity, Animated, Easing, Dimensions, SafeAreaView } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
-import axios from 'axios';
-import { getCardsbyCID, getTopicById } from '../api/firebaseApi';
-import { Audio } from 'expo-av';
-import { auth } from '../firebase';
-import SafeViewAndroid from "../safeAreaViewAndroid";
-//import { getTopicById } from '../api/firebaseApi';
+import * as Speech from 'expo-speech';
+
 const tenvhHeight = Dimensions.get('screen').height * 0.1;
 const cardWidth = Dimensions.get('window').width * 0.8;
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb') // returns Database object
 
 function CardReview(props) {
   const rotate = useRef(new Animated.Value(0)).current;
@@ -33,8 +32,7 @@ function CardReview(props) {
 
   }
   return (
-    <Pressable style={styles.card} onPress={flipCard} android_disableSound={true}>
-
+    <Pressable style={styles.card} onPress={flipCard} android_disableSound={true} key={props.item.id}>
       {
         props.item.image ?
           <View style={styles.cardWrapper}>
@@ -86,108 +84,33 @@ function BasicReviewScreen({ navigation, route }) {
   const [cardNumber, setCardNumber] = useState(1);
 
 
+
   useEffect(() => {
-    // console.log(route?.params)
-    const callApi = async () => {
-      await getCardsbyCID({ cid: route.params || 1 }).then(data => {
-        console.log('data', data)
-        setCard(data)
-        // console.log(data)
-        //  console.log(data)
-      }).then(() => {
-      })
-
-    }
-    callApi()
-
-    //console.log(`https://api.dictionaryapi.dev/media/pronunciations/en/${card[cardNumber - 1].en.toLowerCase()}-uk.mp3`)
-  }, [])
+    const unsubscribe = navigation.addListener('focus', () => {
+      db.transaction(tx => {
+        // sending 4 arguments in executeSql
+        tx.executeSql('SELECT * FROM Cards where CID = ?', [route.params], // passing sql query and parameters:null
+          // success callback which sends two things Transaction object and ResultSet Object
+          (txObj, { rows: { _array } }) => setCard(_array),
+          // failure callback which sends two things Transaction object and Error
+          (txObj, error) => console.log('Error ', error)
+        ) // end executeSQL
+      }) // end transaction
+    });
+    return unsubscribe;
+  }, [navigation]);
 
 
-  async function playSound() {
-    console.log('sound')
-    const a = axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${card[cardNumber - 1].word.toLowerCase()}`
-    ).then(async (data) => {
-      if (data.data[0].phonetics[0].audio) {
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: data.data[0].phonetics[0].audio },
-          { shouldPlay: true }
-        );
-        setSound(sound);
-        console.log('Playing Sound');
-        await sound.playAsync();
-      }
-      else if (data.data[0].phonetics[1].audio) {
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: data.data[0].phonetics[1].audio },
-          { shouldPlay: true }
-        );
-        setSound(sound);
-        console.log('Playing Sound');
-        await sound.playAsync();
-      }
-      else {
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: data.data[0].phonetics[2].audio },
-          { shouldPlay: true }
-        );
-        setSound(sound);
-        console.log('Playing Sound');
-        await sound.playAsync();
-      }
 
-    })
-  }
-
-
-  async function playSound2() {
-    console.log('sound')
-    const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${card[cardNumber - 1].word.toLowerCase()}?strictMatch=false`
-    const a = axios.get(URL,
-      {
-        headers: {
-          app_id: '20d5be5c',
-          app_key: '3689eaa3c8bbb54c633611ce106adb70'
-        }
-      }).then(async (data) => {
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: data.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile },
-          { shouldPlay: true }
-        );
-        setSound(sound);
-        console.log('Playing Sound');
-        await sound.playAsync();
-        console.log(data.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
-      }
-      )
-  }
 
   async function playSound3() {
-    console.log('sound')
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: card[cardNumber - 1].sound },
-      { shouldPlay: true }
-    );
-    setSound(sound);
-    console.log('Playing Sound');
-    await sound.playAsync();
-
-
-
+    const thingToSay = card[cardNumber - 1].word;
+    Speech.speak(thingToSay, { language: "en-US" });
   }
 
 
 
 
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-        console.log('Unloading Sound');
-        sound.unloadAsync();
-      }
-      : undefined;
-  }, [sound]);
 
   // Xử lý animation flip va scroll
   const cardTotal = card.length || 10;     // Tong so luong card
