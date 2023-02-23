@@ -3,19 +3,39 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, T
 import { FontAwesome5, AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import { deleteCollection, deleteSpending } from '../api/firebaseApi';
 import { async } from '@firebase/util';
+import * as SQLite from 'expo-sqlite'
+const db = SQLite.openDatabase('db.testDb') // returns Database object
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
 function DeleteNotification(props) {
+  const del = async (id) => {
+    console.log('delete')
+    await db.transaction(tx => {
+      tx.executeSql('DELETE FROM Collection WHERE id = ? ', [id])
+    })
+    // setFreshkey(state => state + 1)
+  }
+
+  const delCard = async (id) => {
+    console.log('delete')
+    await db.transaction(tx => {
+      tx.executeSql('DELETE FROM Cards WHERE id = ? ', [id])
+    })
+    // setFreshkey(state => state + 1)
+  }
 
   const deleteCard = async () => {
 
     if (props.isTopic) {
-      await deleteCollection(props.id)
-
-      props.setFreshKey(state => state + 1)
+      await del(props.id)
+      console.log(props.id)
+      props.setFreshKeyc(state => state + 1)
     }
     else {
-      await deleteSpending(props.id)
+      //    await deleteSpending(props.id)
+      console.log(props.id)
+      await delCard(props.id)
       props.setFreshKey(state => state + 1)
       props.setCard(state => state.filter((item) => {
         return item.id != props.id

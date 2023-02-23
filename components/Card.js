@@ -18,16 +18,15 @@ export default function Card(props) {
         setSound(sound);
         console.log('Playing Sound');
         await sound.playAsync();
-
-
-
     }
 
 
 
     useEffect(() => {
+        console.log(3)
         console.log(props)
     }, [])
+
     React.useEffect(() => {
         return sound
             ? () => {

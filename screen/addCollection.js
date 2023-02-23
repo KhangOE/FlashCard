@@ -1,9 +1,17 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Dimensions } from 'react-native';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { async } from '@firebase/util';
+import { setStatusBarStyle } from 'expo-status-bar';
+import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
+import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Touchable } from 'react-native';
+import { FontAwesome, AntDesign, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
+import { addCard, addCollection, addspending, getCategories, getspending, main } from '../api/firebaseApi';
+import { getTopicById } from '../api/firebaseApi';
+import SafeViewAndroid from "../safeAreaViewAndroid";
+import safeAreaViewAndroid from '../safeAreaViewAndroid';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
-import * as SQLite from 'expo-sqlite'
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
+
 
 
 export const AddCollection = ({ navigation }) => {
@@ -20,11 +28,8 @@ export const AddCollection = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      db.transaction(tx => {
-        tx.executeSql('SELECT * FROM categories', null,
-          (txObj, resultSet) => { console.log(resultSet.rows._array); setCategories(resultSet.rows._array) },
-          (txObj, error) => console.log(error)
-        )
+      getCategories().then(data => {
+        setCategories(data)
       })
     });
     return unsubscribe;
@@ -51,15 +56,11 @@ export const AddCollection = ({ navigation }) => {
   const handleComplte = async () => {
     if (name) {
       if (checkName) {
-        db.transaction(tx => {
-          tx.executeSql('INSERT INTO collections (name, note, categoryId) values (?, ?, ?)', [name, note, selectedC?.id || 0],
-            (txObj, resultSet) => console.log(resultSet),
-            (txObj, error) => console.error('Error', error))
-        })
+        await addCollection({ name: name, note: note, category: selectedC.id })
         setNote('')
         setName('')
-        setSelectedC(null)
-        navigation.navigate("Main")
+        //  setSelectedC(null)
+        //  navigation.navigate("Main")
       }
       else {
         setShowErr('Name existed')
@@ -72,66 +73,69 @@ export const AddCollection = ({ navigation }) => {
 
   }
   return (<>
+    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
 
-    <View style={styles.base}>
-      <View style={styles.navbar}>
-        <View style={styles.sub_block}>
-          <Pressable onPress={() => {
-            navigation.navigate("Main")
-          }}>
-            <Feather name="x" size={24} color="white" />
-          </Pressable>
-          <Pressable onPress={handleComplte}>
-            <Feather name="check" size={24} color="white" />
-          </Pressable>
+      <View style={styles.base}>
+        <View style={styles.navbar}>
+          <View style={styles.sub_block}>
+            <Pressable onPress={() => {
+              // navigation.navigate("Main")
+              navigation.goBack()
+            }}>
+              <Feather name="x" size={24} color="white" />
+            </Pressable>
+            <Pressable onPress={handleComplte}>
+              <Feather name="check" size={24} color="white" />
+            </Pressable>
+          </View>
         </View>
-      </View>
 
-      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC}></CategoryModal>
-      <View style={styles.mainBlock}>
-        <View style={styles.wrapper}>
-          <View style={styles.addVocabulary}>
-            <Text style={styles.title}>
-              Tên
-            </Text>
-            <TextInput style={styles.inputField}
-              placeholder=""
-              onChangeText={newname => setName(newname)}
-              defaultValue={name}
-            />
-            <Text style={{ fontSize: 18, color: 'red' }}>
-              {showErr ? showErr : ''}
-            </Text>
-          </View>
-          <View style={styles.addMeaning}>
-            <Text style={styles.title}>
-              Mô tả - không bắt buộc
-            </Text>
-            <TextInput style={styles.inputField}
-              placeholder=""
-              onChangeText={newText => setNote(newText)}
-              defaultValue={note}
-            />
-          </View>
-          <View style={styles.addMeaning}>
-            <Text style={styles.title}>
-              Chủ đề
-            </Text>
-            {selectedC ? <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+        <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC}></CategoryModal>
+        <View style={styles.mainBlock}>
+          <View style={styles.wrapper}>
+            <View style={styles.addVocabulary}>
+              <Text style={styles.title}>
+                Tên
+              </Text>
+              <TextInput style={styles.inputField}
+                placeholder=""
+                onChangeText={newname => setName(newname)}
+                defaultValue={name}
+              />
+              <Text style={{ fontSize: 18, color: 'red' }}>
+                {showErr ? showErr : ''}
+              </Text>
+            </View>
+            <View style={styles.addMeaning}>
+              <Text style={styles.title}>
+                Mô tả - không bắt buộc
+              </Text>
+              <TextInput style={styles.inputField}
+                placeholder=""
+                onChangeText={newText => setNote(newText)}
+                defaultValue={note}
+              />
+            </View>
+            <View style={styles.addMeaning}>
+              <Text style={styles.title}>
+                Chủ đề
+              </Text>
+              {/* {selectedC ? <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
               <Text>{selectedC.name}</Text>
             </TouchableOpacity> :
               <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
                 <MaterialIcons name='topic' size={28} />
-              </TouchableOpacity>}
+              </TouchableOpacity>} */}
+            </View>
+
+            <Pressable style={[styles.addBtn]} onPress={handleComplte}  >
+              <Text style={styles.textBtn}>Thêm bộ</Text>
+            </Pressable>
+
           </View>
-
-          <Pressable style={[styles.addBtn]} onPress={handleComplte}  >
-            <Text style={styles.textBtn}>Thêm bộ</Text>
-          </Pressable>
-
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   </>)
 }
 

@@ -1,15 +1,17 @@
-import { async } from '@firebase/util';
-import { setStatusBarStyle } from 'expo-status-bar';
+
 import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Image, Alert } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
-import { addCard, addCollection, addspending, getCardsbyCID, getspending, main } from '../api/firebaseApi';
+import { addCard, getCardsbyCID } from '../api/firebaseApi';
 import * as ImagePicker from 'expo-image-picker';
 import { uuidv4 } from '@firebase/util';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth } from '../firebase';
 import SafeViewAndroid from "../safeAreaViewAndroid";
-import axios from 'axios';
+
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb') // returns Database object
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 const AddCardScreen = ({ navigation, route }) => {
@@ -44,6 +46,7 @@ const AddCardScreen = ({ navigation, route }) => {
   useEffect(() => {
     setCname(route.params.name)
     setCid(route.params.id)
+    console.log(route.params.id)
   }, []);
 
 
@@ -64,20 +67,20 @@ const AddCardScreen = ({ navigation, route }) => {
     setShowErr('')
   }, [checkWord])
 
-  const callSound = async () => {
-    const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`
-    await axios.get(URL,
-      {
-        headers: {
-          app_id: '20d5be5c',
-          app_key: '3689eaa3c8bbb54c633611ce106adb70'
-        }
-      }).then((res) => {
-        console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
-        //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
-        return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
-      })
-  }
+  // const callSound = async () => {
+  //   const URL = `https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`
+  //   await axios.get(URL,
+  //     {
+  //       headers: {
+  //         app_id: '20d5be5c',
+  //         app_key: '3689eaa3c8bbb54c633611ce106adb70'
+  //       }
+  //     }).then((res) => {
+  //       console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+  //       //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+  //       return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
+  //     })
+  // }
 
   // useEffect(() => {
   //   const a = async () => {
@@ -96,9 +99,18 @@ const AddCardScreen = ({ navigation, route }) => {
 
   // }, [])
 
-  useEffect(() => {
-    console.log('lll', sound)
-  }, [sound])
+  const newCard = async () => {
+    await db.transaction(tx => {
+      tx.executeSql("insert into Cards (word, meaning, memorized, favorite, image, CID, ex) values (?, ?, ?, ?, ?, ?, ?)", [en, vi, 0, 0, image, route.params.id, ex]);
+      // tx.executeSql('INSERT INTO items (text, count) values (?, ?)',
+      //   (txObj, resultSet) => this.setState({
+      //     data:
+      //       { id: resultSet.insertId, text: 'gibberish', count: 0 }
+      //   }),
+      //   (txObj, error) => console.log('Error', error))
+    })
+    //setFreshkey(state => state + 1)
+  }
   const handle = async () => {
 
     if (en) {
@@ -108,44 +120,44 @@ const AddCardScreen = ({ navigation, route }) => {
         //   console.log('call sound')
         //   console.log('soundddd ', sound)
         // })
-        const s = await axios.get(`https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`,
-          {
-            headers: {
-              app_id: '20d5be5c',
-              app_key: '3689eaa3c8bbb54c633611ce106adb70'
-            }
-          }).then((res) => {
-            console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
-            //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
-            return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
-          })
-        console.log('ssss', s)
-        if (image) {
-          const response = await fetch(image.uri);
-          const blob = await response.blob();
-          const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+        // const s = await axios.get(`https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/${en.toLowerCase()}?strictMatch=false`,
+        //   {
+        //     headers: {
+        //       app_id: '20d5be5c',
+        //       app_key: '3689eaa3c8bbb54c633611ce106adb70'
+        //     }
+        //   }).then((res) => {
+        //     console.log('res', res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+        //     //setSound(res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile)
+        //     return res.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile
+        //   })
 
-          const storage = getStorage();
-          const storageRef = ref(storage, childPath);
+        if (0) {
+          // const response = await fetch(image.uri);
+          // const blob = await response.blob();
+          // const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+
+          // const storage = getStorage();
+          // const storageRef = ref(storage, childPath);
 
 
 
-          await uploadBytes(storageRef, blob).then((snapshot) => {
-            console.log("uploaded image to storage");
-          });
+          // await uploadBytes(storageRef, blob).then((snapshot) => {
+          //   console.log("uploaded image to storage");
+          // });
 
-          getDownloadURL(ref(storage, childPath))
-            .then(async (url) => {
-              addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url, sound: s })
-            })
-            .catch((error) => {
-              console.log(error);
-              return null;
-            });
+          // getDownloadURL(ref(storage, childPath))
+          //   .then(async (url) => {
+          //     addCard({ en: en, vi: vi, cid: cid, ex: ex, img: url, sound: s })
+          //   })
+          //   .catch((error) => {
+          //     console.log(error);
+          //     return null;
+          //   });
         }
         else {
-          await addCard({ en: en, vi: vi, cid: cid, ex: ex, sound: s })
-
+          // await addCard({ en: en, vi: vi, cid: cid, ex: ex, sound: s || null })
+          await newCard()
           setFreshCall(state => state + 1)
           console.log('add card')
         }
