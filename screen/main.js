@@ -93,7 +93,7 @@ function MainScreen({ navigation }) {
 
 
   const newCollection = async () => {
-    await db.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql("insert into Collection (name, note) values (?, ?)", ['df', 'sdf']);
       // tx.executeSql('INSERT INTO items (text, count) values (?, ?)',
       //   (txObj, resultSet) => this.setState({
@@ -262,7 +262,6 @@ function MainScreen({ navigation }) {
         </TouchableOpacity>
       </View> */}
       <ScrollView style={styles.topicList}>
-        <Button title='add collection' onPress={newCollection}></Button>
         {filteredData?.map((item, idx) => {
           return (
             <TopicTag key={item.id} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}
