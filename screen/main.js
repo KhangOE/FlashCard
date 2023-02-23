@@ -1,13 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, SafeAreaView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, TextInput } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
-import { getCategories, getCollection } from '../api/firebaseApi';
-import { collection } from 'firebase/firestore';
-import { getTopicById } from '../api/firebaseApi';
 import { useIsFocused } from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite'
 
 // New Screen
 import { OptionBlock } from './OptionBlock';
@@ -82,6 +80,8 @@ function TopicTag(props) {
 
 
 function MainScreen({ navigation }) {
+  const db = SQLite.openDatabase('flashcard.db')
+
   const [categories, setCategories] = useState([])
   const [selectedC, setSelectedC] = useState(null)
   const [data, setdata] = useState([])
@@ -112,17 +112,26 @@ function MainScreen({ navigation }) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getCategories().then(data => {
-        setCategories(data)
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM categories', null,
+          (txObj, resultSet) => { setCategories(resultSet.rows._array) },
+          (txObj, error) => console.error(error)
+        )
       })
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    getTopicById().then(data => {
-      setdata(data)
-      setShownData(data)
+    // getTopicById().then(data => {
+    //   setdata(data)
+    //   setShownData(data)
+    // })
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM collections', null,
+        (txObj, resultSet) => { setdata(resultSet.rows._array); setShownData(resultSet.rows._array) },
+        (txObj, error) => console.error(error)
+      )
     })
   }, [freshKey, isFocused]);
 
@@ -135,8 +144,11 @@ function MainScreen({ navigation }) {
 
 
   const updateCategory = () => {
-    getCategories().then(data => {
-      setCategories(data)
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM categories', null,
+        (txObj, resultSet) => { setCategories(resultSet.rows._array) },
+        (txObj, error) => console.error(error)
+      )
     })
   }
 
@@ -203,9 +215,6 @@ function MainScreen({ navigation }) {
                 <FontAwesome name="search" size={20} color="white" />
               </TouchableHighlight>
           }
-          {/* <TouchableHighlight>
-            <FontAwesome name="search" size={20} color="white" />
-          </TouchableHighlight> */}
 
 
         </View>

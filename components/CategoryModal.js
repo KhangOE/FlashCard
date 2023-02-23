@@ -7,12 +7,15 @@ import { addDoc, collection, deleteDoc, doc, getFirestore, setDoc } from "fireba
 import { app, auth } from '../firebase'
 import { FontAwesome5 } from '@expo/vector-icons';
 import { addCategory } from '../api/firebaseApi'
+import * as SQLite from 'expo-sqlite'
 
 
 const db = getFirestore(app);
 
 
 export default function CategoryModal({ setModalVisible, modalVisible, data, selected, setSelected, updateCategory }) {
+    const db = SQLite.openDatabase('flashcard.db')
+
     const [addCategoryVisible, setAddCategoryVisible] = useState(false)
     const [category, setCategory] = useState('')
     const [color, setColor] = useState('#6A197D')

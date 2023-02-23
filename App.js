@@ -1,37 +1,37 @@
 import 'react-native-gesture-handler';
 import { useEffect, useState } from 'react';
 import { Text, View, LogBox } from 'react-native';
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase"
 import { NavigationContainer } from '@react-navigation/native';
-import AuthStack from './navigation/AuthStack';
-import HomeStack from "./navigation/HomeStack"
 import DrawerStack from './navigation/DrawerStack';
+import * as SQLite from 'expo-sqlite'
 
-LogBox.ignoreAllLogs()
+// LogBox.ignoreAllLogs()
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState();
-  const [loaded, setLoaded] = useState(false);
-  const [user, setUser] = useState({});
+  const db = SQLite.openDatabase('flashcard.db')
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        setLoggedIn(false);
-        setLoaded(true);
-      } else {
-        setLoggedIn(true);
-        setLoaded(true);
-        setUser(currentUser);
-      }
-      return () => {
-        unsubscribe();
-      };
-    });
-  });
+    db.transaction(tx => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, color TEXT) ')
+    })
 
-  if (!loaded) {
+    db.transaction(tx => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS collections (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, note TEXT, categoryId INTEGER REFERENCES categories(id)) ')
+    })
+
+    db.transaction(tx => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY AUTOINCREMENT, word TEXT, meaning TEXT, example TEXT, memorized INTEGER, image TEXT, favorited INTEGER, collectionId INTEGER REFERENCES collections(id)) ')
+    })
+
+    db.transaction(tx => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS progress (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT) ')
+    })
+
+    setIsLoading(false)
+  }, [])
+
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Loading...</Text>
@@ -41,7 +41,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {loggedIn ? <DrawerStack /> : <AuthStack />}
+      <DrawerStack />
     </NavigationContainer>
   );
 }

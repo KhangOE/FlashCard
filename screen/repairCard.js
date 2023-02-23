@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions, Image, Alert } from 'react-native';
 import { FontAwesome5, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
 import { updateCard } from '../api/firebaseApi';
 import { async } from '@firebase/util';
@@ -42,6 +42,11 @@ function RepairCardScreen(props) {
             image: url
           })
           props.setFreshKey(state => state + 1)
+
+          Alert.alert(
+            'Thông báo',
+            'Thêm thẻ thành công',
+          )
         })
         .catch((error) => {
           console.log(error);

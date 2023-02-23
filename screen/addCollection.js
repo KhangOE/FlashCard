@@ -1,45 +1,43 @@
-import { async } from '@firebase/util';
-import { setStatusBarStyle } from 'expo-status-bar';
-import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Touchable } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
-import { addCard, addCollection, addspending, getCategories, getspending, main } from '../api/firebaseApi';
-import { getTopicById } from '../api/firebaseApi';
-import SafeViewAndroid from "../safeAreaViewAndroid";
-import safeAreaViewAndroid from '../safeAreaViewAndroid';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Pressable, Dimensions } from 'react-native';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
-
+import * as SQLite from 'expo-sqlite'
 
 
 export const AddCollection = ({ navigation }) => {
+  const db = SQLite.openDatabase('flashcard.db')
 
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
   const [exist, setExist] = useState([])
   const [checkName, setChechName] = useState(false)
   const [showErr, setShowErr] = useState('')
-  const [freshCall, setFreshCall] = useState(1)
   const [categories, setCategories] = useState([])
   const [selectedC, setSelectedC] = useState(null)
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getCategories().then(data => {
-        setCategories(data)
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM categories', null,
+          (txObj, resultSet) => { console.log(resultSet.rows._array); setCategories(resultSet.rows._array) },
+          (txObj, error) => console.log(error)
+        )
       })
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    getTopicById().then((data) => {
-      setExist(data.map(a => a.name))
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM collections', null,
+        (txObj, resultSet) => { setExist(resultSet.rows._array) },
+        (txObj, error) => console.error(error)
+      )
     })
-  }, [freshCall])
+  }, [])
 
   useEffect(() => {
 
@@ -53,7 +51,11 @@ export const AddCollection = ({ navigation }) => {
   const handleComplte = async () => {
     if (name) {
       if (checkName) {
-        await addCollection({ name: name, note: note, category: selectedC.id })
+        db.transaction(tx => {
+          tx.executeSql('INSERT INTO collections (name, note, categoryId) values (?, ?, ?)', [name, note, selectedC?.id || 0],
+            (txObj, resultSet) => console.log(resultSet),
+            (txObj, error) => console.error('Error', error))
+        })
         setNote('')
         setName('')
         setSelectedC(null)

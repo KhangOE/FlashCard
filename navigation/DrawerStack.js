@@ -7,6 +7,7 @@ import CustomDrawer from '../components/CustomDrawer';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import { SafeAreaView } from 'react-native';
 import safeAreaViewAndroid from '../safeAreaViewAndroid';
+import SQLtest from '../components/Drawer/SQLtest';
 
 
 const Drawer = createDrawerNavigator();
@@ -38,6 +39,11 @@ export default function DrawerStack() {
                     )
                 }} />
                 <Drawer.Screen name="Progress" component={Progress} options={{
+                    drawerIcon: ({ color }) => (
+                        <MaterialCommunityIcons name='calendar-check' size={22} color={color} />
+                    )
+                }} />
+                <Drawer.Screen name="SQLtest" component={SQLtest} options={{
                     drawerIcon: ({ color }) => (
                         <MaterialCommunityIcons name='calendar-check' size={22} color={color} />
                     )
