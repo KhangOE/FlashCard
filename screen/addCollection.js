@@ -1,12 +1,7 @@
-import { async } from '@firebase/util';
-import { setStatusBarStyle } from 'expo-status-bar';
-import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, SafeAreaView, Pressable, Dimensions, Touchable } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
-import { addCard, addCollection, addspending, getCategories, getspending, main } from '../api/firebaseApi';
-import { getTopicById } from '../api/firebaseApi';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, TextInput, SafeAreaView, Pressable } from 'react-native';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import SafeViewAndroid from "../safeAreaViewAndroid";
-import safeAreaViewAndroid from '../safeAreaViewAndroid';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
 const width = Dimensions.get('screen').width;
@@ -28,8 +23,11 @@ export const AddCollection = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getCategories().then(data => {
-        setCategories(data)
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM Categories', null,
+          (txObj, { rows: { _array } }) => setCategories(_array),
+          (txObj, error) => console.log('Error ', error)
+        )
       })
     });
     return unsubscribe;
@@ -37,9 +35,9 @@ export const AddCollection = ({ navigation }) => {
 
   useEffect(() => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM collections', null,
-        (txObj, resultSet) => { setExist(resultSet.rows._array) },
-        (txObj, error) => console.error(error)
+      tx.executeSql('SELECT * FROM Collections', null,
+        (txObj, { rows: { _array } }) => { setExist(_array.map(obj => obj.name)) },
+        (txObj, error) => console.log('Error ', error)
       )
     })
   }, [])
@@ -56,11 +54,16 @@ export const AddCollection = ({ navigation }) => {
   const handleComplte = async () => {
     if (name) {
       if (checkName) {
-        await addCollection({ name: name, note: note, category: selectedC.id })
+        db.transaction(tx => {
+          tx.executeSql('INSERT INTO Collections (name, note, categoryId) values (?, ?, ?)', [name, note, selectedC?.id || 0],
+            (txObj, resultSet) => console.log(resultSet),
+            (txObj, error) => console.log('Error ', error)
+          )
+        })
         setNote('')
         setName('')
-        //  setSelectedC(null)
-        //  navigation.navigate("Main")
+        setSelectedC(null)
+        navigation.navigate("Main")
       }
       else {
         setShowErr('Name existed')
@@ -79,7 +82,6 @@ export const AddCollection = ({ navigation }) => {
         <View style={styles.navbar}>
           <View style={styles.sub_block}>
             <Pressable onPress={() => {
-              // navigation.navigate("Main")
               navigation.goBack()
             }}>
               <Feather name="x" size={24} color="white" />
@@ -120,12 +122,12 @@ export const AddCollection = ({ navigation }) => {
               <Text style={styles.title}>
                 Chủ đề
               </Text>
-              {/* {selectedC ? <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
-              <Text>{selectedC.name}</Text>
-            </TouchableOpacity> :
-              <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
-                <MaterialIcons name='topic' size={28} />
-              </TouchableOpacity>} */}
+              {selectedC ? <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+                <Text>{selectedC.name}</Text>
+              </TouchableOpacity> :
+                <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+                  <MaterialIcons name='topic' size={28} />
+                </TouchableOpacity>}
             </View>
 
             <Pressable style={[styles.addBtn]} onPress={handleComplte}  >

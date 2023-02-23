@@ -9,8 +9,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { addCategory } from '../api/firebaseApi'
 import * as SQLite from 'expo-sqlite'
 
-
-const db = getFirestore(app);
+const db = SQLite.openDatabase('db.testDb')
 
 
 export default function CategoryModal({ setModalVisible, modalVisible, data, selected, setSelected, updateCategory }) {
@@ -23,7 +22,12 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
 
     const onAddCategory = async () => {
         try {
-            addCategory({ category, color })
+            db.transaction(tx => {
+                tx.executeSql('INSERT INTO Categories (name, color) values (?, ?)', [category, color],
+                    (txObj, resultSet) => console.log(resultSet),
+                    (txObj, error) => console.log('Error ', error)
+                )
+            })
             updateCategory()
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -32,10 +36,12 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
 
     const editCategory = async () => {
         try {
-            const docRef = await setDoc(doc(db, "categories", auth.currentUser.uid, "categories", selectedCategory.id), {
-                name: category,
-                color: color
-            });
+            db.transaction(tx => {
+                tx.executeSql('UPDATE Categories SET name = ?, color = ?', [category, color],
+                    (txObj, resultSet) => console.log(resultSet),
+                    (txObj, error) => console.log('Error ', error)
+                )
+            })
             updateCategory()
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -44,7 +50,12 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
 
     const deleteCategory = async (id) => {
         try {
-            await deleteDoc(doc(db, "categories", auth.currentUser.uid, "categories", id));
+            db.transaction(tx => {
+                tx.executeSql('DELETE FROM Categories WHERE id = ?', [id],
+                    (txObj, resultSet) => console.log(resultSet),
+                    (txObj, error) => console.log('Error ', error)
+                )
+            })
             updateCategory()
         } catch (e) {
             console.error("Error adding document: ", e);

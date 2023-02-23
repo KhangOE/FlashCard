@@ -12,7 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
-//import CategoryModal from '../components/CategoryModal';
+import CategoryModal from '../components/CategoryModal';
 import * as SQLite from 'expo-sqlite'
 
 const db = SQLite.openDatabase('db.testDb') // returns Database object
@@ -92,24 +92,6 @@ function MainScreen({ navigation }) {
 
   const isFocused = useIsFocused();
 
-
-
-  const newCollection = async () => {
-    await db.transaction(tx => {
-      tx.executeSql("insert into Collection (name, note) values (?, ?)", ['df', 'sdf']);
-      // tx.executeSql('INSERT INTO items (text, count) values (?, ?)',
-      //   (txObj, resultSet) => this.setState({
-      //     data:
-      //       { id: resultSet.insertId, text: 'gibberish', count: 0 }
-      //   }),
-      //   (txObj, error) => console.log('Error', error))
-    })
-    setFreshKey(state => state + 1)
-  }
-
-  useEffect(() => {
-    setShownData(data)
-  }, [data])
   useEffect(() => {
     setFilteredData(shownData?.filter(i => {
       return i.name.toLowerCase().includes(search.toLowerCase())
@@ -123,49 +105,27 @@ function MainScreen({ navigation }) {
     }))
   }, [shownData])
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     getCategories().then(data => {
-  //       setCategories(data)
-  //     })
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
-
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       db.transaction(tx => {
-        // sending 4 arguments in executeSql
-        tx.executeSql('SELECT * FROM Collection', null, // passing sql query and parameters:null
-          // success callback which sends two things Transaction object and ResultSet Object
-          (txObj, { rows: { _array } }) => setdata(_array),
-          // failure callback which sends two things Transaction object and Error
+        tx.executeSql('SELECT * FROM Categories', null,
+          (txObj, { rows: { _array } }) => setCategories(_array),
           (txObj, error) => console.log('Error ', error)
-        ) // end executeSQL
-      }) // end transaction
+        )
+      })
     });
     return unsubscribe;
-  }, [navigation, freshKey]);
+  }, [navigation]);
 
   useEffect(() => {
     db.transaction(tx => {
-      // sending 4 arguments in executeSql
-      tx.executeSql('SELECT * FROM Collection', null, // passing sql query and parameters:null
-        // success callback which sends two things Transaction object and ResultSet Object
-        (txObj, { rows: { _array } }) => setdata(_array),
-        // failure callback which sends two things Transaction object and Error
+      tx.executeSql('SELECT * FROM Collections', null,
+        (txObj, { rows: { _array } }) => { setdata(_array); setShownData(_array) },
         (txObj, error) => console.log('Error ', error)
-      ) // end executeSQL
-    }) // end transaction
-  }, [freshKey])
-
-  // useEffect(() => {
-  //   getTopicById().then(data => {
-  //     setdata(data)
-  //     setShownData(data)
-  //   })
-  // }, [freshKey, isFocused]);
+      )
+    })
+  }, [freshKey, isFocused]);
 
   useEffect(() => {
     if (selectedC === null) {
@@ -177,9 +137,9 @@ function MainScreen({ navigation }) {
 
   const updateCategory = () => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM categories', null,
-        (txObj, resultSet) => { setCategories(resultSet.rows._array) },
-        (txObj, error) => console.error(error)
+      tx.executeSql('SELECT * FROM Categories', null,
+        (txObj, { rows: { _array } }) => setCategories(_array),
+        (txObj, error) => console.log('Error ', error)
       )
     })
   }
@@ -253,7 +213,7 @@ function MainScreen({ navigation }) {
       </View>
 
       <ModalPractice modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} id={topic}></ModalPractice>
-      {/* <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
+      <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
       <View style={{ height: 50, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         <TouchableOpacity onPress={() => setCategoryModalVisible(true)} style={styles.categoryBar}>
           <View style={{ height: 25, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minWidth: 60, flexDirection: 'row', paddingHorizontal: 10 }}>
@@ -262,9 +222,8 @@ function MainScreen({ navigation }) {
           </View>
           <SimpleLineIcons style={{}} name='arrow-down' size={16} />
         </TouchableOpacity>
-      </View> */}
+      </View>
       <ScrollView style={styles.topicList}>
-        <Button title='add collection' onPress={newCollection}></Button>
         {filteredData?.map((item, idx) => {
           return (
             <TopicTag key={item.id} setPick={setPick} item={item} settopic={() => { setTopic(item.id) }} setvisible={setModalVisible} name={item.name} press={() => navigation.navigate('Card', item)}

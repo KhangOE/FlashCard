@@ -1,10 +1,9 @@
 import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { LoginScreen, RegisterScreen } from '../components/auth';
-import { AllCards, Progress } from '../components/Drawer';
+import { AllCards, Backup, Progress, Restore, SQLite } from '../components/Drawer';
 import HomeStack from "./HomeStack"
 import CustomDrawer from '../components/CustomDrawer';
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native';
 import safeAreaViewAndroid from '../safeAreaViewAndroid';
 import SQLtest from '../components/Drawer/SQLtest';
@@ -43,7 +42,17 @@ export default function DrawerStack() {
                         <MaterialCommunityIcons name='calendar-check' size={22} color={color} />
                     )
                 }} />
-                <Drawer.Screen name="SQLtest" component={SQLtest} options={{
+                <Drawer.Screen name="Backup" component={Backup} options={{
+                    drawerIcon: ({ color }) => (
+                        <MaterialIcons name='backup' size={22} color={color} />
+                    )
+                }} />
+                <Drawer.Screen name="Restore" component={Restore} options={{
+                    drawerIcon: ({ color }) => (
+                        <MaterialCommunityIcons name='restore' size={22} color={color} />
+                    )
+                }} />
+                <Drawer.Screen name="SQLite" component={SQLite} options={{
                     drawerIcon: ({ color }) => (
                         <MaterialCommunityIcons name='calendar-check' size={22} color={color} />
                     )
