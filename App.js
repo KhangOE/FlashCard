@@ -5,8 +5,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import DrawerStack from './navigation/DrawerStack';
 import * as SQLite from 'expo-sqlite'
 
-import * as SQLite from 'expo-sqlite'
-
 
 const db = SQLite.openDatabase('db.testDb') // returns Database object
 

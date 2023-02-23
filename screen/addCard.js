@@ -1,13 +1,8 @@
 
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Dimensions, Image, Alert } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
-import { addCard, getCardsbyCID } from '../api/firebaseApi';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { uuidv4 } from '@firebase/util';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth } from '../firebase';
-
 import * as SQLite from 'expo-sqlite'
 
 const db = SQLite.openDatabase('db.testDb') // returns Database object

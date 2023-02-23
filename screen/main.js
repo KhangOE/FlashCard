@@ -1,13 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableHighlight, TouchableOpacity, Dimensions, Pressable, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableHighlight, TouchableOpacity, Pressable, TextInput } from 'react-native';
 import { FontAwesome, AntDesign, Entypo, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { PlusBtn } from '../components/PlusButton'
 import { ModalPractice } from '../components/modalPractice';
 import { useState, useEffect } from 'react';
-import { getCategories } from '../api/firebaseApi';
-//import { getTopicById } from '../api/firebaseApi';
 import { useIsFocused } from '@react-navigation/native';
-
 // New Screen
 import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
@@ -75,8 +72,6 @@ function TopicTag(props) {
 
 
 function MainScreen({ navigation }) {
-  const db = SQLite.openDatabase('flashcard.db')
-
   const [categories, setCategories] = useState([])
   const [selectedC, setSelectedC] = useState(null)
   const [data, setdata] = useState([])
@@ -207,6 +202,9 @@ function MainScreen({ navigation }) {
                 <FontAwesome name="search" size={20} color="white" />
               </TouchableHighlight>
           }
+          {/* <TouchableHighlight>
+            <FontAwesome name="search" size={20} color="white" />
+          </TouchableHighlight> */}
 
 
         </View>

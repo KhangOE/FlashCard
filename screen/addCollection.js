@@ -4,14 +4,11 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import SafeViewAndroid from "../safeAreaViewAndroid";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
+import * as SQLite from 'expo-sqlite'
 
-
+const db = SQLite.openDatabase('db.testDb')
 
 export const AddCollection = ({ navigation }) => {
-  const db = SQLite.openDatabase('flashcard.db')
-
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
   const [exist, setExist] = useState([])

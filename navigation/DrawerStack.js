@@ -6,7 +6,6 @@ import CustomDrawer from '../components/CustomDrawer';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native';
 import safeAreaViewAndroid from '../safeAreaViewAndroid';
-import SQLtest from '../components/Drawer/SQLtest';
 
 
 const Drawer = createDrawerNavigator();
