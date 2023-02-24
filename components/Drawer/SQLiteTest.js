@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableHighlight, View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native'
+import { TouchableHighlight, View, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import * as SQLite from 'expo-sqlite'
 
@@ -10,9 +10,10 @@ export default function SQLiteTest({ navigation, route }) {
 
     const TestSQL = () => {
         db.transaction(tx => {
+            let yourDate = new Date()
             tx.executeSql('SELECT * FROM Progress', null,
-                (txObj, resultSet) => console.lor(resultSet.rows._array),
-                (txObj, error) => console.lor(error),
+                (txObj, resultSet) => console.log(resultSet.rows._array),
+                (txObj, error) => console.log(error),
             )
         })
     }

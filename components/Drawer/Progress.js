@@ -16,16 +16,14 @@ export default function Progress({ navigation }) {
 
 
     useEffect(() => {
-        console.log('this run')
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM Progress', null,
                 (txObj, { rows: { _array } }) => {
                     const obj = {};
-                    _array?.dates?.forEach(element => {
-                        obj[element] = { selected: true };
+                    _array?.forEach(element => {
+                        obj[element.date] = { selected: true };
                     });
                     setDates(obj)
-                    console.log(obj)
                 },
                 (txObj, error) => console.error(error)
             )

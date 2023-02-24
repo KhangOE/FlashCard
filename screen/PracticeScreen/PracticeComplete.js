@@ -66,7 +66,7 @@ export default function PracticeComplete({ route, navigation }) {
     useEffect(() => {
         db.transaction(tx => {
             let yourDate = new Date()
-            tx.executeSql('INSERT INTO Progress (date) values (?)', [yourDate.toISOString().split('T')[0]],
+            tx.executeSql('INSERT INTO Progress (date) VALUES (?)', [yourDate.toISOString().split('T')[0]],
                 (txObj, resultSet) => console.log(resultSet),
                 (txObj, error) => console.log('Error ', error)
             )

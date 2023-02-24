@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions, Image, Alert } from 'react-native';
-import { FontAwesome5, AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
-import { updateCard } from '../api/firebaseApi';
-import { async } from '@firebase/util';
+import { View, Text, StyleSheet, SafeAreaView, TextInput, Pressable, Dimensions, Image, Alert } from 'react-native';
+import { FontAwesome5, Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { auth } from '../firebase';
-import { uuidv4 } from '@firebase/util';
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb')
 
 
 const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
 function RepairCardScreen(props) {
 
   const [word, setWord] = useState(props.item?.word)
@@ -18,43 +15,17 @@ function RepairCardScreen(props) {
   const [example, setExample] = useState(props.item?.example)
   const [image, setImage] = useState(props.item?.image)
   const handleUpdate = async () => {
-    if (image) {
-      const response = await fetch(image);
-      const blob = await response.blob();
-      const childPath = `cardsImage/${auth.currentUser.uid}/${uuidv4()}`;
+    db.transaction(tx => {
+      tx.executeSql('UPDATE Cards SET word = ?, meaning = ?, ex = ?, image = ? WHERE id = ?', [word, meaning, example, image || "", props.item?.id],
+        (txObj, resultSet) => Alert.alert(
+          'Thông báo',
+          'Thêm thẻ thành công',
+        ),
+        (txObj, error) => console.log('Error ', error)
+      )
+    })
 
-      const storage = getStorage();
-      const storageRef = ref(storage, childPath);
-
-
-
-      await uploadBytes(storageRef, blob).then((snapshot) => {
-        console.log("uploaded image to storage");
-      });
-
-      getDownloadURL(ref(storage, childPath))
-        .then(async (url) => {
-          await updateCard({
-            id: props.item?.id,
-            word: word,
-            meaning: meaning,
-            example: example,
-            image: url
-          })
-          props.setFreshKey(state => state + 1)
-
-          Alert.alert(
-            'Thông báo',
-            'Thêm thẻ thành công',
-          )
-        })
-        .catch((error) => {
-          console.log(error);
-          return null;
-        });
-    }
-
-
+    props.setFreshKey(state => state + 1)
   }
   useEffect(() => {
     setExample(props.item?.example)
@@ -98,7 +69,6 @@ function RepairCardScreen(props) {
 
       <View style={styles.mainBlock}>
         <View style={styles.wrapper}>
-          {/* <Button title='Add default' onPress={handle} ></Button> */}
           <View style={styles.addVocabulary}>
             <Text style={styles.title}>
               Thuật ngữ
@@ -150,25 +120,10 @@ function RepairCardScreen(props) {
                 </View>)}
             </View>
           </View>
-          {/* <Text>
-                  ex
-              </Text>
-              <TextInput
-                  style={{ height: 40 }}
-                  placeholder="Type here to note!"
-                  onChangeText={newText => setEx(newText)}
-                  defaultValue={ex}
-              /> */}
-
-          {/* <Button title={cname || 'we'} onPress={handle}>
-              </Button> */}
         </View>
       </View>
     </SafeAreaView>
-
   )
-
-  // Bugs : khi focus vào inputText thì keyboard đẩy button lên che trường ví dụ
 }
 
 const styles = StyleSheet.create({
