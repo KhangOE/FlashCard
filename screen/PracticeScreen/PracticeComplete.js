@@ -4,10 +4,33 @@ import { AntDesign } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ScrollView } from 'react-native';
 import CustomModal from "../../components/CustomModal"
-import { addCardToFavorite, addDate, memorizedCard, notMemorizedCard, removeCardFromFavorite } from '../../api/firebaseApi';
+import { addDate } from '../../api/firebaseApi';
+import * as SQLite from 'expo-sqlite'
+
+
+const db = SQLite.openDatabase('db.testDb')
 
 
 function ReviewPage(props) {
+
+    const addCardToFavorite = (id) => {
+        db.transaction(tx => {
+            tx.executeSql('UPDATE Cards SET favorited = 1 WHERE id = ?', [id],
+                (txObj, resultSet) => console.log(resultSet),
+                (txObj, error) => console.log('Error ', error)
+            )
+        })
+    }
+
+    const removeCardFromFavorite = (id) => {
+        db.transaction(tx => {
+            tx.executeSql('UPDATE Cards SET favorited = 0 WHERE id = ?', [id],
+                (txObj, resultSet) => console.log(resultSet),
+                (txObj, error) => console.log('Error ', error)
+            )
+        })
+    }
+
     return (
         <View style={styles.reviewContainer}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsHorizontalScrollIndicator={false}>
@@ -41,12 +64,27 @@ export default function PracticeComplete({ route, navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
-        let yourDate = new Date()
-        addDate(yourDate.toISOString().split('T')[0])
-        if (!moves) {
-            wrongList?.map(item => notMemorizedCard(item.id))
-            correctList?.map(item => memorizedCard(item.id))
-        }
+        db.transaction(tx => {
+            let yourDate = new Date()
+            tx.executeSql('INSERT INTO Progress (date) VALUES (?)', [yourDate.toISOString().split('T')[0]],
+                (txObj, resultSet) => console.log(resultSet),
+                (txObj, error) => console.log('Error ', error)
+            )
+            if (!moves) {
+                wrongList?.map(item => {
+                    tx.executeSql('UPDATE Cards SET memorized = 0 WHERE id = ?', [item.id],
+                        (txObj, resultSet) => console.log(resultSet),
+                        (txObj, error) => console.log('Error ', error)
+                    )
+                })
+                correctList?.map(item => {
+                    tx.executeSql('UPDATE Cards SET memorized = 1 WHERE id = ?', [item.id],
+                        (txObj, resultSet) => console.log(resultSet),
+                        (txObj, error) => console.log('Error ', error)
+                    )
+                })
+            }
+        })
     }, [])
 
     return (

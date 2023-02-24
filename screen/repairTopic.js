@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions, Alert } from 'react-native';
-import { getCategories, getCategorybyCID, updateCollection } from '../api/firebaseApi';
-import { Feather, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Pressable, Dimensions, Alert } from 'react-native';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import CategoryModal from '../components/CategoryModal';
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb')
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 function RepairTopicScreen(props) {
@@ -16,32 +18,35 @@ function RepairTopicScreen(props) {
   useEffect(() => {
     setTopic(props.item?.name)
     setNote(props.item?.note)
-    getCategorybyCID(props.item?.category).then(data => {
-      setSelectedC(data)
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM Categories WHERE id = ?', [props.item?.categoryId],
+        (txObj, { rows: { _array } }) => setSelectedC(_array),
+        (txObj, error) => console.error(error)
+      )
     })
   }, [props?.item])
 
   useEffect(() => {
-    getCategories().then(data => {
-      setCategories(data)
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM Categories', null,
+        (txObj, { rows: { _array } }) => setCategories(_array),
+        (txObj, error) => console.error(error)
+      )
     })
   }, []);
 
 
   const handleUpdate = async () => {
-    await updateCollection({
-      id: props.item.id,
-      name: topic,
-      note: note,
-      userID: props.item.userID,
-      category: selectedC ? selectedC.id : ""
+    db.transaction(tx => {
+      tx.executeSql('UPDATE Collections SET name = ?, note = ?, categoryId = ?', [topic, note, selectedC ? selectedC.id : 0],
+        (txObj, resultSet) => Alert.alert(
+          'Thông báo',
+          'Sửa topic thành công',
+        ),
+        (txObj, error) => console.error(error)
+      )
     })
-    //props.setFresKey(state => state + 1)
     props.setFreshKey(state => state + 1)
-    Alert.alert(
-      'Thông báo',
-      'Sửa topic thành công',
-    )
   }
   return (
     <View style={[styles.bigBlock, { display: props.display }]}>

@@ -45,6 +45,7 @@ const AddCardScreen = ({ navigation, route }) => {
   useEffect(() => {
     exist.includes(en) ? setCheckWord(false) : setCheckWord(true)
   }, [en])
+
   useEffect(() => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [route.params.id],
@@ -60,12 +61,14 @@ const AddCardScreen = ({ navigation, route }) => {
   }, [checkWord])
 
   const handle = async () => {
-
     if (en) {
       if (checkWord) {
         db.transaction(tx => {
           tx.executeSql('INSERT INTO Cards (word, meaning, ex, image, CID, memorized, favorited) values (?, ?, ?, ?, ?, 0, 0)', [en, vi, ex, image?.uri || "", cid],
-            (txObj, resultSet) => console.log(resultSet),
+            (txObj, resultSet) => Alert.alert(
+              'Thông báo',
+              'Thêm thẻ thành công',
+            ),
             (txObj, error) => console.log('Error ', error)
           )
         })
@@ -74,11 +77,6 @@ const AddCardScreen = ({ navigation, route }) => {
         setEn('')
         setVi('')
         setImage(null)
-
-        Alert.alert(
-          'Thông báo',
-          'Thêm thẻ thành công',
-        )
       }
       else {
         setShowErr('Word existed !')

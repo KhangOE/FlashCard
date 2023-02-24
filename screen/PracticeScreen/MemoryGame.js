@@ -14,7 +14,10 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { getCardsbyCID } from "../../api/firebaseApi";
+import * as SQLite from 'expo-sqlite'
+
+
+const db = SQLite.openDatabase('db.testDb')
 
 function Card({ onPress, card, index, isInactive, isFlipped, isDisabled }) {
     const rotate = useRef(new Animated.Value(0)).current;
@@ -82,12 +85,16 @@ export default function MemoryGame({ navigation, route }) {
             setComplete(false);
             setShouldDisableAllCards(false);
             const callApi = async () => {
-                await getCardsbyCID({ cid: route.params || 1 }).then(d => {
-                    setData(d)
-                    var words = (d.slice(0)).map(item => ({ data: item.word, id: item.id, isFlipped: false }))
-                    var meanings = (d.slice(0)).map(item => ({ data: item.meaning, id: item.id, isFlipped: false }))
-                    setCards(shuffle(words.concat(meanings)))
-                }).then(() => {
+                db.transaction(tx => {
+                    tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [route.params],
+                        (txObj, { rows: { _array } }) => {
+                            setData(_array)
+                            var words = (_array.slice(0)).map(item => ({ data: item.word, id: item.id, isFlipped: false }))
+                            var meanings = (_array.slice(0)).map(item => ({ data: item.meaning, id: item.id, isFlipped: false }))
+                            setCards(shuffle(words.concat(meanings)))
+                        },
+                        (txObj, resultSet) => { console.error(resultSet) }
+                    )
                 })
             }
             callApi()

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { TouchableHighlight, View, StyleSheet, Dimensions, Text, ScrollView, Pressable, TextInput, TouchableOpacity } from 'react-native'
-import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons, Ionicons } from '@expo/vector-icons';
+import { TouchableHighlight, View, StyleSheet, Dimensions, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native'
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { getCardsbyUID } from '../../api/firebaseApi';
 import Card from '../Card';
 import { ModalPractice } from '../modalPractice';
@@ -8,8 +8,10 @@ import { ModalPractice } from '../modalPractice';
 import { DeleteNotification } from '../../screen/deleteNotification'
 import { RepairCardScreen } from '../../screen/repairCard';
 
+import * as SQLite from 'expo-sqlite'
 
-const width = Dimensions.get('screen').width;
+const db = SQLite.openDatabase('db.testDb')
+
 const height = Dimensions.get('screen').height;
 
 
@@ -53,23 +55,23 @@ export default function AllCards({ navigation, route }) {
     useEffect(() => {
 
         const unsubscribe = navigation.addListener('focus', () => {
-            getCardsbyUID().then(data => {
-                setShownData(data)
-                setCard(data)
-
-                //  console.log(data)
-            }).then(() => {
+            db.transaction(tx => {
+                tx.executeSql('SELECT * FROM Cards', null,
+                    (txObj, { rows: { _array } }) => { setShownData(_array); setCard(_array) },
+                    (txObj, error) => console.error(error)
+                )
             })
-            //  console.log('Hello World!')
         });
         return unsubscribe;
     }, [navigation, freshKey]);
 
 
     useEffect(() => {
-        getCardsbyUID().then(data => {
-            setShownData(data)
-            setCard(data)
+        db.transaction(tx => {
+            tx.executeSql('SELECT * FROM Cards', null,
+                (txObj, { rows: { _array } }) => { setShownData(_array); setCard(_array) },
+                (txObj, error) => console.error(error)
+            )
         })
 
     }, [freshKey]);
@@ -80,14 +82,6 @@ export default function AllCards({ navigation, route }) {
     const [isRepairBtn, setIsRepairBtn] = useState('none');
     // Delete notification
     const [isDelete, setIsDelete] = useState('none');
-    function displayAddTopicScreen() {
-        if (isPressBtn == 'none') {
-            setIsPressBtn('flex');
-        }
-        else {
-            setIsPressBtn('none');
-        }
-    }
     function displayRepairTopicScreen() {
         if (isRepairBtn == 'none') {
             setIsRepairBtn('flex');
@@ -161,7 +155,6 @@ export default function AllCards({ navigation, route }) {
                     {filteredData?.map((item) => {
                         return (
                             <View key={item.id}>
-
                                 <Card item={item} vi={item.meaning} en={item.word} isRepairBtn={isRepairBtn} id={item.id} favorited={item.favorited} setFreshKey={setFreshKey} repairTopic={displayRepairTopicScreen} isDelete={isDelete} deleteTopic={displayDeleteNotification} setItem={setItem}></Card>
                             </View>
 

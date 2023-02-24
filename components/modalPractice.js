@@ -12,7 +12,7 @@ export const ModalPractice = (props) => {
     useEffect(() => {
         if (id) {
             db.transaction(tx => {
-                tx.executeSql('SELECT * FROM Cards WHERE id = ?', [id],
+                tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [id],
                     (txObj, { rows: { _array } }) => { setError0(_array.length === 0); setError4(_array.length < 4) },
                     (txObj, error) => console.log('Error ', error)
                 )

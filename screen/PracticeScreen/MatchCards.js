@@ -10,7 +10,10 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { getCardsbyCID } from "../../api/firebaseApi";
+import * as SQLite from 'expo-sqlite'
+
+
+const db = SQLite.openDatabase('db.testDb')
 
 
 function Card(props) {
@@ -41,7 +44,6 @@ export default function MatchCards({ navigation, route }) {
     const [complete, setComplete] = useState(false);
     const [wrongList, setWrongList] = useState([]);
     const [correctList, setCorrectList] = useState([])
-    const [card, setCard] = useState([])
 
     const isFocused = useIsFocused();
 
@@ -50,14 +52,16 @@ export default function MatchCards({ navigation, route }) {
             setComplete(false)
             setWrongList([])
             const callApi = async () => {
-                await getCardsbyCID({ cid: route.params || 1 }).then(d => {
-                    setCard(d)
-                    setCorrectList(d)
-                    setWords(d)
-                    setMeanings(shuffle(d.slice(0)))
-                }).then(() => {
+                db.transaction(tx => {
+                    tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [route.params],
+                        (txObj, { rows: { _array } }) => {
+                            setCorrectList(_array)
+                            setWords(_array)
+                            setMeanings(shuffle(_array.slice(0)))
+                        },
+                        (txObj, resultSet) => { console.error(resultSet) }
+                    )
                 })
-
             }
             callApi()
         }
