@@ -26,7 +26,7 @@ export default function App() {
         'CREATE TABLE IF NOT EXISTS Categories (id INTEGER PRIMARY KEY AUTOINCREMENT, color TEXT, name TEXT)'
       )
       tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS Progress (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT)'
+        'CREATE TABLE IF NOT EXISTS Progress (date TEXT PRIMARY KEY)'
       )
       //tx.executeSql('DROP TABLE IF EXISTS ', []);
     })

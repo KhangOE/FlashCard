@@ -9,7 +9,10 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { getCardsbyCID } from "../../api/firebaseApi";
+import * as SQLite from 'expo-sqlite'
+
+
+const db = SQLite.openDatabase('db.testDb')
 
 
 function Card(props) {
@@ -57,11 +60,15 @@ export default function MultipleChoices({ navigation, route }) {
             setComplete(false)
             setWrongList([])
             const callApi = async () => {
-                await getCardsbyCID({ cid: route.params || 1 }).then(d => {
-                    setCard(d)
-                    setData(shuffle(d))
-                    setCorrectList(d)
-                }).then(() => {
+                db.transaction(tx => {
+                    tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [route.params],
+                        (txObj, { rows: { _array } }) => {
+                            setCard(_array)
+                            setData(shuffle(_array))
+                            setCorrectList(shuffle(_array.slice(0)))
+                        },
+                        (txObj, resultSet) => { console.error(resultSet) }
+                    )
                 })
 
             }
@@ -202,7 +209,6 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     cardTitle: {
-        //fontWeight: 700,
         fontSize: 20,
     },
 });

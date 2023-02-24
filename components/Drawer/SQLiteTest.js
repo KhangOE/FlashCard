@@ -1,10 +1,22 @@
 import React from 'react'
 import { TouchableHighlight, View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
+import * as SQLite from 'expo-sqlite'
+
+const db = SQLite.openDatabase('db.testDb')
 
 
+export default function SQLiteTest({ navigation, route }) {
 
-export default function SQLite({ navigation, route }) {
+    const TestSQL = () => {
+        db.transaction(tx => {
+            tx.executeSql('SELECT * FROM Progress', null,
+                (txObj, resultSet) => console.lor(resultSet.rows._array),
+                (txObj, error) => console.lor(error),
+            )
+        })
+    }
+
     return (
         <View style={styles.base}>
             <View style={styles.navbar}>
@@ -15,7 +27,7 @@ export default function SQLite({ navigation, route }) {
                 </View>
             </View>
             <View style={{ flex: 1 }}>
-                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 100, width: 100, backgroundColor: 'red' }}>
+                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', height: 100, width: 100, backgroundColor: 'red' }} onPress={TestSQL}>
                     <Text style={{ textAlign: 'center' }}>Test SQL</Text>
                 </TouchableOpacity>
             </View>

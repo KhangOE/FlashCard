@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { TouchableHighlight, View, StyleSheet, Dimensions, Text, ScrollView, Pressable, TextInput, TouchableOpacity } from 'react-native'
-import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons, Ionicons } from '@expo/vector-icons';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import { getProgress } from '../../api/firebaseApi';
+import { TouchableHighlight, View, StyleSheet } from 'react-native'
+import { Ionicons } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
 import { useIsFocused } from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite'
+
+
+const db = SQLite.openDatabase('db.testDb')
 
 
 export default function Progress({ navigation }) {
@@ -13,14 +16,23 @@ export default function Progress({ navigation }) {
 
 
     useEffect(() => {
-        getProgress().then(data => {
-            const obj = {};
-            data?.dates.forEach(element => {
-                obj[element] = { selected: true };
-            });
-            setDates(obj)
+        console.log('this run')
+        db.transaction(tx => {
+            tx.executeSql('SELECT * FROM Progress', null,
+                (txObj, { rows: { _array } }) => {
+                    const obj = {};
+                    _array?.dates?.forEach(element => {
+                        obj[element] = { selected: true };
+                    });
+                    setDates(obj)
+                    console.log(obj)
+                },
+                (txObj, error) => console.error(error)
+            )
         })
+
     }, [isFocused])
+
     return (
         <View style={styles.base}>
             <View style={styles.navbar}>
@@ -42,7 +54,6 @@ export default function Progress({ navigation }) {
 const styles = StyleSheet.create({
     base: {
         flex: 1,
-        // marginTop: 28
     },
     sub_block: {
         width: '92%',

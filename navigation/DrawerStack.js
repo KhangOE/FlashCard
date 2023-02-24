@@ -1,6 +1,6 @@
 import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { AllCards, Backup, Progress, Restore, SQLite } from '../components/Drawer';
+import { AllCards, Backup, Progress, Restore, SQLiteTest } from '../components/Drawer';
 import HomeStack from "./HomeStack"
 import CustomDrawer from '../components/CustomDrawer';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -51,7 +51,7 @@ export default function DrawerStack() {
                         <MaterialCommunityIcons name='restore' size={22} color={color} />
                     )
                 }} />
-                <Drawer.Screen name="SQLite" component={SQLite} options={{
+                <Drawer.Screen name="SQLiteTest" component={SQLiteTest} options={{
                     drawerIcon: ({ color }) => (
                         <MaterialCommunityIcons name='calendar-check' size={22} color={color} />
                     )
