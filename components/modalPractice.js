@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import CustomModal from "./CustomModal";
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb')
+import { db } from '../utils'
 
 export const ModalPractice = (props) => {
     const [error0, setError0] = useState(false)

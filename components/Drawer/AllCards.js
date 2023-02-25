@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { TouchableHighlight, View, StyleSheet, Dimensions, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native'
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { getCardsbyUID } from '../../api/firebaseApi';
 import Card from '../Card';
 import { ModalPractice } from '../modalPractice';
 
 import { DeleteNotification } from '../../screen/deleteNotification'
 import { RepairCardScreen } from '../../screen/repairCard';
 
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb')
+import { db } from '../../utils'
 
 const height = Dimensions.get('screen').height;
 
@@ -58,7 +55,7 @@ export default function AllCards({ navigation, route }) {
             db.transaction(tx => {
                 tx.executeSql('SELECT * FROM Cards', null,
                     (txObj, { rows: { _array } }) => { setShownData(_array); setCard(_array) },
-                    (txObj, error) => console.error(error)
+                    (txObj, error) => console.errror(error)
                 )
             })
         });
@@ -70,14 +67,12 @@ export default function AllCards({ navigation, route }) {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM Cards', null,
                 (txObj, { rows: { _array } }) => { setShownData(_array); setCard(_array) },
-                (txObj, error) => console.error(error)
+                (txObj, error) => console.error('Error in AllCards: ', error)
             )
         })
 
     }, [freshKey]);
 
-    // Add card
-    const [isPressBtn, setIsPressBtn] = useState('none');
     // Repair card
     const [isRepairBtn, setIsRepairBtn] = useState('none');
     // Delete notification
@@ -167,7 +162,7 @@ export default function AllCards({ navigation, route }) {
             <RepairCardScreen display={isRepairBtn} handle={displayRepairTopicScreen} item={item} setCard={setCard} setFreshKey={setFreshKey} />
 
             {/* Cửa sổ nhỏ để xóa topic*/}
-            <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} />
+            <DeleteNotification display={isDelete} handle={displayDeleteNotification} id={item?.id} setCard={setCard} setFreshKey={setFreshKey} />
         </View>
     )
 }

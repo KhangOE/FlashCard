@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TextInput, Pressable, Dimensions, Image, Alert } from 'react-native';
 import { FontAwesome5, Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb')
+import { db } from '../utils'
 
 
 const width = Dimensions.get('screen').width;

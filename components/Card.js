@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View
 import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
 import { OptionBlock } from '../screen/OptionBlock';
 import { addCardToFavorite, removeCardFromFavorite } from '../api/firebaseApi';
-
 import * as Speech from 'expo-speech';
 export default function Card(props) {
     const [show, setShow] = useState('none');

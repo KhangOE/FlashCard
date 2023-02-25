@@ -4,9 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import CustomModal from './CustomModal'
 import { PlusBtn } from './PlusButton'
 import { FontAwesome5 } from '@expo/vector-icons';
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb')
+import { db } from '../utils'
 
 
 export default function CategoryModal({ setModalVisible, modalVisible, data, selected, setSelected, updateCategory }) {
@@ -47,7 +45,10 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
         try {
             db.transaction(tx => {
                 tx.executeSql('DELETE FROM Categories WHERE id = ?', [id],
-                    (txObj, resultSet) => console.log(resultSet),
+                    (txObj, resultSet) => tx.executeSql('UPDATE Collections SET categoryId = 0 WHERE categoryId = ?', [id],
+                        (txObj, resultSet) => console.log(resultSet),
+                        (txObj, error) => console.log('Error ', error)
+                    ),
                     (txObj, error) => console.log('Error ', error)
                 )
             })
@@ -98,8 +99,8 @@ export default function CategoryModal({ setModalVisible, modalVisible, data, sel
                         <TouchableOpacity key={index} onPress={() => {
                             setModalVisible(false)
                             setSelected(item)
-                        }} style={[styles.item, selected === item && { backgroundColor: item.color }]}>
-                            <Text style={selected === item && { color: "white" }}>{item.name}</Text>
+                        }} style={[styles.item, selected?.id === item.id && { backgroundColor: item.color }]}>
+                            <Text style={selected?.id === item.id && { color: "white" }}>{item.name}</Text>
                             <View style={{ flexDirection: 'row', width: 50, justifyContent: 'space-between', marginRight: 10 }}>
                                 <TouchableOpacity onPress={() => deleteCategory(item.id)}>
                                     <FontAwesome5 name="trash" size={18} color="black" />

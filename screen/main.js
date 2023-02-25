@@ -10,9 +10,8 @@ import { OptionBlock } from './OptionBlock';
 import { RepairTopicScreen } from './repairTopic';
 import { DeleteNotification } from './deleteNotification';
 import CategoryModal from '../components/CategoryModal';
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb') // returns Database object
+import { db } from '../utils'
+// returns Database object
 
 
 function TopicTag(props) {
@@ -126,7 +125,7 @@ function MainScreen({ navigation }) {
     if (selectedC === null) {
       setShownData(data)
     } else
-      setShownData(data.filter(d => d.category === selectedC.id))
+      setShownData(data.filter(d => d.categoryId === selectedC.id))
   }, [selectedC]);
 
 
@@ -202,10 +201,6 @@ function MainScreen({ navigation }) {
                 <FontAwesome name="search" size={20} color="white" />
               </TouchableHighlight>
           }
-          {/* <TouchableHighlight>
-            <FontAwesome name="search" size={20} color="white" />
-          </TouchableHighlight> */}
-
 
         </View>
       </View>

@@ -1,9 +1,8 @@
 import React from 'react'
 import { TouchableHighlight, View, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../../utils'
 
-const db = SQLite.openDatabase('db.testDb')
 
 
 export default function SQLiteTest({ navigation, route }) {
@@ -11,11 +10,12 @@ export default function SQLiteTest({ navigation, route }) {
     const TestSQL = () => {
         db.transaction(tx => {
             let yourDate = new Date()
-            tx.executeSql('SELECT * FROM Progress', null,
-                (txObj, resultSet) => console.log(resultSet.rows._array),
+            tx.executeSql('DROP TABLE Collections', null,
+                (txObj, resultSet) => console.log(resultSet),
                 (txObj, error) => console.log(error),
             )
         })
+        // db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, (error, resultSet) => { });
     }
 
     return (

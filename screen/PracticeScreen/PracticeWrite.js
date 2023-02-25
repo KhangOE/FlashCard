@@ -13,10 +13,8 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { getCardsbyCID } from "../../api/firebaseApi";
-import * as SQLite from 'expo-sqlite'
+import { db } from '../../utils'
 
-const db = SQLite.openDatabase('db.testDb')
 
 const width = Dimensions.get('window').width
 
@@ -28,7 +26,6 @@ export const PracticeWrite = ({ navigation, route }) => {
   const [correct, setCorrect] = useState(null);
   const [wrongList, setWrongList] = useState([]);
   const [correctList, setCorrectList] = useState([]);
-  const [card, setCard] = useState([])
   const [hide, setHide] = useState(true)
 
   const isFocused = useIsFocused();
@@ -56,7 +53,6 @@ export const PracticeWrite = ({ navigation, route }) => {
         db.transaction(tx => {
           tx.executeSql('SELECT * FROM Cards WHERE CID = ?', [route.params],
             (txObj, { rows: { _array } }) => {
-              setCard(_array)
               setData(shuffle(_array))
               setCorrectList(_array)
             }

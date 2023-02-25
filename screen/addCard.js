@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Dimensions, Image, Alert } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../utils'
 
-const db = SQLite.openDatabase('db.testDb') // returns Database object
+// returns Database object
 const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
 
 const AddCardScreen = ({ navigation, route }) => {
   const [cname, setCname] = useState('')

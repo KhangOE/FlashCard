@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { TouchableOpacity, Image, StyleSheet, Text, View, Modal, Pressable } from 'react-native'
+import { TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ScrollView } from 'react-native';
 import CustomModal from "../../components/CustomModal"
-import { addDate } from '../../api/firebaseApi';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../../utils'
 
-
-const db = SQLite.openDatabase('db.testDb')
 
 
 function ReviewPage(props) {
