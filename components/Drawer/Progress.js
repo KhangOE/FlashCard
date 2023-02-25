@@ -3,10 +3,7 @@ import { TouchableHighlight, View, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 import { useIsFocused } from '@react-navigation/native';
-import * as SQLite from 'expo-sqlite'
-
-
-const db = SQLite.openDatabase('db.testDb')
+import { db } from '../../utils'
 
 
 export default function Progress({ navigation }) {
@@ -25,7 +22,7 @@ export default function Progress({ navigation }) {
                     });
                     setDates(obj)
                 },
-                (txObj, error) => console.error(error)
+                (txObj, error) => console.error('Error in Progess: ', error)
             )
         })
 

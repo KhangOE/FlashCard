@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableHighlight, TouchableOpacity, TextInput, Button, Pressable, Dimensions } from 'react-native';
-import { FontAwesome5, AntDesign, Entypo, Feather } from '@expo/vector-icons';
-import { deleteCollection, deleteSpending } from '../api/firebaseApi';
-import { async } from '@firebase/util';
-import * as SQLite from 'expo-sqlite'
-const db = SQLite.openDatabase('db.testDb') // returns Database object
+import React from 'react';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { db } from '../utils'
+
+// returns Database object
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 function DeleteNotification(props) {
   const del = async (id) => {
     console.log('delete')
-    await db.transaction(tx => {
-      tx.executeSql('DELETE FROM Collection WHERE id = ? ', [id])
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM Collections WHERE id = ? ', [id])
     })
     // setFreshkey(state => state + 1)
   }
 
   const delCard = async (id) => {
     console.log('delete')
-    await db.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql('DELETE FROM Cards WHERE id = ? ', [id])
     })
     // setFreshkey(state => state + 1)

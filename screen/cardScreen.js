@@ -8,9 +8,8 @@ import Card from '../components/Card';
 import { OptionBlock } from './OptionBlock';
 import { DeleteNotification } from './deleteNotification'
 import { RepairCardScreen } from './repairCard';
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb') // returns Database object
+import { db } from '../utils'
+// returns Database object
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;

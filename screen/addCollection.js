@@ -4,9 +4,8 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import SafeViewAndroid from "../safeAreaViewAndroid";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CategoryModal from '../components/CategoryModal';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../utils'
 
-const db = SQLite.openDatabase('db.testDb')
 
 export const AddCollection = ({ navigation }) => {
   const [name, setName] = useState('')
@@ -69,9 +68,17 @@ export const AddCollection = ({ navigation }) => {
     else {
       setShowErr('Name is required !')
     }
-
-
   }
+
+  const updateCategory = () => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM Categories', null,
+        (txObj, { rows: { _array } }) => setCategories(_array),
+        (txObj, error) => console.log('Error ', error)
+      )
+    })
+  }
+
   return (<>
     <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
 
@@ -89,7 +96,7 @@ export const AddCollection = ({ navigation }) => {
           </View>
         </View>
 
-        <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC}></CategoryModal>
+        <CategoryModal modalVisible={categoryModalVisible} setModalVisible={setCategoryModalVisible} data={categories} selected={selectedC} setSelected={setSelectedC} updateCategory={updateCategory}></CategoryModal>
         <View style={styles.mainBlock}>
           <View style={styles.wrapper}>
             <View style={styles.addVocabulary}>

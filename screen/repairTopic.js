@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Pressable, Dimensions, Alert } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import CategoryModal from '../components/CategoryModal';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../utils'
 
-const db = SQLite.openDatabase('db.testDb')
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -18,12 +17,14 @@ function RepairTopicScreen(props) {
   useEffect(() => {
     setTopic(props.item?.name)
     setNote(props.item?.note)
-    db.transaction(tx => {
-      tx.executeSql('SELECT * FROM Categories WHERE id = ?', [props.item?.categoryId],
-        (txObj, { rows: { _array } }) => setSelectedC(_array),
-        (txObj, error) => console.error(error)
-      )
-    })
+    if (props.item?.categoryId) {
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM Categories WHERE id = ?', [props.item?.categoryId],
+          (txObj, { rows: { _array } }) => setSelectedC(_array[0]),
+          (txObj, error) => console.error('Error in repairTopic: ', error)
+        )
+      })
+    }
   }, [props?.item])
 
   useEffect(() => {

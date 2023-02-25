@@ -5,9 +5,8 @@ import * as Speech from 'expo-speech';
 
 const tenvhHeight = Dimensions.get('screen').height * 0.1;
 const cardWidth = Dimensions.get('window').width * 0.8;
-import * as SQLite from 'expo-sqlite'
-
-const db = SQLite.openDatabase('db.testDb') // returns Database object
+import { db } from '../utils'
+// returns Database object
 
 function CardReview(props) {
   const rotate = useRef(new Animated.Value(0)).current;

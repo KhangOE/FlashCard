@@ -9,10 +9,8 @@ import {
     AntDesign,
 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import * as SQLite from 'expo-sqlite'
+import { db } from '../../utils'
 
-
-const db = SQLite.openDatabase('db.testDb')
 
 
 function Card(props) {
