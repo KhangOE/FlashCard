@@ -1,12 +1,92 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { TouchableHighlight, View, StyleSheet, Dimensions, TouchableOpacity, Text, Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
+import { db } from '../../utils';
+import { useIsFocused } from '@react-navigation/native';
 
 const { StorageAccessFramework } = FileSystem;
 
 
 export default function Backup({ navigation, route }) {
+
+
+    const [data, setData] = useState(
+        {
+            Collection: [],
+            Card: [],
+            Categories: [],
+            Progress: []
+
+        })
+
+    const isFocused = useIsFocused();
+
+
+    // useEffect(() => {
+    //     console.log('cards')
+    //     db.transaction(tx => {
+    //         tx.executeSql('SELECT * FROM Cards', null,
+    //             (txObj, { rows: { _array } }) => console.log('cards', _array),
+    //             (txObj, error) => console.log('Error ', error)
+    //         )
+    //     })
+    // }, []);
+
+
+    useEffect(() => {
+        console.log('data')
+        db.transaction(tx => {
+            tx.executeSql('SELECT * FROM Collections', null,
+                (txObj, { rows: { _array } }) => {
+                    setData(preState => ({
+
+                        ...preState,
+                        Collection: _array
+
+                    }))
+                },
+                (txObj, error) => console.log('Error ', error)
+            )
+            tx.executeSql('SELECT * FROM Cards', null,
+                (txObj, { rows: { _array } }) => {
+                    setData(preState => (
+                        {
+                            ...preState,
+                            Cards: _array
+                        }
+                    ))
+                },
+                (txObj, error) => console.log('Error ', error)
+            )
+            tx.executeSql('SELECT * FROM Categories', null,
+                (txObj, { rows: { _array } }) => {
+                    setData(preState => (
+                        {
+                            ...preState,
+                            Categories: _array
+                        }
+                    ))
+                },
+                (txObj, error) => console.log('Error ', error)
+            )
+            tx.executeSql('SELECT * FROM Progress', null,
+                (txObj, { rows: { _array } }) => {
+                    setData(preState => (
+                        {
+                            ...preState,
+                            Progress: _array
+                        }
+                    ))
+                },
+                (txObj, error) => console.log('Error ', error)
+            )
+        })
+    }, [isFocused]);
+
+    useEffect(() => {
+        console.log(data.Progress)
+    }, [])
     const pathUri = useRef();
 
     function changeObjToJSON(data) {
@@ -74,7 +154,7 @@ export default function Backup({ navigation, route }) {
                         uri: 'https://static.thenounproject.com/png/2406231-200.png',
                     }}
                 />
-                <TouchableOpacity onPress={() => createJSONFile({ a: 2 })}>
+                <TouchableOpacity onPress={() => createJSONFile(data)}>
                     <View style={{ marginTop: 50, backgroundColor: '#492780', maxWidth: 200, paddingHorizontal: 10, paddingVertical: 20, borderRadius: 10 }}>
                         <Text style={{ color: 'white', textAlign: 'center' }}>
                             Dowload your data here !

@@ -115,7 +115,7 @@ function MainScreen({ navigation }) {
   useEffect(() => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM Collections', null,
-        (txObj, { rows: { _array } }) => { setdata(_array); setShownData(_array) },
+        (txObj, { rows: { _array } }) => { setdata(_array); setShownData(_array); console.log('call colleciton') },
         (txObj, error) => console.log('Error ', error)
       )
     })

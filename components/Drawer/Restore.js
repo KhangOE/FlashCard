@@ -3,6 +3,7 @@ import { TouchableHighlight, View, StyleSheet, Dimensions, TouchableOpacity, Tex
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker'
 import * as ExpoFileSystem from 'expo-file-system'
+import { db } from '../../utils';
 export default function Restore({ navigation, route }) {
 
 
@@ -16,9 +17,7 @@ export default function Restore({ navigation, route }) {
         });
 
     }
-    useEffect(() => {
-        console.log('state', state)
-    }, [state])
+
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
