@@ -17,21 +17,78 @@ export default function Restore({ navigation, route }) {
         });
 
     }
+    useEffect(() => {
+        // console.log('Collection', state?.Collection)
+        // console.log('Card', state?.Cards)
+        //console.log('PRogress', state?.Progress)
+        console.log('Categories', state?.Categories)
+    }, [state])
 
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            aspect: [4, 3],
-        });
+    useEffect(() => {
 
-        alert(result.uri);
-        console.log(result)
 
-        if (!result.cancelled) {
-            this.setState({ image: result.uri });
-        }
-    };
+        state?.Categories && state.Categories.forEach(x => {
+            db.transaction(tx => {
+                tx.executeSql('INSERT INTO Categories (name, color) values (?, ?)', [x.name, x.color],
+                    (txObj, resultSet) => {
+                        state?.Collection && state.Collection.forEach(e => {
+                            //  console.log(e),
+                            if (e.categoryId == x.id) {
+                                db.transaction(tx => {
+                                    tx.executeSql('INSERT INTO Collections (name, note, categoryId) values (?, ?, ?)', [e.name, e.note, resultSet.insertId],
+                                        (txObj, resultSet2) => (console.log(resultSet2)
+                                            , state?.Cards.forEach(e2 => {
+                                                console.log('card', e2.CID, e.id)
+                                                if (e2.CID == e.id) {
+                                                    db.transaction(tx => {
+                                                        tx.executeSql('INSERT INTO Cards (word, meaning, ex, image, CID, memorized, favorited) values (?, ?, ?, ?, ?, 0, 0)', [e2.word, e2.meaning, e2.ex, e2.image, resultSet2.insertId],
+                                                            (txObj, resultSet) => console.log(resultSet)
+                                                        ),
+                                                            (txObj, error) => console.log('Error ', error)
+                                                    })
+                                                }
+                                            })
+                                        ),
+                                        //  (txObj, error) => console.log('Error ', error)
+                                    )
+                                })
+                            }
+
+                        })
+                    }
+                    ,
+                    (txObj, error) => console.log('Error ', error)
+                )
+            })
+        })
+
+
+        state?.Collection && state.Collection.forEach(e => {
+            if (e.categoryId == 0) {
+                db.transaction(tx => {
+                    tx.executeSql('INSERT INTO Collections (name, note, categoryId) values (?, ?, ?)', [e.name, e.note, e.categoryId],
+                        (txObj, resultSet) => (console.log(resultSet)
+                            , state?.Cards.forEach(e2 => {
+                                console.log('card', e2.CID, e.id)
+                                if (e2.CID == e.id) {
+                                    db.transaction(tx => {
+                                        tx.executeSql('INSERT INTO Cards (word, meaning, ex, image, CID, memorized, favorited) values (?, ?, ?, ?, ?, 0, 0)', [e2.word, e2.meaning, e2.ex, e2.image, resultSet.insertId],
+                                            (txObj, resultSet) => console.log(resultSet)
+                                        ),
+                                            (txObj, error) => console.log('Error ', error)
+                                    })
+                                }
+                            })
+                        ),
+                        //  (txObj, error) => console.log('Error ', error)
+                    )
+                })
+            }
+
+        })
+    }, [state])
+
     return (
         <View style={styles.base}>
             <View style={styles.navbar}>
