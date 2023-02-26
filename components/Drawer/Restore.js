@@ -1,10 +1,38 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { TouchableHighlight, View, StyleSheet, Dimensions, TouchableOpacity, Text, Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
-
-
-
+import * as DocumentPicker from 'expo-document-picker'
+import * as ExpoFileSystem from 'expo-file-system'
 export default function Restore({ navigation, route }) {
+
+
+    const [state, setState] = useState()
+
+
+    const pickDocument = async () => {
+        let result = await DocumentPicker.getDocumentAsync({});
+        await ExpoFileSystem.readAsStringAsync(result.uri).then(res => {
+            setState(JSON.parse(res))
+        });
+
+    }
+    useEffect(() => {
+        console.log('state', state)
+    }, [state])
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+        });
+
+        alert(result.uri);
+        console.log(result)
+
+        if (!result.cancelled) {
+            this.setState({ image: result.uri });
+        }
+    };
     return (
         <View style={styles.base}>
             <View style={styles.navbar}>
@@ -24,7 +52,7 @@ export default function Restore({ navigation, route }) {
                         uri: 'http://cdn.onlinewebfonts.com/svg/img_115498.png',
                     }}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={pickDocument}>
                     <View style={{ marginTop: 50, backgroundColor: '#492780', maxWidth: 200, paddingHorizontal: 10, paddingVertical: 20, borderRadius: 10 }}>
                         <Text style={{ color: 'white', textAlign: 'center' }}>
                             Upload your data here !
