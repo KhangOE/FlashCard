@@ -69,12 +69,14 @@ export default function PracticeComplete({ route, navigation }) {
             )
             if (!moves) {
                 wrongList?.map(item => {
+                    console.log("memorized: ", item.id)
                     tx.executeSql('UPDATE Cards SET memorized = 0 WHERE id = ?', [item.id],
                         (txObj, resultSet) => console.log(resultSet),
                         (txObj, error) => console.log('Error ', error)
                     )
                 })
                 correctList?.map(item => {
+                    console.log("not memorized: ", item.id)
                     tx.executeSql('UPDATE Cards SET memorized = 1 WHERE id = ?', [item.id],
                         (txObj, resultSet) => console.log(resultSet),
                         (txObj, error) => console.log('Error ', error)

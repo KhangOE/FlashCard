@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
-import { FontAwesome, AntDesign, Entypo, Feather, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { OptionBlock } from '../screen/OptionBlock';
-import { addCardToFavorite, removeCardFromFavorite } from '../api/firebaseApi';
 import * as Speech from 'expo-speech';
+import { db } from '../utils';
 export default function Card(props) {
     const [show, setShow] = useState('none');
 
@@ -13,7 +13,24 @@ export default function Card(props) {
         Speech.speak(thingToSay, { language: "en-US" });
     }
 
+    const addCardToFavorite = (id) => {
+        console.log("the id is: ", id)
+        db.transaction(tx => {
+            tx.executeSql('UPDATE Cards SET favorited = 1 WHERE id = ?', [id],
+                (txObj, resultSet) => console.log(resultSet),
+                (txObj, error) => console.log('Error ', error)
+            )
+        })
+    }
 
+    const removeCardFromFavorite = (id) => {
+        db.transaction(tx => {
+            tx.executeSql('UPDATE Cards SET favorited = 0 WHERE id = ?', [id],
+                (txObj, resultSet) => console.log(resultSet),
+                (txObj, error) => console.log('Error ', error)
+            )
+        })
+    }
 
 
     function showBlock() {
